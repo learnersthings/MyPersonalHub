@@ -2,8 +2,8 @@ import { createNativeStackNavigator }
     from "@react-navigation/native-stack";
 
 import NotesScreen from "../screens/NotesScreen";
-import NoteEditorScreen
-    from "../screens/NoteEditorScreen";
+import NoteEditorScreen from "../screens/NoteEditorScreen";
+import NoteViewScreen from "../screens/NoteViewScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +32,14 @@ export default function NotesStack() {
                         ? "Edit Note"
                         : "Add Note",
                 })}
+            />
+
+            <Stack.Screen
+                name="NoteView"
+                component={NoteViewScreen}
+                options={{
+                    title: "View Note",
+                }}
             />
         </Stack.Navigator>
     );

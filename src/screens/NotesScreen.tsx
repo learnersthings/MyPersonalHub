@@ -13,6 +13,7 @@ import { useCallback } from "react";
 
 import { useEffect, useState } from "react";
 import { getNotes, saveNotes } from "../services/notesStorage";
+import { stripHtml } from "../utils/htmlUtils";
 
 export default function NotesScreen() {
     const [notes, setNotes] = useState<any[]>([]);
@@ -139,7 +140,7 @@ export default function NotesScreen() {
                                 marginTop: 5,
                             }}
                         >
-                            {item.content}
+                            {stripHtml(item.content)}
                         </Text>
 
                         <View style={{
