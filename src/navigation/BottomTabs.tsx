@@ -3,9 +3,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
 import HomeScreen from "../screens/HomeScreen";
-import TasksScreen from "../screens/TasksScreen";
 import SettingsScreen from "../screens/SettingsScreen";
-import NotesStack from "./NotesStack";
+import ScreenStack from "./NotesStack";
+import TasksStack from "./TasksStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -58,7 +58,7 @@ export default function BottomTabs() {
 
                 <Tab.Screen
                     name="Notes"
-                    component={NotesStack}
+                    component={ScreenStack}
                     options={{
                         headerShown: false,
                     }}
@@ -66,7 +66,7 @@ export default function BottomTabs() {
 
                 <Tab.Screen
                     name="Tasks"
-                    component={TasksScreen}
+                    component={TasksStack}
                 />
 
                 <Tab.Screen
