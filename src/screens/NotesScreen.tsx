@@ -5,6 +5,7 @@ import {
     TextInput,
     TouchableOpacity,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import { useEffect, useState } from "react";
 import { getNotes, saveNotes } from "../services/notesStorage";
@@ -154,21 +155,46 @@ export default function NotesScreen() {
                 My Notes
             </Text>
 
-            <TextInput
-                placeholder="🔍 Search notes..."
-                value={searchText}
-                onChangeText={setSearchText}
-                style={{
-                    borderWidth: 1,
-                    borderColor: "#ddd",
-                    borderRadius: 10,
-                    paddingHorizontal: 10,
-                    paddingVertical: 12,
-                    backgroundColor: "#fff",
-                    fontSize: 16,
-                    marginBottom: 10,
-                }}
-            />
+            <View style={{
+                flexDirection: "row",
+                alignItems: "center",
+                borderWidth: 1,
+                borderColor: "#ddd",
+                borderRadius: 10,
+                backgroundColor: "#fff",
+                marginBottom: 15,
+                paddingHorizontal: 10,
+            }}>
+                <Ionicons
+                    name="search-outline"
+                    size={20}
+                    color="gray"
+                />
+
+                <TextInput
+                    placeholder="Search notes..."
+                    value={searchText}
+                    onChangeText={setSearchText}
+                    style={{
+                        flex: 1,
+                        paddingHorizontal: 10,
+                        paddingVertical: 12,
+                        fontSize: 16,
+                    }}
+                />
+
+                {searchText.length > 0 && (
+                    <TouchableOpacity
+                        onPress={() => setSearchText("")}
+                    >
+                        <Ionicons
+                            name="close-circle"
+                            size={20}
+                            color="gray"
+                        />
+                    </TouchableOpacity>
+                )}
+            </View>
 
             <FlatList
                 data={filteredNotes}
