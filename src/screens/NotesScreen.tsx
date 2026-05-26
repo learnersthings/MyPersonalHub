@@ -73,29 +73,6 @@ export default function NotesScreen() {
             padding: 16,
             backgroundColor: "#f5f5f5",
         }}>
-            <TouchableOpacity
-                onPress={() =>
-                    navigation.navigate("NoteEditor")
-                }
-                style={{
-                    backgroundColor: "#2196F3",
-                    paddingVertical: 14,
-                    borderRadius: 10,
-                    alignItems: "center",
-                    marginBottom: 15,
-                }}
-            >
-                <Text
-                    style={{
-                        color: "#fff",
-                        fontSize: 16,
-                        fontWeight: "bold",
-                    }}
-                >
-                    + New Note
-                </Text>
-            </TouchableOpacity>
-
             <View style={{
                 flexDirection: "row",
                 alignItems: "center",
@@ -143,18 +120,16 @@ export default function NotesScreen() {
                 renderItem={({ item }) => (
                     <View
                         style={{
-                            marginBottom: 8,
-                            borderWidth: 1,
+                            backgroundColor: "#fff",
+                            borderRadius: 12,
                             padding: 12,
+                            marginBottom: 12,
+                            elevation: 3,
                         }}
                     >
                         <Text style={{
-                            padding: 8,
-                            borderRadius: 5,
-                            flex: 1,
-                            alignItems: "center",
-                            backgroundColor: "#fff",
-                            justifyContent: "center"
+                            fontSize: 18,
+                            fontWeight: "bold",
                         }}>{item.title}</Text>
 
                         <Text
@@ -240,6 +215,30 @@ export default function NotesScreen() {
                 )
                 }
             />
+
+            <TouchableOpacity
+                onPress={() =>
+                    navigation.navigate("NoteEditor")
+                }
+                style={{
+                    position: "absolute",
+                    right: 20,
+                    bottom: 20,
+                    width: 60,
+                    height: 60,
+                    borderRadius: 30,
+                    backgroundColor: "#2196F3",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    elevation: 5,
+                }}
+            >
+                <Ionicons
+                    name="add"
+                    size={32}
+                    color="#fff"
+                />
+            </TouchableOpacity>
 
         </View >
     );
