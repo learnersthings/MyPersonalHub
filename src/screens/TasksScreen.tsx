@@ -44,6 +44,7 @@ export default function TasksScreen() {
     }, []);
 
     async function loadTasks() {
+
         const data =
             await getTasks();
 
@@ -81,15 +82,11 @@ export default function TasksScreen() {
 
         setTasks(updated);
 
-        await saveTasks(
-            updated
-        );
+        await saveTasks(updated);
 
         setTitle("");
 
-        setHabitMode(
-            false
-        );
+        setHabitMode(false);
     }
 
     async function toggleTask(
@@ -97,22 +94,19 @@ export default function TasksScreen() {
     ) {
 
         const updated =
-            tasks.map(
-                task =>
-                    task.id === id
-                        ? {
-                            ...task,
-                            completed:
-                                !task.completed,
-                        }
-                        : task
+            tasks.map(task =>
+                task.id === id
+                    ? {
+                        ...task,
+                        completed:
+                            !task.completed,
+                    }
+                    : task
             );
 
         setTasks(updated);
 
-        await saveTasks(
-            updated
-        );
+        await saveTasks(updated);
     }
 
     async function deleteTask(
@@ -127,9 +121,7 @@ export default function TasksScreen() {
 
         setTasks(updated);
 
-        await saveTasks(
-            updated
-        );
+        await saveTasks(updated);
     }
 
     return (
@@ -145,14 +137,16 @@ export default function TasksScreen() {
                     fontSize: 24,
                     fontWeight:
                         "700",
-                    marginBottom: 15,
+
+                    marginBottom:
+                        15,
                 }}
             >
-                Tasks & Habits
+                📝 Tasks & Habits
             </Text>
 
             <TextInput
-                placeholder="Enter task..."
+                placeholder="Enter task or habit..."
                 value={title}
                 onChangeText={
                     setTitle
@@ -173,11 +167,11 @@ export default function TasksScreen() {
                     {
                         backgroundColor:
                             habitMode
-                                ? "#4CAF50"
-                                : "#777",
+                                ? "#555"
+                                : "#555",
 
                         marginBottom:
-                            10,
+                            12,
                     },
                 ]}
             >
@@ -194,8 +188,109 @@ export default function TasksScreen() {
                 </Text>
             </TouchableOpacity>
 
+            {/* Progress */}
+
+            <View
+                style={{
+                    backgroundColor:
+                        "#2196F3",
+
+                    padding: 15,
+
+                    borderRadius: 12,
+
+                    marginBottom: 15,
+                }}
+            >
+
+                <View
+                    style={{
+                        flexDirection:
+                            "row",
+
+                        justifyContent:
+                            "space-between",
+
+                        alignItems:
+                            "center",
+                    }}
+                >
+
+                    <Text
+                        style={{
+                            color:
+                                "#fff",
+
+                            fontSize:
+                                18,
+
+                            fontWeight:
+                                "600",
+                        }}
+                    >
+
+                        📊 Completed:
+
+                        {" "}
+
+                        {
+                            tasks.filter(
+                                t =>
+                                    t.completed
+                            ).length
+                        }
+
+                        /
+
+                        {
+                            tasks.length
+                        }
+
+                    </Text>
+
+                    <Text
+                        style={{
+                            color:
+                                "#fff",
+
+                            fontSize:
+                                22,
+
+                            fontWeight:
+                                "700",
+                        }}
+                    >
+
+                        {
+                            tasks.length
+                                ? Math.round(
+                                    (
+                                        tasks.filter(
+                                            t =>
+                                                t.completed
+                                        ).length
+                                        /
+                                        tasks.length
+                                    )
+                                    *
+                                    100
+                                )
+                                : 0
+                        }
+
+                        %
+
+                    </Text>
+
+                </View>
+
+            </View>
+
             <FlatList
-                data={tasks}
+
+                data={
+                    tasks
+                }
 
                 keyExtractor={
                     item =>
@@ -232,6 +327,7 @@ export default function TasksScreen() {
                             {
                                 item.title
                             }
+
                         </Text>
 
                         <View
@@ -252,28 +348,60 @@ export default function TasksScreen() {
                                         item.id
                                     )
                                 }
+
                                 style={[
                                     globalStyles.button,
                                     {
-                                        flex:
-                                            1,
+                                        flex: 1,
 
                                         backgroundColor:
-                                            "#4CAF50",
+                                            item.completed
+                                                ? "#2196F3"
+                                                : "#4CAF50",
                                     },
                                 ]}
                             >
-                                <Text
-                                    style={
-                                        globalStyles.buttonText
-                                    }
+
+                                <View
+                                    style={{
+                                        flexDirection:
+                                            "row",
+
+                                        alignItems:
+                                            "center",
+
+                                        gap: 6,
+                                    }}
                                 >
-                                    {
-                                        item.completed
-                                            ? "Undo"
-                                            : "Done"
-                                    }
-                                </Text>
+
+                                    <Ionicons
+                                        name={
+                                            item.completed
+                                                ? "refresh"
+                                                : "checkmark"
+                                        }
+
+                                        size={18}
+
+                                        color="#fff"
+                                    />
+
+                                    <Text
+                                        style={
+                                            globalStyles.buttonText
+                                        }
+                                    >
+
+                                        {
+                                            item.completed
+                                                ? "Undo"
+                                                : "Done"
+                                        }
+
+                                    </Text>
+
+                                </View>
+
                             </TouchableOpacity>
 
                             <TouchableOpacity
@@ -282,6 +410,7 @@ export default function TasksScreen() {
                                         item.id
                                     )
                                 }
+
                                 style={[
                                     globalStyles.button,
                                     {
@@ -293,43 +422,110 @@ export default function TasksScreen() {
                                     },
                                 ]}
                             >
-                                <Text
-                                    style={
-                                        globalStyles.buttonText
-                                    }
+
+                                <View
+                                    style={{
+                                        flexDirection:
+                                            "row",
+
+                                        alignItems:
+                                            "center",
+
+                                        gap:
+                                            6,
+                                    }}
                                 >
-                                    Delete
-                                </Text>
+
+                                    <Ionicons
+                                        name="trash"
+                                        size={18}
+                                        color="#fff"
+                                    />
+
+                                    <Text
+                                        style={
+                                            globalStyles.buttonText
+                                        }
+                                    >
+                                        Delete
+                                    </Text>
+
+                                </View>
+
                             </TouchableOpacity>
 
                         </View>
 
-                        <Text
+                        <View
                             style={{
+                                flexDirection:
+                                    "row",
+
+                                alignItems:
+                                    "center",
+
                                 marginTop:
                                     10,
-
-                                color:
-                                    "#777",
-
-                                fontSize:
-                                    13,
                             }}
                         >
-                            {
-                                new Date(
-                                    item.createdAt
-                                )
-                                    .toLocaleDateString()
-                            }
-                        </Text>
+
+                            <Ionicons
+                                name="calendar-outline"
+                                size={14}
+                                color="#555"
+                            />
+
+                            <Text
+                                style={{
+                                    marginLeft:
+                                        5,
+
+                                    color:
+                                        "#555",
+
+                                    fontSize:
+                                        13,
+                                }}
+                            >
+                                {
+                                    new Date(
+                                        item.createdAt
+                                    )
+                                        .toLocaleDateString()
+                                }
+                            </Text>
+
+                        </View>
 
                     </View>
 
                 )}
-            />
 
-            {/* Floating Add */}
+                ListEmptyComponent={
+
+                    <Text
+                        style={{
+                            textAlign:
+                                "center",
+
+                            marginTop:
+                                80,
+
+                            color:
+                                "#555",
+
+                            fontSize:
+                                16,
+                        }}
+                    >
+
+                        No tasks yet
+
+                    </Text>
+
+                }
+
+            />
 
             <TouchableOpacity
                 onPress={
@@ -340,11 +536,13 @@ export default function TasksScreen() {
                     globalStyles.floatingButton
                 }
             >
+
                 <Ionicons
                     name="add"
                     size={32}
                     color="#fff"
                 />
+
             </TouchableOpacity>
 
         </View>

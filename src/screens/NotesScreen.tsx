@@ -223,7 +223,7 @@ export default function NotesScreen() {
                             }
                             style={{
                                 color:
-                                    "#777",
+                                    "#555",
 
                                 marginTop:
                                     5,
@@ -243,42 +243,63 @@ export default function NotesScreen() {
 
                         <View
                             style={{
-                                flexDirection:
-                                    "row",
+                                flexDirection: "row",
 
                                 gap: 8,
 
-                                marginTop:
-                                    12,
+                                marginTop: 12,
                             }}
                         >
+
+                            {/* EDIT */}
 
                             <TouchableOpacity
                                 onPress={() =>
                                     navigation.navigate(
                                         "NoteEditor",
                                         {
-                                            note:
-                                                item,
+                                            note: item,
                                         }
                                     )
                                 }
+
                                 style={[
                                     globalStyles.button,
                                     {
-                                        flex:
-                                            1,
+                                        flex: 1,
                                     },
                                 ]}
                             >
-                                <Text
-                                    style={
-                                        globalStyles.buttonText
-                                    }
+
+                                <View
+                                    style={{
+                                        flexDirection: "row",
+
+                                        alignItems: "center",
+
+                                        gap: 6,
+                                    }}
                                 >
-                                    Edit
-                                </Text>
+
+                                    <Ionicons
+                                        name="create-outline"
+                                        size={18}
+                                        color="#fff"
+                                    />
+
+                                    <Text
+                                        style={
+                                            globalStyles.buttonText
+                                        }
+                                    >
+                                        Edit
+                                    </Text>
+
+                                </View>
+
                             </TouchableOpacity>
+
+                            {/* DELETE */}
 
                             <TouchableOpacity
                                 onPress={() =>
@@ -286,25 +307,47 @@ export default function NotesScreen() {
                                         item.id
                                     )
                                 }
+
                                 style={[
                                     globalStyles.button,
                                     {
-                                        flex:
-                                            1,
+                                        flex: 1,
 
                                         backgroundColor:
                                             "#F44336",
                                     },
                                 ]}
                             >
-                                <Text
-                                    style={
-                                        globalStyles.buttonText
-                                    }
+
+                                <View
+                                    style={{
+                                        flexDirection: "row",
+
+                                        alignItems: "center",
+
+                                        gap: 6,
+                                    }}
                                 >
-                                    Delete
-                                </Text>
+
+                                    <Ionicons
+                                        name="trash"
+                                        size={18}
+                                        color="#fff"
+                                    />
+
+                                    <Text
+                                        style={
+                                            globalStyles.buttonText
+                                        }
+                                    >
+                                        Delete
+                                    </Text>
+
+                                </View>
+
                             </TouchableOpacity>
+
+                            {/* PIN */}
 
                             <TouchableOpacity
                                 onPress={() =>
@@ -312,51 +355,92 @@ export default function NotesScreen() {
                                         item.id
                                     )
                                 }
+
                                 style={[
                                     globalStyles.button,
                                     {
-                                        flex:
-                                            1,
+                                        flex: 1,
 
                                         backgroundColor:
-                                            "#000",
+                                            "#555",
                                     },
                                 ]}
                             >
-                                <Text
-                                    style={
-                                        globalStyles.buttonText
-                                    }
+
+                                <View
+                                    style={{
+                                        flexDirection: "row",
+
+                                        alignItems: "center",
+
+                                        gap: 6,
+                                    }}
                                 >
-                                    {
-                                        item.pinned
-                                            ? "Unpin"
-                                            : "Pin"
-                                    }
-                                </Text>
+
+                                    <Ionicons
+                                        name={
+                                            item.pinned
+                                                ? "pin"
+                                                : "pin-outline"
+                                        }
+
+                                        size={18}
+
+                                        color="#fff"
+                                    />
+
+                                    <Text
+                                        style={
+                                            globalStyles.buttonText
+                                        }
+                                    >
+                                        {
+                                            item.pinned
+                                                ? "Unpin"
+                                                : "Pin"
+                                        }
+                                    </Text>
+
+                                </View>
+
                             </TouchableOpacity>
 
                         </View>
 
-                        <Text
+                        <View
                             style={{
-                                marginTop:
-                                    10,
+                                flexDirection: "row",
 
-                                color:
-                                    "#777",
+                                alignItems: "center",
 
-                                fontSize:
-                                    13,
+                                marginTop: 10,
                             }}
                         >
-                            {
-                                new Date(
-                                    item.createdAt
-                                )
-                                    .toLocaleDateString()
-                            }
-                        </Text>
+
+                            <Ionicons
+                                name="calendar-outline"
+                                size={14}
+                                color="#555"
+                            />
+
+                            <Text
+                                style={{
+                                    marginLeft: 5,
+
+                                    color: "#555",
+
+                                    fontSize: 13,
+                                }}
+                            >
+                                {
+                                    new Date(
+                                        item.createdAt
+                                    )
+                                        .toLocaleDateString()
+                                }
+                            </Text>
+
+                        </View>
 
                     </View>
 

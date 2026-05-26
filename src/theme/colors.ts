@@ -8,7 +8,7 @@ const colors = {
 
     text: "#222",
 
-    gray: "#777",
+    gray: "#555",
 
     border: "#DDD",
 
