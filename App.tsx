@@ -1,15 +1,5 @@
-import { SafeAreaView, Text } from 'react-native';
+import BottomTabs from "./src/navigation/BottomTabs";
 
 export default function App() {
-  return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <Text>My Personal Hub</Text>
-    </SafeAreaView>
-  );
+  return <BottomTabs />;
 }
