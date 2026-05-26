@@ -6,6 +6,7 @@ import HomeScreen from "../screens/HomeScreen";
 import NotesScreen from "../screens/NotesScreen";
 import TasksScreen from "../screens/TasksScreen";
 import SettingsScreen from "../screens/SettingsScreen";
+import NotesStack from "./NotesStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -58,7 +59,10 @@ export default function BottomTabs() {
 
                 <Tab.Screen
                     name="Notes"
-                    component={NotesScreen}
+                    component={NotesStack}
+                    options={{
+                        headerShown: false,
+                    }}
                 />
 
                 <Tab.Screen

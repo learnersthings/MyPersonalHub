@@ -6,12 +6,15 @@ import {
     TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation }
+    from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 import { useEffect, useState } from "react";
 import { getNotes, saveNotes } from "../services/notesStorage";
 
 export default function NotesScreen() {
-    const [title, setTitle] = useState("");
     const [notes, setNotes] = useState<any[]>([]);
     const [searchText, setSearchText] = useState("");
     const filteredNotes = notes.filter(note =>
@@ -19,50 +22,17 @@ export default function NotesScreen() {
             .toLowerCase()
             .includes(searchText.toLowerCase())
     );
-    const [editingId, setEditingId] =
-        useState<string | null>(null);
-    const [content, setContent] = useState("");
+    const navigation = useNavigation<any>();
 
-    useEffect(() => {
-        loadNotes();
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            loadNotes();
+        }, [])
+    );
 
     async function loadNotes() {
         const data = await getNotes();
         setNotes(data);
-    }
-
-    async function saveNote() {
-        if (!title.trim()) return;
-
-        if (editingId) {
-            const updated = notes.map(note =>
-                note.id === editingId
-                    ? { ...note, title, content }
-                    : note
-            );
-
-            setNotes(updated);
-            await saveNotes(updated);
-
-            setEditingId(null);
-        } else {
-            const newNote = {
-                id: Date.now().toString(),
-                title,
-                content,
-                createdAt: new Date().toISOString(),
-                pinned: false,
-            };
-
-            const updated = [newNote, ...notes];
-
-            setNotes(updated);
-            await saveNotes(updated);
-        }
-
-        setTitle("");
-        setContent("");
     }
 
     async function deleteNote(id: string) {
@@ -103,87 +73,28 @@ export default function NotesScreen() {
             padding: 16,
             backgroundColor: "#f5f5f5",
         }}>
-            <Text
-                style={{
-                    fontWeight: "600",
-                    marginBottom: 5,
-                }}
-            >
-                Note Title
-            </Text>
-
-            <TextInput
-                placeholder="Note title"
-                value={title}
-                onChangeText={setTitle}
-                style={{
-                    borderWidth: 1,
-                    borderColor: "#ddd",
-                    borderRadius: 10,
-                    paddingHorizontal: 10,
-                    paddingVertical: 12,
-                    backgroundColor: "#fff",
-                    fontSize: 16,
-                    marginBottom: 10,
-                }}
-            />
-
-            <Text
-                style={{
-                    fontWeight: "600",
-                    marginBottom: 5,
-                }}
-            >
-                Note Content
-            </Text>
-
-            <TextInput
-                placeholder="Write your note..."
-                value={content}
-                onChangeText={setContent}
-                multiline
-                textAlignVertical="top"
-                style={{
-                    borderWidth: 1,
-                    borderColor: "#ddd",
-                    borderRadius: 10,
-                    paddingVertical: 12,
-                    paddingHorizontal: 10,
-                    minHeight: 120,
-                    backgroundColor: "#fff",
-                    marginBottom: 15,
-                    fontSize: 16,
-                }}
-            />
-
             <TouchableOpacity
-                onPress={saveNote}
+                onPress={() =>
+                    navigation.navigate("NoteEditor")
+                }
                 style={{
                     backgroundColor: "#2196F3",
                     paddingVertical: 14,
                     borderRadius: 10,
                     alignItems: "center",
-                    marginBottom: 10,
+                    marginBottom: 15,
                 }}
             >
-                <Text style={{
-                    color: "#fff",
-                    fontSize: 16,
-                    fontWeight: "bold"
-                }}>
-                    {editingId ? "Update Note" : "Add Note"}
+                <Text
+                    style={{
+                        color: "#fff",
+                        fontSize: 16,
+                        fontWeight: "bold",
+                    }}
+                >
+                    + New Note
                 </Text>
             </TouchableOpacity>
-
-            <Text
-                style={{
-                    fontSize: 20,
-                    fontWeight: "bold",
-                    marginBottom: 10,
-                }}
-            >
-                My Notes
-            </Text>
 
             <View style={{
                 flexDirection: "row",
@@ -262,11 +173,11 @@ export default function NotesScreen() {
                             marginTop: 8,
                         }}>
                             <TouchableOpacity
-                                onPress={() => {
-                                    setTitle(item.title);
-                                    setContent(item.content);
-                                    setEditingId(item.id);
-                                }}
+                                onPress={() =>
+                                    navigation.navigate("NoteEditor", {
+                                        note: item,
+                                    })
+                                }
                                 style={{
                                     backgroundColor: "blue",
                                     padding: 8,
