@@ -1,7 +1,6 @@
 import {
     View,
     Text,
-    TextInput,
     FlatList,
     TouchableOpacity,
 } from "react-native";
@@ -11,7 +10,18 @@ import {
     useState,
 } from "react";
 
-import { Ionicons } from "@expo/vector-icons";
+import {
+    useFocusEffect,
+    useNavigation,
+} from "@react-navigation/native";
+
+import {
+    useCallback,
+} from "react";
+
+import {
+    Ionicons,
+} from "@expo/vector-icons";
 
 import {
     getTasks,
@@ -24,24 +34,20 @@ import {
 
 export default function TasksScreen() {
 
-    const [
-        title,
-        setTitle,
-    ] = useState("");
+    const navigation =
+        useNavigation<any>();
 
     const [
         tasks,
         setTasks,
-    ] = useState<any[]>([]);
+    ] =
+        useState<any[]>([]);
 
-    const [
-        habitMode,
-        setHabitMode,
-    ] = useState(false);
-
-    useEffect(() => {
-        loadTasks();
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            loadTasks();
+        }, [])
+    );
 
     async function loadTasks() {
 
@@ -51,62 +57,27 @@ export default function TasksScreen() {
         setTasks(data);
     }
 
-    async function addTask() {
-
-        if (!title.trim())
-            return;
-
-        const newTask = {
-
-            id:
-                Date.now()
-                    .toString(),
-
-            title,
-
-            completed:
-                false,
-
-            isHabit:
-                habitMode,
-
-            createdAt:
-                new Date()
-                    .toISOString(),
-        };
-
-        const updated = [
-            newTask,
-            ...tasks,
-        ];
-
-        setTasks(updated);
-
-        await saveTasks(updated);
-
-        setTitle("");
-
-        setHabitMode(false);
-    }
-
     async function toggleTask(
         id: string
     ) {
 
         const updated =
-            tasks.map(task =>
-                task.id === id
-                    ? {
-                        ...task,
-                        completed:
-                            !task.completed,
-                    }
-                    : task
+            tasks.map(
+                task =>
+                    task.id === id
+                        ? {
+                            ...task,
+                            completed:
+                                !task.completed,
+                        }
+                        : task
             );
 
         setTasks(updated);
 
-        await saveTasks(updated);
+        await saveTasks(
+            updated
+        );
     }
 
     async function deleteTask(
@@ -121,8 +92,27 @@ export default function TasksScreen() {
 
         setTasks(updated);
 
-        await saveTasks(updated);
+        await saveTasks(
+            updated
+        );
     }
+
+    const completed =
+        tasks.filter(
+            t =>
+                t.completed
+        ).length;
+
+    const percentage =
+        tasks.length
+            ? Math.round(
+                (
+                    completed
+                    /
+                    tasks.length
+                ) * 100
+            )
+            : 0;
 
     return (
 
@@ -135,58 +125,12 @@ export default function TasksScreen() {
             <Text
                 style={{
                     fontSize: 24,
-                    fontWeight:
-                        "700",
-
-                    marginBottom:
-                        15,
+                    fontWeight: "700",
+                    marginBottom: 15,
                 }}
             >
                 📝 Tasks & Habits
             </Text>
-
-            <TextInput
-                placeholder="Enter task or habit..."
-                value={title}
-                onChangeText={
-                    setTitle
-                }
-                style={
-                    globalStyles.input
-                }
-            />
-
-            <TouchableOpacity
-                onPress={() =>
-                    setHabitMode(
-                        !habitMode
-                    )
-                }
-                style={[
-                    globalStyles.button,
-                    {
-                        backgroundColor:
-                            habitMode
-                                ? "#555"
-                                : "#555",
-
-                        marginBottom:
-                            12,
-                    },
-                ]}
-            >
-                <Text
-                    style={
-                        globalStyles.buttonText
-                    }
-                >
-                    {
-                        habitMode
-                            ? "🔥 Habit Mode"
-                            : "📝 Task Mode"
-                    }
-                </Text>
-            </TouchableOpacity>
 
             {/* Progress */}
 
@@ -229,15 +173,12 @@ export default function TasksScreen() {
                         }}
                     >
 
-                        📊 Completed:
+                        📊 Completed
 
                         {" "}
 
                         {
-                            tasks.filter(
-                                t =>
-                                    t.completed
-                            ).length
+                            completed
                         }
 
                         /
@@ -260,26 +201,10 @@ export default function TasksScreen() {
                                 "700",
                         }}
                     >
-
                         {
-                            tasks.length
-                                ? Math.round(
-                                    (
-                                        tasks.filter(
-                                            t =>
-                                                t.completed
-                                        ).length
-                                        /
-                                        tasks.length
-                                    )
-                                    *
-                                    100
-                                )
-                                : 0
+                            percentage
                         }
-
                         %
-
                     </Text>
 
                 </View>
@@ -318,6 +243,7 @@ export default function TasksScreen() {
                                         : "none",
                             }}
                         >
+
                             {
                                 item.isHabit
                                     ? "🔥 "
@@ -337,8 +263,7 @@ export default function TasksScreen() {
 
                                 gap: 8,
 
-                                marginTop:
-                                    12,
+                                marginTop: 12,
                             }}
                         >
 
@@ -380,9 +305,7 @@ export default function TasksScreen() {
                                                 ? "refresh"
                                                 : "checkmark"
                                         }
-
                                         size={18}
-
                                         color="#fff"
                                     />
 
@@ -414,8 +337,7 @@ export default function TasksScreen() {
                                 style={[
                                     globalStyles.button,
                                     {
-                                        flex:
-                                            1,
+                                        flex: 1,
 
                                         backgroundColor:
                                             "#F44336",
@@ -431,8 +353,7 @@ export default function TasksScreen() {
                                         alignItems:
                                             "center",
 
-                                        gap:
-                                            6,
+                                        gap: 6,
                                     }}
                                 >
 
@@ -487,12 +408,14 @@ export default function TasksScreen() {
                                         13,
                                 }}
                             >
+
                                 {
                                     new Date(
                                         item.createdAt
                                     )
                                         .toLocaleDateString()
                                 }
+
                             </Text>
 
                         </View>
@@ -528,8 +451,10 @@ export default function TasksScreen() {
             />
 
             <TouchableOpacity
-                onPress={
-                    addTask
+                onPress={() =>
+                    navigation.navigate(
+                        "TaskEditor"
+                    )
                 }
 
                 style={
@@ -547,4 +472,4 @@ export default function TasksScreen() {
 
         </View>
     );
-}
+} x
