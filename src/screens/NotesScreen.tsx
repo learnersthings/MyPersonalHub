@@ -21,6 +21,7 @@ export default function NotesScreen() {
     );
     const [editingId, setEditingId] =
         useState<string | null>(null);
+    const [content, setContent] = useState("");
 
     useEffect(() => {
         loadNotes();
@@ -37,7 +38,7 @@ export default function NotesScreen() {
         if (editingId) {
             const updated = notes.map(note =>
                 note.id === editingId
-                    ? { ...note, title }
+                    ? { ...note, title, content }
                     : note
             );
 
@@ -49,7 +50,7 @@ export default function NotesScreen() {
             const newNote = {
                 id: Date.now().toString(),
                 title,
-                content: "",
+                content,
                 createdAt: new Date().toISOString(),
                 pinned: false,
             };
@@ -61,6 +62,7 @@ export default function NotesScreen() {
         }
 
         setTitle("");
+        setContent("");
     }
 
     async function deleteNote(id: string) {
@@ -123,6 +125,34 @@ export default function NotesScreen() {
                     backgroundColor: "#fff",
                     fontSize: 16,
                     marginBottom: 10,
+                }}
+            />
+
+            <Text
+                style={{
+                    fontWeight: "600",
+                    marginBottom: 5,
+                }}
+            >
+                Note Content
+            </Text>
+
+            <TextInput
+                placeholder="Write your note..."
+                value={content}
+                onChangeText={setContent}
+                multiline
+                textAlignVertical="top"
+                style={{
+                    borderWidth: 1,
+                    borderColor: "#ddd",
+                    borderRadius: 10,
+                    paddingVertical: 12,
+                    paddingHorizontal: 10,
+                    minHeight: 120,
+                    backgroundColor: "#fff",
+                    marginBottom: 15,
+                    fontSize: 16,
                 }}
             />
 
@@ -216,6 +246,16 @@ export default function NotesScreen() {
                             justifyContent: "center"
                         }}>{item.title}</Text>
 
+                        <Text
+                            numberOfLines={3}
+                            style={{
+                                color: "#555",
+                                marginTop: 5,
+                            }}
+                        >
+                            {item.content}
+                        </Text>
+
                         <View style={{
                             flexDirection: "row",
                             gap: 8,
@@ -224,6 +264,7 @@ export default function NotesScreen() {
                             <TouchableOpacity
                                 onPress={() => {
                                     setTitle(item.title);
+                                    setContent(item.content);
                                     setEditingId(item.id);
                                 }}
                                 style={{
