@@ -95,7 +95,19 @@ export default function NotesScreen() {
     }
 
     return (
-        <View style={{ flex: 1, padding: 16 }}>
+        <View style={{
+            flex: 1,
+            padding: 16,
+            backgroundColor: "#f5f5f5",
+        }}>
+            <Text
+                style={{
+                    fontWeight: "600",
+                    marginBottom: 5,
+                }}
+            >
+                Note Title
+            </Text>
 
             <TextInput
                 placeholder="Note title"
@@ -103,7 +115,12 @@ export default function NotesScreen() {
                 onChangeText={setTitle}
                 style={{
                     borderWidth: 1,
-                    padding: 10,
+                    borderColor: "#ddd",
+                    borderRadius: 10,
+                    paddingHorizontal: 10,
+                    paddingVertical: 12,
+                    backgroundColor: "#fff",
+                    fontSize: 16,
                     marginBottom: 10,
                 }}
             />
@@ -112,22 +129,43 @@ export default function NotesScreen() {
                 onPress={saveNote}
                 style={{
                     backgroundColor: "#2196F3",
-                    padding: 12,
-                    marginBottom: 15,
+                    paddingVertical: 14,
+                    borderRadius: 10,
+                    alignItems: "center",
+                    marginBottom: 10,
                 }}
             >
-                <Text style={{ color: "#fff" }}>
-                    Add Note
+                <Text style={{
+                    color: "#fff",
+                    fontSize: 16,
+                    fontWeight: "bold"
+                }}>
+                    {editingId ? "Update Note" : "Add Note"}
                 </Text>
             </TouchableOpacity>
 
+            <Text
+                style={{
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    marginBottom: 10,
+                }}
+            >
+                My Notes
+            </Text>
+
             <TextInput
-                placeholder="Search notes..."
+                placeholder="🔍 Search notes..."
                 value={searchText}
                 onChangeText={setSearchText}
                 style={{
                     borderWidth: 1,
-                    padding: 10,
+                    borderColor: "#ddd",
+                    borderRadius: 10,
+                    paddingHorizontal: 10,
+                    paddingVertical: 12,
+                    backgroundColor: "#fff",
+                    fontSize: 16,
                     marginBottom: 10,
                 }}
             />
@@ -138,67 +176,93 @@ export default function NotesScreen() {
                 renderItem={({ item }) => (
                     <View
                         style={{
+                            marginBottom: 8,
                             borderWidth: 1,
                             padding: 12,
-                            marginBottom: 8,
                         }}
                     >
-                        <Text>{item.title}</Text>
+                        <Text style={{
+                            padding: 8,
+                            borderRadius: 5,
+                            flex: 1,
+                            alignItems: "center",
+                            backgroundColor: "#fff",
+                            justifyContent: "center"
+                        }}>{item.title}</Text>
 
-                        <TouchableOpacity
-                            onPress={() => {
-                                setTitle(item.title);
-                                setEditingId(item.id);
-                            }}
-                            style={{
-                                marginTop: 10,
-                                backgroundColor: "blue",
-                                padding: 8,
-                                borderRadius: 5,
-                            }}
-                        >
-                            <Text style={{ color: "#fff" }}>Edit</Text>
-                        </TouchableOpacity>
+                        <View style={{
+                            flexDirection: "row",
+                            gap: 8,
+                            marginTop: 8,
+                        }}>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setTitle(item.title);
+                                    setEditingId(item.id);
+                                }}
+                                style={{
+                                    backgroundColor: "blue",
+                                    padding: 8,
+                                    borderRadius: 5,
+                                    flex: 1,
+                                    alignItems: "center",
+                                    justifyContent: "center"
+                                }}
+                            >
+                                <Text style={{ color: "#fff" }}>Edit</Text>
+                            </TouchableOpacity>
 
-                        <TouchableOpacity
-                            onPress={() => deleteNote(item.id)}
-                            style={{
-                                marginTop: 10,
-                                backgroundColor: "red",
-                                padding: 8,
-                                borderRadius: 5,
-                            }}
-                        >
-                            <Text style={{ color: "#fff" }}>
-                                Delete
-                            </Text>
-                        </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => deleteNote(item.id)}
+                                style={{
+                                    backgroundColor: "red",
+                                    padding: 8,
+                                    borderRadius: 5,
+                                    flex: 1,
+                                    alignItems: "center",
+                                    justifyContent: "center"
+                                }}
+                            >
+                                <Text style={{ color: "#fff" }}>
+                                    Delete
+                                </Text>
+                            </TouchableOpacity>
 
-                        <TouchableOpacity
-                            onPress={() => togglePin(item.id)}
-                            style={{
-                                marginTop: 10,
-                                backgroundColor: "black",
-                                padding: 8,
-                                borderRadius: 5,
-                            }}
-                        >
-                            <Text style={{ color: "#fff" }}>
-                                {item.pinned
-                                    ? "Unpin"
-                                    : "Pin"}
-                            </Text>
-                        </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => togglePin(item.id)}
+                                style={{
+                                    backgroundColor: "black",
+                                    padding: 8,
+                                    borderRadius: 5,
+                                    flex: 1,
+                                    alignItems: "center",
+                                    justifyContent: "center"
+                                }}
+                            >
+                                <Text style={{ color: "#fff" }}>
+                                    {item.pinned
+                                        ? "Unpin"
+                                        : "Pin"}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
 
-                        <Text>
+                        <Text style={{
+                            padding: 8,
+                            borderRadius: 5,
+                            flex: 1,
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}>
                             {new Date(
                                 item.createdAt
                             ).toLocaleDateString()}
                         </Text>
                     </View>
-                )}
+                )
+                }
             />
 
-        </View>
+        </View >
     );
 }
