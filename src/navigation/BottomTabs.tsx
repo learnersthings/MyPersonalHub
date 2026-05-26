@@ -67,6 +67,9 @@ export default function BottomTabs() {
                 <Tab.Screen
                     name="Tasks"
                     component={TasksStack}
+                    options={{
+                        headerShown: false,
+                    }}
                 />
 
                 <Tab.Screen

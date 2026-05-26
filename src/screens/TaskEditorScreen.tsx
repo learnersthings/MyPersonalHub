@@ -106,7 +106,7 @@ export default function TaskEditorScreen() {
                 }}
             >
 
-                ✍️ Create Task
+                ✍️ Create Task or Habit
 
             </Text>
 
