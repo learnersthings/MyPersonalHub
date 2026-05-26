@@ -5,25 +5,53 @@ import {
     TextInput,
     TouchableOpacity,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useNavigation }
-    from "@react-navigation/native";
-import { useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
 
-import { useEffect, useState } from "react";
-import { getNotes, saveNotes } from "../services/notesStorage";
-import { stripHtml } from "../utils/htmlUtils";
+import { Ionicons } from "@expo/vector-icons";
+
+import {
+    useNavigation,
+    useFocusEffect,
+} from "@react-navigation/native";
+
+import {
+    useCallback,
+    useState,
+} from "react";
+
+import {
+    getNotes,
+    saveNotes,
+} from "../services/notesStorage";
+
+import { stripHtml }
+    from "../utils/htmlUtils";
+
+import {
+    globalStyles
+} from "../theme/styles";
 
 export default function NotesScreen() {
-    const [notes, setNotes] = useState<any[]>([]);
-    const [searchText, setSearchText] = useState("");
-    const filteredNotes = notes.filter(note =>
-        note.title
-            .toLowerCase()
-            .includes(searchText.toLowerCase())
-    );
-    const navigation = useNavigation<any>();
+
+    const [notes, setNotes] =
+        useState<any[]>([]);
+
+    const [
+        searchText,
+        setSearchText,
+    ] = useState("");
+
+    const navigation =
+        useNavigation<any>();
+
+    const filteredNotes =
+        notes.filter(note =>
+            note.title
+                .toLowerCase()
+                .includes(
+                    searchText
+                        .toLowerCase()
+                )
+        );
 
     useFocusEffect(
         useCallback(() => {
@@ -32,207 +60,321 @@ export default function NotesScreen() {
     );
 
     async function loadNotes() {
-        const data = await getNotes();
+        const data =
+            await getNotes();
+
         setNotes(data);
     }
 
-    async function deleteNote(id: string) {
-        const updated = notes.filter(
-            note => note.id !== id
-        );
+    async function deleteNote(
+        id: string
+    ) {
+
+        const updated =
+            notes.filter(
+                note =>
+                    note.id !==
+                    id
+            );
 
         setNotes(updated);
 
-        await saveNotes(updated);
+        await saveNotes(
+            updated
+        );
     }
 
-    async function togglePin(id: string) {
+    async function togglePin(
+        id: string
+    ) {
 
-        const updated = notes.map(note =>
-            note.id === id
-                ? {
-                    ...note,
-                    pinned: !note.pinned,
-                }
-                : note
-        );
+        const updated =
+            notes.map(note =>
+                note.id === id
+                    ? {
+                        ...note,
+                        pinned:
+                            !note.pinned,
+                    }
+                    : note
+            );
 
         updated.sort(
             (a, b) =>
-                Number(b.pinned) -
-                Number(a.pinned)
+                Number(
+                    b.pinned
+                ) -
+                Number(
+                    a.pinned
+                )
         );
 
         setNotes(updated);
 
-        await saveNotes(updated);
+        await saveNotes(
+            updated
+        );
     }
 
     return (
-        <View style={{
-            flex: 1,
-            padding: 16,
-            backgroundColor: "#f5f5f5",
-        }}>
-            <View style={{
-                flexDirection: "row",
-                alignItems: "center",
-                borderWidth: 1,
-                borderColor: "#ddd",
-                borderRadius: 10,
-                backgroundColor: "#fff",
-                marginBottom: 15,
-                paddingHorizontal: 10,
-            }}>
-                <Ionicons
-                    name="search-outline"
-                    size={20}
-                    color="gray"
-                />
 
-                <TextInput
-                    placeholder="Search notes..."
-                    value={searchText}
-                    onChangeText={setSearchText}
+        <View
+            style={
+                globalStyles.screen
+            }
+        >
+
+            {/* SEARCH */}
+
+            <View
+                style={
+                    globalStyles.input
+                }
+            >
+                <View
                     style={{
-                        flex: 1,
-                        paddingHorizontal: 10,
-                        paddingVertical: 12,
-                        fontSize: 16,
+                        flexDirection:
+                            "row",
+
+                        alignItems:
+                            "center",
                     }}
-                />
+                >
+                    <Ionicons
+                        name="search-outline"
+                        size={20}
+                        color="gray"
+                    />
 
-                {searchText.length > 0 && (
-                    <TouchableOpacity
-                        onPress={() => setSearchText("")}
-                    >
-                        <Ionicons
-                            name="close-circle"
-                            size={20}
-                            color="gray"
-                        />
-                    </TouchableOpacity>
-                )}
-            </View>
-
-            <FlatList
-                data={filteredNotes}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                    <View
+                    <TextInput
+                        placeholder="Search notes..."
+                        value={
+                            searchText
+                        }
+                        onChangeText={
+                            setSearchText
+                        }
                         style={{
-                            backgroundColor: "#fff",
-                            borderRadius: 12,
-                            padding: 12,
-                            marginBottom: 12,
-                            elevation: 3,
+                            flex: 1,
+                            paddingHorizontal: 10,
+                            fontSize: 16,
                         }}
-                    >
-                        <Text style={{
-                            fontSize: 18,
-                            fontWeight: "bold",
-                        }}>{item.title}</Text>
+                    />
 
-                        <Text
-                            numberOfLines={3}
-                            style={{
-                                color: "#555",
-                                marginTop: 5,
-                            }}
-                        >
-                            {stripHtml(item.content)}
-                        </Text>
-
-                        <View style={{
-                            flexDirection: "row",
-                            gap: 8,
-                            marginTop: 8,
-                        }}>
+                    {
+                        searchText.length >
+                        0 && (
                             <TouchableOpacity
                                 onPress={() =>
-                                    navigation.navigate("NoteEditor", {
-                                        note: item,
-                                    })
+                                    setSearchText(
+                                        ""
+                                    )
                                 }
-                                style={{
-                                    backgroundColor: "blue",
-                                    padding: 8,
-                                    borderRadius: 5,
-                                    flex: 1,
-                                    alignItems: "center",
-                                    justifyContent: "center"
-                                }}
                             >
-                                <Text style={{ color: "#fff" }}>Edit</Text>
+                                <Ionicons
+                                    name="close-circle"
+                                    size={20}
+                                    color="gray"
+                                />
+                            </TouchableOpacity>
+                        )
+                    }
+
+                </View>
+            </View>
+
+            {/* NOTES */}
+
+            <FlatList
+                data={
+                    filteredNotes
+                }
+
+                keyExtractor={
+                    item =>
+                        item.id
+                }
+
+                renderItem={({
+                    item,
+                }) => (
+
+                    <View
+                        style={
+                            globalStyles.card
+                        }
+                    >
+
+                        <Text
+                            style={{
+                                fontSize: 18,
+                                fontWeight:
+                                    "700",
+                            }}
+                        >
+                            {
+                                item.title
+                            }
+                        </Text>
+
+                        <Text
+                            numberOfLines={
+                                3
+                            }
+                            style={{
+                                color:
+                                    "#777",
+
+                                marginTop:
+                                    5,
+
+                                fontSize:
+                                    14,
+                            }}
+                        >
+                            {
+                                stripHtml(
+                                    item.content
+                                )
+                            }
+                        </Text>
+
+                        {/* BUTTONS */}
+
+                        <View
+                            style={{
+                                flexDirection:
+                                    "row",
+
+                                gap: 8,
+
+                                marginTop:
+                                    12,
+                            }}
+                        >
+
+                            <TouchableOpacity
+                                onPress={() =>
+                                    navigation.navigate(
+                                        "NoteEditor",
+                                        {
+                                            note:
+                                                item,
+                                        }
+                                    )
+                                }
+                                style={[
+                                    globalStyles.button,
+                                    {
+                                        flex:
+                                            1,
+                                    },
+                                ]}
+                            >
+                                <Text
+                                    style={
+                                        globalStyles.buttonText
+                                    }
+                                >
+                                    Edit
+                                </Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                onPress={() => deleteNote(item.id)}
-                                style={{
-                                    backgroundColor: "red",
-                                    padding: 8,
-                                    borderRadius: 5,
-                                    flex: 1,
-                                    alignItems: "center",
-                                    justifyContent: "center"
-                                }}
+                                onPress={() =>
+                                    deleteNote(
+                                        item.id
+                                    )
+                                }
+                                style={[
+                                    globalStyles.button,
+                                    {
+                                        flex:
+                                            1,
+
+                                        backgroundColor:
+                                            "#F44336",
+                                    },
+                                ]}
                             >
-                                <Text style={{ color: "#fff" }}>
+                                <Text
+                                    style={
+                                        globalStyles.buttonText
+                                    }
+                                >
                                     Delete
                                 </Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                onPress={() => togglePin(item.id)}
-                                style={{
-                                    backgroundColor: "black",
-                                    padding: 8,
-                                    borderRadius: 5,
-                                    flex: 1,
-                                    alignItems: "center",
-                                    justifyContent: "center"
-                                }}
+                                onPress={() =>
+                                    togglePin(
+                                        item.id
+                                    )
+                                }
+                                style={[
+                                    globalStyles.button,
+                                    {
+                                        flex:
+                                            1,
+
+                                        backgroundColor:
+                                            "#000",
+                                    },
+                                ]}
                             >
-                                <Text style={{ color: "#fff" }}>
-                                    {item.pinned
-                                        ? "Unpin"
-                                        : "Pin"}
+                                <Text
+                                    style={
+                                        globalStyles.buttonText
+                                    }
+                                >
+                                    {
+                                        item.pinned
+                                            ? "Unpin"
+                                            : "Pin"
+                                    }
                                 </Text>
                             </TouchableOpacity>
+
                         </View>
 
-                        <Text style={{
-                            padding: 8,
-                            borderRadius: 5,
-                            flex: 1,
-                            alignItems: "center",
-                            justifyContent: "center"
-                        }}>
-                            {new Date(
-                                item.createdAt
-                            ).toLocaleDateString()}
+                        <Text
+                            style={{
+                                marginTop:
+                                    10,
+
+                                color:
+                                    "#777",
+
+                                fontSize:
+                                    13,
+                            }}
+                        >
+                            {
+                                new Date(
+                                    item.createdAt
+                                )
+                                    .toLocaleDateString()
+                            }
                         </Text>
+
                     </View>
-                )
-                }
+
+                )}
             />
+
+            {/* FAB */}
 
             <TouchableOpacity
                 onPress={() =>
-                    navigation.navigate("NoteEditor")
+                    navigation.navigate(
+                        "NoteEditor"
+                    )
                 }
-                style={{
-                    position: "absolute",
-                    right: 20,
-                    bottom: 20,
-                    width: 60,
-                    height: 60,
-                    borderRadius: 30,
-                    backgroundColor: "#2196F3",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    elevation: 5,
-                }}
+
+                style={
+                    globalStyles.floatingButton
+                }
             >
                 <Ionicons
                     name="add"
@@ -241,6 +383,6 @@ export default function NotesScreen() {
                 />
             </TouchableOpacity>
 
-        </View >
+        </View>
     );
 }

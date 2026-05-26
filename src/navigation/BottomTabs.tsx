@@ -3,7 +3,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
 import HomeScreen from "../screens/HomeScreen";
-import NotesScreen from "../screens/NotesScreen";
 import TasksScreen from "../screens/TasksScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import NotesStack from "./NotesStack";
