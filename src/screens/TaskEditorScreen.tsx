@@ -33,6 +33,10 @@ import DateTimePicker
     from
     "@react-native-community/datetimepicker";
 
+import {
+    useTheme,
+} from "../context/ThemeContext";
+
 export default function TaskEditorScreen() {
 
     const navigation =
@@ -40,6 +44,10 @@ export default function TaskEditorScreen() {
 
     const route =
         useRoute<any>();
+
+    const {
+        colors,
+    } = useTheme();
 
     const editingTask =
         route.params?.task;
@@ -209,9 +217,14 @@ export default function TaskEditorScreen() {
     return (
 
         <ScrollView
-            style={
-                globalStyles.screen
-            }
+
+            style={[
+                globalStyles.screen,
+                {
+                    backgroundColor:
+                        colors.background,
+                },
+            ]}
 
             showsVerticalScrollIndicator={
                 false
@@ -227,6 +240,9 @@ export default function TaskEditorScreen() {
 
                     marginBottom:
                         20,
+
+                    color:
+                        colors.text,
                 }}
             >
 
@@ -242,6 +258,10 @@ export default function TaskEditorScreen() {
 
                 placeholder="Enter task or habit..."
 
+                placeholderTextColor={
+                    colors.subText
+                }
+
                 value={
                     title
                 }
@@ -250,9 +270,19 @@ export default function TaskEditorScreen() {
                     setTitle
                 }
 
-                style={
-                    globalStyles.input
-                }
+                style={[
+                    globalStyles.input,
+                    {
+                        backgroundColor:
+                            colors.input,
+
+                        color:
+                            colors.text,
+
+                        borderColor:
+                            colors.border,
+                    },
+                ]}
             />
 
             <TouchableOpacity
@@ -267,7 +297,7 @@ export default function TaskEditorScreen() {
                     globalStyles.button,
                     {
                         backgroundColor:
-                            "#555",
+                            colors.primary,
 
                         marginBottom:
                             18,
@@ -323,6 +353,7 @@ export default function TaskEditorScreen() {
                     fontSize: 16,
                     fontWeight: "600",
                     marginBottom: 10,
+                    color: colors.text,
                 }}
             >
 
@@ -365,8 +396,13 @@ export default function TaskEditorScreen() {
 
                             backgroundColor:
                                 category === item
-                                    ? "#2196F3"
-                                    : "#ddd",
+                                    ? colors.primary
+                                    : colors.card,
+
+                            borderWidth: 1,
+
+                            borderColor:
+                                colors.border,
                         }}
                     >
 
@@ -375,7 +411,7 @@ export default function TaskEditorScreen() {
                                 color:
                                     category === item
                                         ? "#fff"
-                                        : "#333",
+                                        : colors.text,
 
                                 fontWeight: "600",
                             }}
@@ -396,6 +432,7 @@ export default function TaskEditorScreen() {
                     fontSize: 16,
                     fontWeight: "600",
                     marginBottom: 10,
+                    color: colors.text,
                 }}
             >
 
@@ -442,13 +479,18 @@ export default function TaskEditorScreen() {
                             backgroundColor:
                                 priority === item.label
                                     ? item.color
-                                    : "#E0E0E0",
+                                    : colors.card,
 
                             paddingVertical: 10,
 
                             borderRadius: 10,
 
                             alignItems: "center",
+
+                            borderWidth: 1,
+
+                            borderColor:
+                                colors.border,
                         }}
                     >
 
@@ -457,7 +499,7 @@ export default function TaskEditorScreen() {
                                 color:
                                     priority === item.label
                                         ? "#fff"
-                                        : "#333",
+                                        : colors.text,
 
                                 fontWeight: "600",
                             }}
@@ -478,6 +520,7 @@ export default function TaskEditorScreen() {
                     fontSize: 16,
                     fontWeight: "600",
                     marginBottom: 10,
+                    color: colors.text,
                 }}
             >
 
@@ -494,11 +537,13 @@ export default function TaskEditorScreen() {
                 }
 
                 style={{
-                    backgroundColor: "#fff",
+                    backgroundColor:
+                        colors.card,
 
                     borderWidth: 1,
 
-                    borderColor: "#ddd",
+                    borderColor:
+                        colors.border,
 
                     borderRadius: 12,
 
@@ -517,7 +562,7 @@ export default function TaskEditorScreen() {
                 <Text
                     style={{
                         fontSize: 15,
-                        color: "#333",
+                        color: colors.text,
                     }}
                 >
 
@@ -531,7 +576,7 @@ export default function TaskEditorScreen() {
                 <Ionicons
                     name="calendar-outline"
                     size={20}
-                    color="#555"
+                    color={colors.subText}
                 />
 
             </TouchableOpacity>
@@ -575,9 +620,13 @@ export default function TaskEditorScreen() {
                     saveTask
                 }
 
-                style={
-                    globalStyles.button
-                }
+                style={[
+                    globalStyles.button,
+                    {
+                        backgroundColor:
+                            colors.primary,
+                    },
+                ]}
             >
 
                 <View

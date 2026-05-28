@@ -30,6 +30,10 @@ import {
     globalStyles
 } from "../theme/styles";
 
+import {
+    useTheme,
+} from "../context/ThemeContext";
+
 export default function NotesScreen() {
 
     const [notes, setNotes] =
@@ -42,6 +46,10 @@ export default function NotesScreen() {
 
     const navigation =
         useNavigation<any>();
+
+    const {
+        colors,
+    } = useTheme();
 
     const filteredNotes =
         notes.filter(note =>
@@ -60,6 +68,7 @@ export default function NotesScreen() {
     );
 
     async function loadNotes() {
+
         const data =
             await getNotes();
 
@@ -90,20 +99,27 @@ export default function NotesScreen() {
 
         const updated =
             notes.map(note =>
+
                 note.id === id
+
                     ? {
                         ...note,
                         pinned:
                             !note.pinned,
                     }
+
                     : note
             );
 
         updated.sort(
             (a, b) =>
+
                 Number(
                     b.pinned
-                ) -
+                )
+
+                -
+
                 Number(
                     a.pinned
                 )
@@ -119,18 +135,30 @@ export default function NotesScreen() {
     return (
 
         <View
-            style={
-                globalStyles.screen
-            }
+            style={[
+                globalStyles.screen,
+                {
+                    backgroundColor:
+                        colors.background,
+                },
+            ]}
         >
 
             {/* SEARCH */}
 
             <View
-                style={
-                    globalStyles.input
-                }
+                style={[
+                    globalStyles.input,
+                    {
+                        backgroundColor:
+                            colors.card,
+
+                        borderColor:
+                            colors.border,
+                    },
+                ]}
             >
+
                 <View
                     style={{
                         flexDirection:
@@ -140,30 +168,47 @@ export default function NotesScreen() {
                             "center",
                     }}
                 >
+
                     <Ionicons
                         name="search-outline"
                         size={20}
-                        color="gray"
+                        color={
+                            colors.subText
+                        }
                     />
 
                     <TextInput
+
                         placeholder="Search notes..."
+
+                        placeholderTextColor={
+                            colors.subText
+                        }
+
                         value={
                             searchText
                         }
+
                         onChangeText={
                             setSearchText
                         }
+
                         style={{
                             flex: 1,
+
                             paddingHorizontal: 10,
+
                             fontSize: 16,
+
+                            color:
+                                colors.text,
                         }}
                     />
 
                     {
                         searchText.length >
                         0 && (
+
                             <TouchableOpacity
                                 onPress={() =>
                                     setSearchText(
@@ -171,21 +216,27 @@ export default function NotesScreen() {
                                     )
                                 }
                             >
+
                                 <Ionicons
                                     name="close-circle"
                                     size={20}
-                                    color="gray"
+                                    color={
+                                        colors.subText
+                                    }
                                 />
+
                             </TouchableOpacity>
                         )
                     }
 
                 </View>
+
             </View>
 
             {/* NOTES */}
 
             <FlatList
+
                 data={
                     filteredNotes
                 }
@@ -200,30 +251,42 @@ export default function NotesScreen() {
                 }) => (
 
                     <View
-                        style={
-                            globalStyles.card
-                        }
+                        style={[
+                            globalStyles.card,
+                            {
+                                backgroundColor:
+                                    colors.card,
+                            },
+                        ]}
                     >
 
                         <Text
                             style={{
                                 fontSize: 18,
+
                                 fontWeight:
                                     "700",
+
+                                color:
+                                    colors.text,
                             }}
                         >
+
                             {
                                 item.title
                             }
+
                         </Text>
 
                         <Text
+
                             numberOfLines={
                                 3
                             }
+
                             style={{
                                 color:
-                                    "#555",
+                                    colors.subText,
 
                                 marginTop:
                                     5,
@@ -232,11 +295,13 @@ export default function NotesScreen() {
                                     14,
                             }}
                         >
+
                             {
                                 stripHtml(
                                     item.content
                                 )
                             }
+
                         </Text>
 
                         {/* BUTTONS */}
@@ -254,6 +319,7 @@ export default function NotesScreen() {
                             {/* EDIT */}
 
                             <TouchableOpacity
+
                                 onPress={() =>
                                     navigation.navigate(
                                         "NoteEditor",
@@ -292,7 +358,9 @@ export default function NotesScreen() {
                                             globalStyles.buttonText
                                         }
                                     >
+
                                         Edit
+
                                     </Text>
 
                                 </View>
@@ -302,6 +370,7 @@ export default function NotesScreen() {
                             {/* DELETE */}
 
                             <TouchableOpacity
+
                                 onPress={() =>
                                     deleteNote(
                                         item.id
@@ -340,7 +409,9 @@ export default function NotesScreen() {
                                             globalStyles.buttonText
                                         }
                                     >
+
                                         Delete
+
                                     </Text>
 
                                 </View>
@@ -350,6 +421,7 @@ export default function NotesScreen() {
                             {/* PIN */}
 
                             <TouchableOpacity
+
                                 onPress={() =>
                                     togglePin(
                                         item.id
@@ -394,11 +466,13 @@ export default function NotesScreen() {
                                             globalStyles.buttonText
                                         }
                                     >
+
                                         {
                                             item.pinned
                                                 ? "Unpin"
                                                 : "Pin"
                                         }
+
                                     </Text>
 
                                 </View>
@@ -420,24 +494,29 @@ export default function NotesScreen() {
                             <Ionicons
                                 name="calendar-outline"
                                 size={14}
-                                color="#555"
+                                color={
+                                    colors.subText
+                                }
                             />
 
                             <Text
                                 style={{
                                     marginLeft: 5,
 
-                                    color: "#555",
+                                    color:
+                                        colors.subText,
 
                                     fontSize: 13,
                                 }}
                             >
+
                                 {
                                     new Date(
                                         item.createdAt
                                     )
                                         .toLocaleDateString()
                                 }
+
                             </Text>
 
                         </View>
@@ -450,6 +529,7 @@ export default function NotesScreen() {
             {/* FAB */}
 
             <TouchableOpacity
+
                 onPress={() =>
                     navigation.navigate(
                         "NoteEditor"
@@ -460,11 +540,13 @@ export default function NotesScreen() {
                     globalStyles.floatingButton
                 }
             >
+
                 <Ionicons
                     name="add"
                     size={32}
                     color="#fff"
                 />
+
             </TouchableOpacity>
 
         </View>

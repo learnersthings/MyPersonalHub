@@ -3,11 +3,10 @@ import {
     Text,
     FlatList,
     TouchableOpacity,
-    TextInput
+    TextInput,
 } from "react-native";
 
 import {
-    useEffect,
     useState,
 } from "react";
 
@@ -31,6 +30,10 @@ import {
 
 import Swipeable
     from "react-native-gesture-handler/Swipeable";
+
+import {
+    useTheme,
+} from "../context/ThemeContext";
 
 const categoryStyles: any = {
 
@@ -74,6 +77,9 @@ export default function TasksScreen() {
 
     const navigation =
         useNavigation<any>();
+
+    const { colors } =
+        useTheme();
 
     const [
         tasks,
@@ -308,9 +314,13 @@ export default function TasksScreen() {
     return (
 
         <View
-            style={
-                globalStyles.screen
-            }
+            style={[
+                globalStyles.screen,
+                {
+                    backgroundColor:
+                        colors.background,
+                },
+            ]}
         >
 
             <Text
@@ -318,6 +328,7 @@ export default function TasksScreen() {
                     fontSize: 24,
                     fontWeight: "700",
                     marginBottom: 15,
+                    color: colors.text,
                 }}
             >
 
@@ -325,16 +336,20 @@ export default function TasksScreen() {
 
             </Text>
 
+            {/* Search */}
+
             <View
                 style={{
                     flexDirection: "row",
                     alignItems: "center",
 
-                    backgroundColor: "#fff",
+                    backgroundColor:
+                        colors.card,
 
                     borderWidth: 1,
 
-                    borderColor: "#ddd",
+                    borderColor:
+                        colors.border,
 
                     borderRadius: 12,
 
@@ -347,12 +362,16 @@ export default function TasksScreen() {
                 <Ionicons
                     name="search-outline"
                     size={20}
-                    color="#777"
+                    color={colors.subText}
                 />
 
                 <TextInput
 
                     placeholder="Search tasks..."
+
+                    placeholderTextColor={
+                        colors.subText
+                    }
 
                     value={searchText}
 
@@ -368,6 +387,8 @@ export default function TasksScreen() {
                         paddingHorizontal: 10,
 
                         fontSize: 15,
+
+                        color: colors.text,
                     }}
                 />
 
@@ -383,7 +404,7 @@ export default function TasksScreen() {
                             <Ionicons
                                 name="close-circle"
                                 size={20}
-                                color="#777"
+                                color={colors.subText}
                             />
 
                         </TouchableOpacity>
@@ -397,7 +418,7 @@ export default function TasksScreen() {
             <View
                 style={{
                     backgroundColor:
-                        "#2196F3",
+                        colors.primary,
 
                     padding: 16,
 
@@ -409,14 +430,12 @@ export default function TasksScreen() {
 
                 <View
                     style={{
-                        flexDirection:
-                            "row",
+                        flexDirection: "row",
 
                         justifyContent:
                             "space-between",
 
-                        alignItems:
-                            "center",
+                        alignItems: "center",
                     }}
                 >
 
@@ -471,11 +490,10 @@ export default function TasksScreen() {
 
                 </Text>
 
-                {/* Progress Bar */}
-
                 <View
                     style={{
                         height: 10,
+
                         backgroundColor:
                             "rgba(255,255,255,0.3)",
 
@@ -534,7 +552,7 @@ export default function TasksScreen() {
                         "Fitness",
                         "Shopping",
                         "Travel",
-                        "Other"
+                        "Other",
                     ]}
 
                     keyExtractor={
@@ -584,8 +602,8 @@ export default function TasksScreen() {
                                 style={{
                                     backgroundColor:
                                         filter === item
-                                            ? "#2196F3"
-                                            : "#E0E0E0",
+                                            ? colors.primary
+                                            : colors.card,
 
                                     paddingHorizontal: 14,
 
@@ -600,6 +618,11 @@ export default function TasksScreen() {
                                     flexDirection: "row",
 
                                     gap: 6,
+
+                                    borderWidth: 1,
+
+                                    borderColor:
+                                        colors.border,
                                 }}
                             >
 
@@ -608,7 +631,7 @@ export default function TasksScreen() {
                                         color:
                                             filter === item
                                                 ? "#fff"
-                                                : "#333",
+                                                : colors.text,
 
                                         fontSize: 13,
 
@@ -625,7 +648,7 @@ export default function TasksScreen() {
                                         backgroundColor:
                                             filter === item
                                                 ? "rgba(255,255,255,0.25)"
-                                                : "#C5C5C5",
+                                                : colors.border,
 
                                         minWidth: 18,
 
@@ -646,7 +669,7 @@ export default function TasksScreen() {
                                             color:
                                                 filter === item
                                                     ? "#fff"
-                                                    : "#333",
+                                                    : colors.text,
 
                                             fontSize: 11,
 
@@ -661,27 +684,23 @@ export default function TasksScreen() {
                                 </View>
 
                             </TouchableOpacity>
-
                         );
                     }}
                 />
 
             </View>
 
+            {/* Tasks List */}
+
             <FlatList
 
-                data={
-                    filteredTasks
-                }
+                data={filteredTasks}
 
                 keyExtractor={
-                    item =>
-                        item.id
+                    item => item.id
                 }
 
-                renderItem={({
-                    item,
-                }) => (
+                renderItem={({ item }) => (
 
                     <Swipeable
 
@@ -726,7 +745,6 @@ export default function TasksScreen() {
                                 />
 
                             </TouchableOpacity>
-
                         )}
 
                         renderRightActions={() => (
@@ -763,7 +781,6 @@ export default function TasksScreen() {
                                 />
 
                             </TouchableOpacity>
-
                         )}
                     >
 
@@ -779,9 +796,13 @@ export default function TasksScreen() {
                                     }
                                 )
                             }
+
                             style={[
                                 globalStyles.card,
                                 {
+                                    backgroundColor:
+                                        colors.card,
+
                                     opacity:
                                         item.completed
                                             ? 0.8
@@ -803,6 +824,9 @@ export default function TasksScreen() {
                             <Text
                                 style={{
                                     fontSize: 16,
+
+                                    color:
+                                        colors.text,
 
                                     textDecorationLine:
                                         item.completed
@@ -907,7 +931,8 @@ export default function TasksScreen() {
                                         marginLeft: 6,
                                         fontSize: 13,
                                         fontWeight: "600",
-                                        color: "#555",
+                                        color:
+                                            colors.subText,
                                     }}
                                 >
 
@@ -928,14 +953,17 @@ export default function TasksScreen() {
                                 <Ionicons
                                     name="time-outline"
                                     size={14}
-                                    color="#555"
+                                    color={
+                                        colors.subText
+                                    }
                                 />
 
                                 <Text
                                     style={{
                                         marginLeft: 5,
                                         fontSize: 13,
-                                        color: "#555",
+                                        color:
+                                            colors.subText,
                                     }}
                                 >
 
@@ -954,9 +982,7 @@ export default function TasksScreen() {
                             <View
                                 style={{
                                     flexDirection: "row",
-
                                     alignItems: "center",
-
                                     marginTop: 10,
                                 }}
                             >
@@ -964,13 +990,17 @@ export default function TasksScreen() {
                                 <Ionicons
                                     name="calendar-outline"
                                     size={14}
-                                    color="#555"
+                                    color={
+                                        colors.subText
+                                    }
                                 />
 
                                 <Text
                                     style={{
                                         marginLeft: 5,
-                                        color: "#555",
+                                        color:
+                                            colors.subText,
+
                                         fontSize: 13,
                                     }}
                                 >
@@ -986,6 +1016,7 @@ export default function TasksScreen() {
                             </View>
 
                         </TouchableOpacity>
+
                     </Swipeable>
 
                 )}
@@ -996,7 +1027,7 @@ export default function TasksScreen() {
                         style={{
                             textAlign: "center",
                             marginTop: 80,
-                            color: "#555",
+                            color: colors.subText,
                             fontSize: 16,
                         }}
                     >
@@ -1019,9 +1050,13 @@ export default function TasksScreen() {
                     )
                 }
 
-                style={
-                    globalStyles.floatingButton
-                }
+                style={[
+                    globalStyles.floatingButton,
+                    {
+                        backgroundColor:
+                            colors.primary,
+                    },
+                ]}
             >
 
                 <Ionicons
@@ -1033,6 +1068,5 @@ export default function TasksScreen() {
             </TouchableOpacity>
 
         </View>
-
     );
 }

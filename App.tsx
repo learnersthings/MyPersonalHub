@@ -7,6 +7,10 @@ import {
 import BottomTabs
   from "./src/navigation/BottomTabs";
 
+import {
+  ThemeProvider,
+} from "./src/context/ThemeContext";
+
 export default function App() {
 
   return (
@@ -16,8 +20,9 @@ export default function App() {
         flex: 1,
       }}
     >
-
-      <BottomTabs />
+      <ThemeProvider>
+        <BottomTabs />
+      </ThemeProvider>
 
     </GestureHandlerRootView>
 

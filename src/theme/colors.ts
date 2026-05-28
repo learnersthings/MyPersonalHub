@@ -1,20 +1,29 @@
-const colors = {
+export const lightTheme = {
+
+    background: "#F5F7FB",
+
+    card: "#FFFFFF",
+
+    text: "#111",
+
+    subText: "#666",
+
+    border: "#E0E0E0",
+
     primary: "#2196F3",
-    secondary: "#4CAF50",
-
-    background: "#F5F5F5",
-
-    white: "#FFFFFF",
-
-    text: "#222",
-
-    gray: "#555",
-
-    border: "#DDD",
-
-    danger: "#F44336",
-
-    warning: "#FF9800",
 };
 
-export default colors;
+export const darkTheme = {
+
+    background: "#121212",
+
+    card: "#1E1E1E",
+
+    text: "#FFFFFF",
+
+    subText: "#B0B0B0",
+
+    border: "#333",
+
+    primary: "#2196F3",
+};
