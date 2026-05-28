@@ -5,9 +5,13 @@ import {
 } from "react-native";
 
 import {
-    useEffect,
     useState,
+    useCallback,
 } from "react";
+
+import {
+    useFocusEffect,
+} from "@react-navigation/native";
 
 import {
     Ionicons,
@@ -36,11 +40,13 @@ export default function AnalyticsScreen() {
         setTasks,
     ] = useState<any[]>([]);
 
-    useEffect(() => {
+    useFocusEffect(
+        useCallback(() => {
 
-        loadTasks();
+            loadTasks();
 
-    }, []);
+        }, [])
+    );
 
     async function loadTasks() {
 
