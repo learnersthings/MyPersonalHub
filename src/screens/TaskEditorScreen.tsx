@@ -3,14 +3,17 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
+    ScrollView
 } from "react-native";
 
 import {
     useState,
+    useEffect
 } from "react";
 
 import {
     useNavigation,
+    useRoute
 } from "@react-navigation/native";
 
 import {
@@ -34,6 +37,12 @@ export default function TaskEditorScreen() {
 
     const navigation =
         useNavigation<any>();
+
+    const route =
+        useRoute<any>();
+
+    const editingTask =
+        route.params?.task;
 
     const [
         title,
@@ -73,6 +82,42 @@ export default function TaskEditorScreen() {
     ] =
         useState(false);
 
+    useEffect(() => {
+
+        if (editingTask) {
+
+            setTitle(
+                editingTask.title
+            );
+
+            setHabitMode(
+                editingTask.isHabit
+            );
+
+            setCategory(
+                editingTask.category
+                || "Personal"
+            );
+
+            setPriority(
+                editingTask.priority
+                || "Medium"
+            );
+
+            if (
+                editingTask.dueDate
+            ) {
+
+                setDueDate(
+                    new Date(
+                        editingTask.dueDate
+                    )
+                );
+            }
+        }
+
+    }, []);
+
     async function saveTask() {
 
         if (
@@ -83,44 +128,79 @@ export default function TaskEditorScreen() {
         const tasks =
             await getTasks();
 
-        const newTask = {
+        let updatedTasks =
+            [];
 
-            id:
-                Date.now()
-                    .toString(),
+        if (editingTask) {
 
-            title,
+            updatedTasks =
+                tasks.map(task =>
 
-            completed:
-                false,
+                    task.id ===
+                        editingTask.id
 
-            isHabit:
-                habitMode,
+                        ? {
+                            ...task,
 
-            taskMode:
-                !habitMode,
+                            title,
 
-            category,
+                            isHabit:
+                                habitMode,
 
-            createdAt:
-                new Date()
-                    .toISOString(),
+                            taskMode:
+                                !habitMode,
 
-            priority,
+                            category,
 
-            dueDate:
-                dueDate.toISOString(),
-        };
+                            priority,
 
-        await saveTasks([
-            newTask,
-            ...tasks,
-        ]);
+                            dueDate:
+                                dueDate.toISOString(),
+                        }
 
-        setTitle("");
+                        : task
+                );
 
-        setHabitMode(
-            false
+        } else {
+
+            const newTask = {
+
+                id:
+                    Date.now()
+                        .toString(),
+
+                title,
+
+                completed:
+                    false,
+
+                isHabit:
+                    habitMode,
+
+                taskMode:
+                    !habitMode,
+
+                category,
+
+                priority,
+
+                dueDate:
+                    dueDate
+                        .toISOString(),
+
+                createdAt:
+                    new Date()
+                        .toISOString(),
+            };
+
+            updatedTasks = [
+                newTask,
+                ...tasks,
+            ];
+        }
+
+        await saveTasks(
+            updatedTasks
         );
 
         navigation.goBack();
@@ -128,9 +208,13 @@ export default function TaskEditorScreen() {
 
     return (
 
-        <View
+        <ScrollView
             style={
                 globalStyles.screen
+            }
+
+            showsVerticalScrollIndicator={
+                false
             }
         >
 
@@ -146,11 +230,16 @@ export default function TaskEditorScreen() {
                 }}
             >
 
-                ✍️ Create Task or Habit
+                {
+                    editingTask
+                        ? "✏️ Edit Task or Habit"
+                        : "✍️ Create Task or Habit"
+                }
 
             </Text>
 
             <TextInput
+
                 placeholder="Enter task or habit..."
 
                 value={
@@ -178,12 +267,10 @@ export default function TaskEditorScreen() {
                     globalStyles.button,
                     {
                         backgroundColor:
-                            habitMode
-                                ? "#555"
-                                : "#555",
+                            "#555",
 
                         marginBottom:
-                            12,
+                            18,
                     },
                 ]}
             >
@@ -263,6 +350,7 @@ export default function TaskEditorScreen() {
                 ].map(item => (
 
                     <TouchableOpacity
+
                         key={item}
 
                         onPress={() =>
@@ -319,7 +407,7 @@ export default function TaskEditorScreen() {
                 style={{
                     flexDirection: "row",
                     gap: 10,
-                    marginBottom: 18,
+                    marginBottom: 20,
                 }}
             >
 
@@ -334,7 +422,7 @@ export default function TaskEditorScreen() {
                     },
                     {
                         label: "Low",
-                        color: "#2196F3",
+                        color: "#4CAF50",
                     },
                 ].map(item => (
 
@@ -382,6 +470,7 @@ export default function TaskEditorScreen() {
                     </TouchableOpacity>
 
                 ))}
+
             </View>
 
             <Text
@@ -415,7 +504,7 @@ export default function TaskEditorScreen() {
 
                     padding: 14,
 
-                    marginBottom: 20,
+                    marginBottom: 24,
 
                     flexDirection: "row",
 
@@ -519,7 +608,11 @@ export default function TaskEditorScreen() {
                         }
                     >
 
-                        Save
+                        {
+                            editingTask
+                                ? "Update"
+                                : "Save"
+                        }
 
                     </Text>
 
@@ -527,7 +620,13 @@ export default function TaskEditorScreen() {
 
             </TouchableOpacity>
 
-        </View>
+            <View
+                style={{
+                    height: 40,
+                }}
+            />
+
+        </ScrollView>
 
     );
 }

@@ -767,7 +767,18 @@ export default function TasksScreen() {
                         )}
                     >
 
-                        <View
+                        <TouchableOpacity
+
+                            activeOpacity={0.9}
+
+                            onPress={() =>
+                                navigation.navigate(
+                                    "TaskEditor",
+                                    {
+                                        task: item,
+                                    }
+                                )
+                            }
                             style={[
                                 globalStyles.card,
                                 {
@@ -974,7 +985,7 @@ export default function TasksScreen() {
 
                             </View>
 
-                        </View>
+                        </TouchableOpacity>
                     </Swipeable>
 
                 )}
