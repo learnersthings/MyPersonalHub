@@ -285,68 +285,142 @@ export default function TaskEditorScreen() {
                 ]}
             />
 
-            <TouchableOpacity
-
-                onPress={() =>
-                    setHabitMode(
-                        !habitMode
-                    )
-                }
-
-                style={[
-                    globalStyles.button,
-                    {
-                        backgroundColor:
-                            colors.primary,
-
-                        marginBottom:
-                            18,
-                    },
-                ]}
+            <Text
+                style={{
+                    fontSize: 16,
+                    fontWeight: "600",
+                    marginBottom: 10,
+                    color: colors.text,
+                }}
             >
 
-                <View
+                Mode
+
+            </Text>
+
+            <View
+                style={{
+                    flexDirection: "row",
+                    backgroundColor: colors.card,
+                    borderRadius: 14,
+                    padding: 4,
+                    marginBottom: 20,
+                    borderWidth: 1,
+                    borderColor: colors.border,
+                }}
+            >
+
+                <TouchableOpacity
+
+                    onPress={() =>
+                        setHabitMode(false)
+                    }
+
                     style={{
-                        flexDirection:
-                            "row",
+                        flex: 1,
 
-                        alignItems:
-                            "center",
+                        backgroundColor:
+                            !habitMode
+                                ? "#2196F3"
+                                : "transparent",
 
-                        gap:
-                            8,
+                        paddingVertical: 12,
+
+                        borderRadius: 10,
+
+                        alignItems: "center",
+
+                        flexDirection: "row",
+
+                        justifyContent: "center",
+
+                        gap: 6,
                     }}
                 >
 
                     <Ionicons
-                        name={
-                            habitMode
-                                ? "flame"
-                                : "clipboard"
-                        }
-
+                        name="clipboard"
                         size={18}
-
-                        color="#fff"
+                        color={
+                            !habitMode
+                                ? "#fff"
+                                : colors.text
+                        }
                     />
 
                     <Text
-                        style={
-                            globalStyles.buttonText
-                        }
+                        style={{
+                            color:
+                                !habitMode
+                                    ? "#fff"
+                                    : colors.text,
+
+                            fontWeight: "700",
+                        }}
                     >
 
-                        {
-                            habitMode
-                                ? "Habit Mode"
-                                : "Task Mode"
-                        }
+                        Task
 
                     </Text>
 
-                </View>
+                </TouchableOpacity>
 
-            </TouchableOpacity>
+                <TouchableOpacity
+
+                    onPress={() =>
+                        setHabitMode(true)
+                    }
+
+                    style={{
+                        flex: 1,
+
+                        backgroundColor:
+                            habitMode
+                                ? "#FF9800"
+                                : "transparent",
+
+                        paddingVertical: 12,
+
+                        borderRadius: 10,
+
+                        alignItems: "center",
+
+                        flexDirection: "row",
+
+                        justifyContent: "center",
+
+                        gap: 6,
+                    }}
+                >
+
+                    <Ionicons
+                        name="flame"
+                        size={18}
+                        color={
+                            habitMode
+                                ? "#fff"
+                                : colors.text
+                        }
+                    />
+
+                    <Text
+                        style={{
+                            color:
+                                habitMode
+                                    ? "#fff"
+                                    : colors.text,
+
+                            fontWeight: "700",
+                        }}
+                    >
+
+                        Habit
+
+                    </Text>
+
+                </TouchableOpacity>
+
+            </View>
 
             <Text
                 style={{
