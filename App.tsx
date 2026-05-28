@@ -11,6 +11,22 @@ import {
   ThemeProvider,
 } from "./src/context/ThemeContext";
 
+import {
+  SafeAreaProvider,
+  SafeAreaView,
+} from "react-native-safe-area-context";
+
+import { useTheme } from "./src/context/ThemeContext";
+
+function AppContent() {
+  const { colors } = useTheme();
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
+      <BottomTabs />
+    </SafeAreaView>
+  );
+}
+
 export default function App() {
 
   return (
@@ -20,9 +36,11 @@ export default function App() {
         flex: 1,
       }}
     >
-      <ThemeProvider>
-        <BottomTabs />
-      </ThemeProvider>
+      <SafeAreaProvider>
+        <ThemeProvider>
+          <AppContent />
+        </ThemeProvider>
+      </SafeAreaProvider>
 
     </GestureHandlerRootView>
 

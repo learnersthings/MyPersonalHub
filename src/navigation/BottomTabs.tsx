@@ -50,6 +50,8 @@ export default function BottomTabs() {
                     tabBarInactiveTintColor: "gray",
 
                     headerTitleAlign: "center",
+
+                    headerShown: false,
                 })}
             >
                 <Tab.Screen

@@ -19,6 +19,7 @@ export default function ScreenStack() {
             screenOptions={{
 
                 headerTitleAlign: "center",
+                headerShown: false,
                 headerShadowVisible: false,
                 headerTitleStyle: {
                     fontSize: 18,

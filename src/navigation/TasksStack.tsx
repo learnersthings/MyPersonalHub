@@ -22,6 +22,7 @@ export default function TasksStack() {
             screenOptions={{
                 headerTitleAlign:
                     "center",
+                headerShown: false,
 
                 headerShadowVisible:
                     false,
