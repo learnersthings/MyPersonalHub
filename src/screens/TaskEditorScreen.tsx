@@ -43,6 +43,12 @@ export default function TaskEditorScreen() {
     ] =
         useState(false);
 
+    const [
+        category,
+        setCategory,
+    ] =
+        useState("Personal");
+
     async function saveTask() {
 
         if (
@@ -66,6 +72,11 @@ export default function TaskEditorScreen() {
 
             isHabit:
                 habitMode,
+
+            taskMode:
+                !habitMode,
+
+            category,
 
             createdAt:
                 new Date()
@@ -190,6 +201,78 @@ export default function TaskEditorScreen() {
                 </View>
 
             </TouchableOpacity>
+
+            <Text
+                style={{
+                    fontSize: 16,
+                    fontWeight: "600",
+                    marginBottom: 10,
+                }}
+            >
+
+                Select Category
+
+            </Text>
+
+            <View
+                style={{
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    gap: 10,
+                    marginBottom: 20,
+                }}
+            >
+
+                {[
+                    "Personal",
+                    "Study",
+                    "Work",
+                    "Fitness",
+                    "Shopping",
+                    "Travel",
+                    "Other"
+                ].map(item => (
+
+                    <TouchableOpacity
+                        key={item}
+
+                        onPress={() =>
+                            setCategory(item)
+                        }
+
+                        style={{
+                            paddingVertical: 10,
+                            paddingHorizontal: 16,
+
+                            borderRadius: 20,
+
+                            backgroundColor:
+                                category === item
+                                    ? "#2196F3"
+                                    : "#ddd",
+                        }}
+                    >
+
+                        <Text
+                            style={{
+                                color:
+                                    category === item
+                                        ? "#fff"
+                                        : "#333",
+
+                                fontWeight: "600",
+                            }}
+                        >
+
+                            {item}
+
+                        </Text>
+
+                    </TouchableOpacity>
+
+                ))}
+
+            </View>
 
             <TouchableOpacity
 

@@ -28,6 +28,44 @@ import {
     globalStyles,
 } from "../theme/styles";
 
+const categoryStyles: any = {
+
+    Personal: {
+        color: "#2196F3",
+        icon: "person",
+    },
+
+    Study: {
+        color: "#9C27B0",
+        icon: "book",
+    },
+
+    Work: {
+        color: "#FF9800",
+        icon: "briefcase",
+    },
+
+    Fitness: {
+        color: "#4CAF50",
+        icon: "barbell",
+    },
+
+    Shopping: {
+        color: "#E91E63",
+        icon: "cart",
+    },
+
+    Travel: {
+        color: "#43B581",
+        icon: "train",
+    },
+
+    Other: {
+        color: "#7F8C8D",
+        icon: "ellipsis-horizontal",
+    },
+};
+
 export default function TasksScreen() {
 
     const navigation =
@@ -134,7 +172,13 @@ export default function TasksScreen() {
             )
                 return task.isHabit;
 
-            return true;
+            if (
+                task.category ===
+                filter
+            )
+                return true;
+
+            return filter === 'All';
         });
 
     return (
@@ -274,58 +318,162 @@ export default function TasksScreen() {
 
             <View
                 style={{
-                    flexDirection: "row",
-                    marginBottom: 15,
-                    gap: 8,
+                    height: 42,
+                    marginBottom: 12,
                 }}
             >
 
-                {[
-                    "All",
-                    "Completed",
-                    "Pending",
-                    "Tasks",
-                    "Habits",
-                ].map(item => (
+                <FlatList
 
-                    <TouchableOpacity
-                        key={item}
+                    horizontal
 
-                        onPress={() =>
-                            setFilter(item)
-                        }
+                    showsHorizontalScrollIndicator={
+                        false
+                    }
 
-                        style={{
-                            paddingVertical: 8,
-                            paddingHorizontal: 14,
+                    data={[
+                        "All",
+                        "Tasks",
+                        "Habits",
+                        "Completed",
+                        "Pending",
+                        "Personal",
+                        "Study",
+                        "Work",
+                        "Fitness",
+                        "Shopping",
+                        "Travel",
+                        "Other"
+                    ]}
 
-                            borderRadius: 20,
+                    keyExtractor={
+                        item => item
+                    }
 
-                            backgroundColor:
-                                filter === item
-                                    ? "#2196F3"
-                                    : "#ddd",
-                        }}
-                    >
+                    contentContainerStyle={{
+                        alignItems: "center",
+                        paddingRight: 10,
+                        gap: 8,
+                    }}
 
-                        <Text
-                            style={{
-                                color:
-                                    filter === item
-                                        ? "#fff"
-                                        : "#333",
+                    renderItem={({ item }) => {
 
-                                fontWeight: "600",
-                            }}
-                        >
+                        const count =
+                            tasks.filter(task => {
 
-                            {item}
+                                if (item === "All")
+                                    return true;
 
-                        </Text>
+                                if (item === "Completed")
+                                    return task.completed;
 
-                    </TouchableOpacity>
+                                if (item === "Pending")
+                                    return !task.completed;
 
-                ))}
+                                if (item === "Tasks")
+                                    return task.taskMode;
+
+                                if (item === "Habits")
+                                    return task.isHabit;
+
+                                return (
+                                    task.category === item
+                                );
+
+                            }).length;
+
+                        return (
+
+                            <TouchableOpacity
+
+                                onPress={() =>
+                                    setFilter(item)
+                                }
+
+                                style={{
+                                    backgroundColor:
+                                        filter === item
+                                            ? "#2196F3"
+                                            : "#E0E0E0",
+
+                                    paddingHorizontal: 14,
+
+                                    height: 32,
+
+                                    borderRadius: 16,
+
+                                    alignItems: "center",
+
+                                    justifyContent: "center",
+
+                                    flexDirection: "row",
+
+                                    gap: 6,
+                                }}
+                            >
+
+                                <Text
+                                    style={{
+                                        color:
+                                            filter === item
+                                                ? "#fff"
+                                                : "#333",
+
+                                        fontSize: 13,
+
+                                        fontWeight: "600",
+                                    }}
+                                >
+
+                                    {item}
+
+                                </Text>
+
+                                <View
+                                    style={{
+                                        backgroundColor:
+                                            filter === item
+                                                ? "rgba(255,255,255,0.25)"
+                                                : "#C5C5C5",
+
+                                        minWidth: 18,
+
+                                        height: 18,
+
+                                        borderRadius: 9,
+
+                                        alignItems: "center",
+
+                                        justifyContent: "center",
+
+                                        paddingHorizontal: 5,
+                                    }}
+                                >
+
+                                    <Text
+                                        style={{
+                                            color:
+                                                filter === item
+                                                    ? "#fff"
+                                                    : "#333",
+
+                                            fontSize: 11,
+
+                                            fontWeight: "700",
+                                        }}
+                                    >
+
+                                        {count}
+
+                                    </Text>
+
+                                </View>
+
+                            </TouchableOpacity>
+
+                        );
+                    }}
+                />
 
             </View>
 
@@ -372,6 +520,63 @@ export default function TasksScreen() {
                             }
 
                         </Text>
+
+                        <View
+                            style={{
+                                flexDirection: "row",
+
+                                alignItems: "center",
+
+                                alignSelf: "flex-start",
+
+                                marginTop: 8,
+
+                                backgroundColor:
+                                    `${categoryStyles[item.category]?.color}20`,
+
+                                paddingVertical: 5,
+                                paddingHorizontal: 10,
+
+                                borderRadius: 20,
+                            }}
+                        >
+
+                            <Ionicons
+                                name={
+                                    categoryStyles[
+                                        item.category
+                                    ]?.icon
+                                }
+
+                                size={14}
+
+                                color={
+                                    categoryStyles[
+                                        item.category
+                                    ]?.color
+                                }
+                            />
+
+                            <Text
+                                style={{
+                                    color:
+                                        categoryStyles[
+                                            item.category
+                                        ]?.color,
+
+                                    fontSize: 12,
+
+                                    fontWeight: "700",
+
+                                    marginLeft: 5,
+                                }}
+                            >
+
+                                {item.category}
+
+                            </Text>
+
+                        </View>
 
                         <View
                             style={{
