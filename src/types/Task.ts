@@ -6,5 +6,6 @@ export interface Task {
     taskMode: boolean;
     category: string;
     priority: string;
+    dueDate: string;
     createdAt: string;
 }

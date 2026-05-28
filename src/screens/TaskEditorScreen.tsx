@@ -26,6 +26,10 @@ import {
     globalStyles,
 } from "../theme/styles";
 
+import DateTimePicker
+    from
+    "@react-native-community/datetimepicker";
+
 export default function TaskEditorScreen() {
 
     const navigation =
@@ -54,6 +58,20 @@ export default function TaskEditorScreen() {
         setPriority,
     ] =
         useState("Medium");
+
+    const [
+        dueDate,
+        setDueDate,
+    ] =
+        useState(
+            new Date()
+        );
+
+    const [
+        showDatePicker,
+        setShowDatePicker,
+    ] =
+        useState(false);
 
     async function saveTask() {
 
@@ -89,6 +107,9 @@ export default function TaskEditorScreen() {
                     .toISOString(),
 
             priority,
+
+            dueDate:
+                dueDate.toISOString(),
         };
 
         await saveTasks([
@@ -362,6 +383,102 @@ export default function TaskEditorScreen() {
 
                 ))}
             </View>
+
+            <Text
+                style={{
+                    fontSize: 16,
+                    fontWeight: "600",
+                    marginBottom: 10,
+                }}
+            >
+
+                Due Date
+
+            </Text>
+
+            <TouchableOpacity
+
+                onPress={() =>
+                    setShowDatePicker(
+                        true
+                    )
+                }
+
+                style={{
+                    backgroundColor: "#fff",
+
+                    borderWidth: 1,
+
+                    borderColor: "#ddd",
+
+                    borderRadius: 12,
+
+                    padding: 14,
+
+                    marginBottom: 20,
+
+                    flexDirection: "row",
+
+                    alignItems: "center",
+
+                    justifyContent: "space-between",
+                }}
+            >
+
+                <Text
+                    style={{
+                        fontSize: 15,
+                        color: "#333",
+                    }}
+                >
+
+                    {
+                        dueDate
+                            .toLocaleDateString()
+                    }
+
+                </Text>
+
+                <Ionicons
+                    name="calendar-outline"
+                    size={20}
+                    color="#555"
+                />
+
+            </TouchableOpacity>
+
+            {
+                showDatePicker && (
+
+                    <DateTimePicker
+
+                        value={dueDate}
+
+                        mode="date"
+
+                        display="default"
+
+                        onChange={(
+                            event,
+                            selectedDate
+                        ) => {
+
+                            setShowDatePicker(
+                                false
+                            );
+
+                            if (
+                                selectedDate
+                            ) {
+
+                                setDueDate(
+                                    selectedDate
+                                );
+                            }
+                        }}
+                    />
+                )
+            }
 
             <TouchableOpacity
 

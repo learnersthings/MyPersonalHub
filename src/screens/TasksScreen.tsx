@@ -510,7 +510,26 @@ export default function TasksScreen() {
 
                     <View
                         style={
-                            globalStyles.card
+                            [
+                                globalStyles.card,
+
+                                {
+                                    borderLeftWidth: 5,
+
+                                    borderLeftColor:
+
+                                        !item.completed &&
+
+                                            new Date()
+                                            > new Date(
+                                                item.dueDate
+                                            )
+
+                                            ? "#2196F3"
+
+                                            : "#F44336",
+                                },
+                            ]
                         }
                     >
 
@@ -759,6 +778,43 @@ export default function TasksScreen() {
                             >
 
                                 {item.priority}
+
+                            </Text>
+
+                        </View>
+
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                marginTop: 8,
+                            }}
+                        >
+
+                            <Ionicons
+                                name="time-outline"
+                                size={14}
+                                color="#555"
+                            />
+
+                            <Text
+                                style={{
+                                    marginLeft: 5,
+                                    fontSize: 13,
+                                    color: "#555",
+                                }}
+                            >
+
+                                Due:
+
+                                {" "}
+
+                                {
+                                    new Date(
+                                        item.dueDate
+                                    )
+                                        .toLocaleDateString()
+                                }
 
                             </Text>
 
