@@ -29,6 +29,9 @@ import {
     globalStyles,
 } from "../theme/styles";
 
+import Swipeable
+    from "react-native-gesture-handler/Swipeable";
+
 const categoryStyles: any = {
 
     Personal: {
@@ -680,121 +683,9 @@ export default function TasksScreen() {
                     item,
                 }) => (
 
-                    <View
-                        style={
-                            [
-                                globalStyles.card,
+                    <Swipeable
 
-                                {
-                                    borderLeftWidth: 5,
-
-                                    borderLeftColor:
-
-                                        !item.completed &&
-
-                                            new Date()
-                                            > new Date(
-                                                item.dueDate
-                                            )
-
-                                            ? "#2196F3"
-
-                                            : "#F44336",
-                                },
-                            ]
-                        }
-                    >
-
-                        <Text
-                            style={{
-                                fontSize: 16,
-
-                                textDecorationLine:
-                                    item.completed
-                                        ? "line-through"
-                                        : "none",
-                            }}
-                        >
-
-                            {
-                                item.isHabit
-                                    ? "🔥 "
-                                    : "✅ "
-                            }
-
-                            {
-                                item.title
-                            }
-
-                        </Text>
-
-                        <View
-                            style={{
-                                flexDirection: "row",
-
-                                alignItems: "center",
-
-                                alignSelf: "flex-start",
-
-                                marginTop: 8,
-
-                                backgroundColor:
-                                    `${categoryStyles[item.category]?.color}20`,
-
-                                paddingVertical: 5,
-                                paddingHorizontal: 10,
-
-                                borderRadius: 20,
-                            }}
-                        >
-
-                            <Ionicons
-                                name={
-                                    categoryStyles[
-                                        item.category
-                                    ]?.icon
-                                }
-
-                                size={14}
-
-                                color={
-                                    categoryStyles[
-                                        item.category
-                                    ]?.color
-                                }
-                            />
-
-                            <Text
-                                style={{
-                                    color:
-                                        categoryStyles[
-                                            item.category
-                                        ]?.color,
-
-                                    fontSize: 12,
-
-                                    fontWeight: "700",
-
-                                    marginLeft: 5,
-                                }}
-                            >
-
-                                {item.category}
-
-                            </Text>
-
-                        </View>
-
-                        <View
-                            style={{
-                                flexDirection:
-                                    "row",
-
-                                gap: 8,
-
-                                marginTop: 12,
-                            }}
-                        >
+                        renderLeftActions={() => (
 
                             <TouchableOpacity
                                 onPress={() =>
@@ -803,63 +694,42 @@ export default function TasksScreen() {
                                     )
                                 }
 
-                                style={[
-                                    globalStyles.button,
-                                    {
-                                        flex: 1,
+                                style={{
+                                    backgroundColor:
+                                        item.completed
+                                            ? "#2196F3"
+                                            : "#4CAF50",
 
-                                        backgroundColor:
-                                            item.completed
-                                                ? "#2196F3"
-                                                : "#4CAF50",
-                                    },
-                                ]}
+                                    justifyContent:
+                                        "center",
+
+                                    alignItems:
+                                        "center",
+
+                                    width: 90,
+
+                                    borderRadius: 14,
+
+                                    marginBottom: 14,
+                                }}
                             >
 
-                                <View
-                                    style={{
-                                        flexDirection:
-                                            "row",
+                                <Ionicons
+                                    name={
+                                        item.completed
+                                            ? "refresh"
+                                            : "checkmark"
+                                    }
 
-                                        alignItems:
-                                            "center",
-
-                                        justifyContent:
-                                            "center",
-
-                                        gap: 6,
-                                    }}
-                                >
-
-                                    <Ionicons
-                                        name={
-                                            item.completed
-                                                ? "refresh"
-                                                : "checkmark"
-                                        }
-
-                                        size={18}
-
-                                        color="#fff"
-                                    />
-
-                                    <Text
-                                        style={
-                                            globalStyles.buttonText
-                                        }
-                                    >
-
-                                        {
-                                            item.completed
-                                                ? "Undo"
-                                                : "Done"
-                                        }
-
-                                    </Text>
-
-                                </View>
+                                    size={26}
+                                    color="#fff"
+                                />
 
                             </TouchableOpacity>
+
+                        )}
+
+                        renderRightActions={() => (
 
                             <TouchableOpacity
                                 onPress={() =>
@@ -868,170 +738,244 @@ export default function TasksScreen() {
                                     )
                                 }
 
-                                style={[
-                                    globalStyles.button,
-                                    {
-                                        flex: 1,
-                                        backgroundColor:
-                                            "#F44336",
-                                    },
-                                ]}
+                                style={{
+                                    backgroundColor:
+                                        "#F44336",
+
+                                    justifyContent:
+                                        "center",
+
+                                    alignItems:
+                                        "center",
+
+                                    width: 90,
+
+                                    borderRadius: 14,
+
+                                    marginBottom: 14,
+                                }}
+                            >
+
+                                <Ionicons
+                                    name="trash"
+                                    size={26}
+                                    color="#fff"
+                                />
+
+                            </TouchableOpacity>
+
+                        )}
+                    >
+
+                        <View
+                            style={[
+                                globalStyles.card,
+                                {
+                                    opacity:
+                                        item.completed
+                                            ? 0.8
+                                            : 1,
+
+                                    borderLeftWidth: 5,
+
+                                    borderLeftColor:
+                                        item.completed
+                                            ? "#4CAF50"
+                                            : new Date() >
+                                                new Date(item.dueDate)
+                                                ? "#2196F3"
+                                                : "#F44336",
+                                },
+                            ]}
+                        >
+
+                            <Text
+                                style={{
+                                    fontSize: 16,
+
+                                    textDecorationLine:
+                                        item.completed
+                                            ? "line-through"
+                                            : "none",
+                                }}
+                            >
+
+                                {
+                                    item.isHabit
+                                        ? "🔥 "
+                                        : "✅ "
+                                }
+
+                                {item.title}
+
+                            </Text>
+
+                            <View
+                                style={{
+                                    flexDirection: "row",
+
+                                    alignItems: "center",
+
+                                    alignSelf: "flex-start",
+
+                                    marginTop: 8,
+
+                                    backgroundColor:
+                                        `${categoryStyles[item.category]?.color}20`,
+
+                                    paddingVertical: 5,
+
+                                    paddingHorizontal: 10,
+
+                                    borderRadius: 20,
+                                }}
+                            >
+
+                                <Ionicons
+                                    name={
+                                        categoryStyles[
+                                            item.category
+                                        ]?.icon
+                                    }
+
+                                    size={14}
+
+                                    color={
+                                        categoryStyles[
+                                            item.category
+                                        ]?.color
+                                    }
+                                />
+
+                                <Text
+                                    style={{
+                                        color:
+                                            categoryStyles[
+                                                item.category
+                                            ]?.color,
+
+                                        fontSize: 12,
+
+                                        fontWeight: "700",
+
+                                        marginLeft: 5,
+                                    }}
+                                >
+
+                                    {item.category}
+
+                                </Text>
+
+                            </View>
+
+                            <View
+                                style={{
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    marginTop: 10,
+                                }}
                             >
 
                                 <View
                                     style={{
-                                        flexDirection:
-                                            "row",
+                                        width: 10,
+                                        height: 10,
+                                        borderRadius: 5,
 
-                                        alignItems:
-                                            "center",
+                                        backgroundColor:
+                                            item.priority === "High"
+                                                ? "#F44336"
+                                                : item.priority === "Medium"
+                                                    ? "#FF9800"
+                                                    : "#4CAF50",
+                                    }}
+                                />
 
-                                        justifyContent:
-                                            "center",
-
-                                        gap: 6,
+                                <Text
+                                    style={{
+                                        marginLeft: 6,
+                                        fontSize: 13,
+                                        fontWeight: "600",
+                                        color: "#555",
                                     }}
                                 >
 
-                                    <Ionicons
-                                        name="trash"
+                                    {item.priority}
 
-                                        size={18}
+                                </Text>
 
-                                        color="#fff"
-                                    />
-
-                                    <Text
-                                        style={
-                                            globalStyles.buttonText
-                                        }
-                                    >
-
-                                        Delete
-
-                                    </Text>
-
-                                </View>
-
-                            </TouchableOpacity>
-
-                        </View>
-
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                marginTop: 10,
-                            }}
-                        >
+                            </View>
 
                             <View
                                 style={{
-                                    width: 10,
-                                    height: 10,
-                                    borderRadius: 5,
-
-                                    backgroundColor:
-                                        item.priority === "High"
-                                            ? "#F44336"
-                                            : item.priority === "Medium"
-                                                ? "#FF9800"
-                                                : "#4CAF50",
-                                }}
-                            />
-
-                            <Text
-                                style={{
-                                    marginLeft: 6,
-                                    fontSize: 13,
-                                    fontWeight: "600",
-                                    color: "#555",
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    marginTop: 8,
                                 }}
                             >
 
-                                {item.priority}
+                                <Ionicons
+                                    name="time-outline"
+                                    size={14}
+                                    color="#555"
+                                />
 
-                            </Text>
+                                <Text
+                                    style={{
+                                        marginLeft: 5,
+                                        fontSize: 13,
+                                        color: "#555",
+                                    }}
+                                >
 
-                        </View>
+                                    Due:{" "}
 
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                marginTop: 8,
-                            }}
-                        >
+                                    {
+                                        new Date(
+                                            item.dueDate
+                                        ).toLocaleDateString()
+                                    }
 
-                            <Ionicons
-                                name="time-outline"
-                                size={14}
-                                color="#555"
-                            />
+                                </Text>
 
-                            <Text
+                            </View>
+
+                            <View
                                 style={{
-                                    marginLeft: 5,
-                                    fontSize: 13,
-                                    color: "#555",
+                                    flexDirection: "row",
+
+                                    alignItems: "center",
+
+                                    marginTop: 10,
                                 }}
                             >
 
-                                Due:
+                                <Ionicons
+                                    name="calendar-outline"
+                                    size={14}
+                                    color="#555"
+                                />
 
-                                {" "}
+                                <Text
+                                    style={{
+                                        marginLeft: 5,
+                                        color: "#555",
+                                        fontSize: 13,
+                                    }}
+                                >
 
-                                {
-                                    new Date(
-                                        item.dueDate
-                                    )
-                                        .toLocaleDateString()
-                                }
+                                    {
+                                        new Date(
+                                            item.createdAt
+                                        ).toLocaleDateString()
+                                    }
 
-                            </Text>
+                                </Text>
 
-                        </View>
-
-                        <View
-                            style={{
-                                flexDirection:
-                                    "row",
-
-                                alignItems:
-                                    "center",
-
-                                marginTop: 10,
-                            }}
-                        >
-
-                            <Ionicons
-                                name="calendar-outline"
-
-                                size={14}
-
-                                color="#555"
-                            />
-
-                            <Text
-                                style={{
-                                    marginLeft: 5,
-                                    color: "#555",
-                                    fontSize: 13,
-                                }}
-                            >
-
-                                {
-                                    new Date(
-                                        item.createdAt
-                                    )
-                                        .toLocaleDateString()
-                                }
-
-                            </Text>
+                            </View>
 
                         </View>
-
-                    </View>
+                    </Swipeable>
 
                 )}
 

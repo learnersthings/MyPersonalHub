@@ -1,5 +1,25 @@
-import BottomTabs from "./src/navigation/BottomTabs";
+import "react-native-gesture-handler";
+
+import {
+  GestureHandlerRootView,
+} from "react-native-gesture-handler";
+
+import BottomTabs
+  from "./src/navigation/BottomTabs";
 
 export default function App() {
-  return <BottomTabs />;
+
+  return (
+
+    <GestureHandlerRootView
+      style={{
+        flex: 1,
+      }}
+    >
+
+      <BottomTabs />
+
+    </GestureHandlerRootView>
+
+  );
 }
