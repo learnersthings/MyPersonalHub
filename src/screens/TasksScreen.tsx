@@ -10,18 +10,14 @@ import {
     useState,
 } from "react";
 
+import { Ionicons } from "@expo/vector-icons";
+
 import {
-    useFocusEffect,
     useNavigation,
+    useFocusEffect,
 } from "@react-navigation/native";
 
-import {
-    useCallback,
-} from "react";
-
-import {
-    Ionicons,
-} from "@expo/vector-icons";
+import { useCallback } from "react";
 
 import {
     getTasks,
@@ -40,8 +36,12 @@ export default function TasksScreen() {
     const [
         tasks,
         setTasks,
-    ] =
-        useState<any[]>([]);
+    ] = useState<any[]>([]);
+
+    const [
+        filter,
+        setFilter,
+    ] = useState("All");
 
     useFocusEffect(
         useCallback(() => {
@@ -62,22 +62,19 @@ export default function TasksScreen() {
     ) {
 
         const updated =
-            tasks.map(
-                task =>
-                    task.id === id
-                        ? {
-                            ...task,
-                            completed:
-                                !task.completed,
-                        }
-                        : task
+            tasks.map(task =>
+                task.id === id
+                    ? {
+                        ...task,
+                        completed:
+                            !task.completed,
+                    }
+                    : task
             );
 
         setTasks(updated);
 
-        await saveTasks(
-            updated
-        );
+        await saveTasks(updated);
     }
 
     async function deleteTask(
@@ -92,27 +89,53 @@ export default function TasksScreen() {
 
         setTasks(updated);
 
-        await saveTasks(
-            updated
-        );
+        await saveTasks(updated);
     }
 
-    const completed =
+    const completedCount =
         tasks.filter(
-            t =>
-                t.completed
+            t => t.completed
         ).length;
 
-    const percentage =
+    const progress =
         tasks.length
-            ? Math.round(
-                (
-                    completed
-                    /
-                    tasks.length
-                ) * 100
-            )
+            ? (
+                completedCount
+                /
+                tasks.length
+            ) * 100
             : 0;
+
+    const filteredTasks =
+        tasks.filter(task => {
+
+            if (
+                filter ===
+                "Completed"
+            )
+                return task.completed;
+
+            if (
+                filter ===
+                "Pending"
+            )
+                return !task.completed;
+
+            if (
+                filter ===
+                "Tasks"
+            )
+
+                return !task.isHabit;
+
+            if (
+                filter ===
+                "Habits"
+            )
+                return task.isHabit;
+
+            return true;
+        });
 
     return (
 
@@ -129,21 +152,23 @@ export default function TasksScreen() {
                     marginBottom: 15,
                 }}
             >
+
                 📝 Tasks & Habits
+
             </Text>
 
-            {/* Progress */}
+            {/* Dashboard */}
 
             <View
                 style={{
                     backgroundColor:
                         "#2196F3",
 
-                    padding: 15,
+                    padding: 16,
 
-                    borderRadius: 12,
+                    borderRadius: 14,
 
-                    marginBottom: 15,
+                    marginBottom: 18,
                 }}
             >
 
@@ -162,59 +187,152 @@ export default function TasksScreen() {
 
                     <Text
                         style={{
-                            color:
-                                "#fff",
-
-                            fontSize:
-                                18,
-
-                            fontWeight:
-                                "600",
+                            color: "#fff",
+                            fontSize: 18,
+                            fontWeight: "700",
                         }}
                     >
 
-                        📊 Completed
-
-                        {" "}
-
-                        {
-                            completed
-                        }
-
-                        /
-
-                        {
-                            tasks.length
-                        }
+                        Completed
 
                     </Text>
 
                     <Text
                         style={{
-                            color:
-                                "#fff",
-
-                            fontSize:
-                                22,
-
-                            fontWeight:
-                                "700",
+                            color: "#fff",
+                            fontSize: 24,
+                            fontWeight: "bold",
                         }}
                     >
+
                         {
-                            percentage
-                        }
-                        %
+                            Math.round(
+                                progress
+                            )
+                        }%
+
                     </Text>
 
                 </View>
+
+                <Text
+                    style={{
+                        color: "#E3F2FD",
+                        marginTop: 5,
+                    }}
+                >
+
+                    {
+                        completedCount
+                    }
+
+                    /
+
+                    {
+                        tasks.length
+                    }
+
+                    {" Completed"}
+
+                </Text>
+
+                {/* Progress Bar */}
+
+                <View
+                    style={{
+                        height: 10,
+                        backgroundColor:
+                            "rgba(255,255,255,0.3)",
+
+                        borderRadius: 10,
+
+                        marginTop: 14,
+
+                        overflow: "hidden",
+                    }}
+                >
+
+                    <View
+                        style={{
+                            width:
+                                `${progress}%`,
+
+                            height: "100%",
+
+                            backgroundColor:
+                                "#fff",
+
+                            borderRadius: 10,
+                        }}
+                    />
+
+                </View>
+
+            </View>
+
+            {/* Filters */}
+
+            <View
+                style={{
+                    flexDirection: "row",
+                    marginBottom: 15,
+                    gap: 8,
+                }}
+            >
+
+                {[
+                    "All",
+                    "Completed",
+                    "Pending",
+                    "Tasks",
+                    "Habits",
+                ].map(item => (
+
+                    <TouchableOpacity
+                        key={item}
+
+                        onPress={() =>
+                            setFilter(item)
+                        }
+
+                        style={{
+                            paddingVertical: 8,
+                            paddingHorizontal: 14,
+
+                            borderRadius: 20,
+
+                            backgroundColor:
+                                filter === item
+                                    ? "#2196F3"
+                                    : "#ddd",
+                        }}
+                    >
+
+                        <Text
+                            style={{
+                                color:
+                                    filter === item
+                                        ? "#fff"
+                                        : "#333",
+
+                                fontWeight: "600",
+                            }}
+                        >
+
+                            {item}
+
+                        </Text>
+
+                    </TouchableOpacity>
+
+                ))}
 
             </View>
 
             <FlatList
 
                 data={
-                    tasks
+                    filteredTasks
                 }
 
                 keyExtractor={
@@ -234,8 +352,7 @@ export default function TasksScreen() {
 
                         <Text
                             style={{
-                                fontSize:
-                                    16,
+                                fontSize: 16,
 
                                 textDecorationLine:
                                     item.completed
@@ -295,6 +412,9 @@ export default function TasksScreen() {
                                         alignItems:
                                             "center",
 
+                                        justifyContent:
+                                            "center",
+
                                         gap: 6,
                                     }}
                                 >
@@ -305,7 +425,9 @@ export default function TasksScreen() {
                                                 ? "refresh"
                                                 : "checkmark"
                                         }
+
                                         size={18}
+
                                         color="#fff"
                                     />
 
@@ -338,7 +460,6 @@ export default function TasksScreen() {
                                     globalStyles.button,
                                     {
                                         flex: 1,
-
                                         backgroundColor:
                                             "#F44336",
                                     },
@@ -353,13 +474,18 @@ export default function TasksScreen() {
                                         alignItems:
                                             "center",
 
+                                        justifyContent:
+                                            "center",
+
                                         gap: 6,
                                     }}
                                 >
 
                                     <Ionicons
                                         name="trash"
+
                                         size={18}
+
                                         color="#fff"
                                     />
 
@@ -368,7 +494,9 @@ export default function TasksScreen() {
                                             globalStyles.buttonText
                                         }
                                     >
+
                                         Delete
+
                                     </Text>
 
                                 </View>
@@ -385,27 +513,23 @@ export default function TasksScreen() {
                                 alignItems:
                                     "center",
 
-                                marginTop:
-                                    10,
+                                marginTop: 10,
                             }}
                         >
 
                             <Ionicons
                                 name="calendar-outline"
+
                                 size={14}
+
                                 color="#555"
                             />
 
                             <Text
                                 style={{
-                                    marginLeft:
-                                        5,
-
-                                    color:
-                                        "#555",
-
-                                    fontSize:
-                                        13,
+                                    marginLeft: 5,
+                                    color: "#555",
+                                    fontSize: 13,
                                 }}
                             >
 
@@ -428,21 +552,14 @@ export default function TasksScreen() {
 
                     <Text
                         style={{
-                            textAlign:
-                                "center",
-
-                            marginTop:
-                                80,
-
-                            color:
-                                "#555",
-
-                            fontSize:
-                                16,
+                            textAlign: "center",
+                            marginTop: 80,
+                            color: "#555",
+                            fontSize: 16,
                         }}
                     >
 
-                        No tasks yet
+                        No tasks found
 
                     </Text>
 
@@ -450,7 +567,10 @@ export default function TasksScreen() {
 
             />
 
+            {/* Floating Button */}
+
             <TouchableOpacity
+
                 onPress={() =>
                     navigation.navigate(
                         "TaskEditor"
@@ -471,5 +591,6 @@ export default function TasksScreen() {
             </TouchableOpacity>
 
         </View>
+
     );
 }
