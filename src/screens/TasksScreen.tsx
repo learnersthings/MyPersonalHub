@@ -3,6 +3,7 @@ import {
     Text,
     FlatList,
     TouchableOpacity,
+    TextInput
 } from "react-native";
 
 import {
@@ -80,6 +81,11 @@ export default function TasksScreen() {
         filter,
         setFilter,
     ] = useState("All");
+
+    const [
+        searchText,
+        setSearchText,
+    ] = useState("");
 
     useFocusEffect(
         useCallback(() => {
@@ -160,8 +166,52 @@ export default function TasksScreen() {
             ) * 100
             : 0;
 
+    const today =
+        new Date();
+
+    today.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+    const weekLater =
+        new Date();
+
+    weekLater.setDate(
+        today.getDate() + 7
+    );
+
     const filteredTasks =
         tasks.filter(task => {
+
+            const matchesSearch =
+
+                task.title
+                    .toLowerCase()
+                    .includes(
+                        searchText.toLowerCase()
+                    )
+
+                ||
+
+                task.category
+                    .toLowerCase()
+                    .includes(
+                        searchText.toLowerCase()
+                    )
+
+                ||
+
+                task.priority
+                    .toLowerCase()
+                    .includes(
+                        searchText.toLowerCase()
+                    );
+
+            if (!matchesSearch)
+                return false;
 
             if (
                 filter ===
@@ -179,8 +229,7 @@ export default function TasksScreen() {
                 filter ===
                 "Tasks"
             )
-
-                return !task.isHabit;
+                return task.taskMode;
 
             if (
                 filter ===
@@ -189,12 +238,68 @@ export default function TasksScreen() {
                 return task.isHabit;
 
             if (
+                filter ===
+                "Today"
+            )
+
+                return (
+                    new Date(
+                        task.dueDate
+                    )
+                        .toDateString()
+                    ===
+                    today.toDateString()
+                );
+
+            if (
+                filter ===
+                "Upcoming"
+            )
+
+                return (
+                    new Date(
+                        task.dueDate
+                    ) > today
+                );
+
+            if (
+                filter ===
+                "Overdue"
+            )
+
+                return (
+                    !task.completed
+                    &&
+                    new Date(
+                        task.dueDate
+                    ) < today
+                );
+
+            if (
+                filter ===
+                "This Week"
+            )
+
+                return (
+
+                    new Date(
+                        task.dueDate
+                    ) >= today
+
+                    &&
+
+                    new Date(
+                        task.dueDate
+                    ) <= weekLater
+                );
+
+            if (
                 task.category ===
                 filter
             )
                 return true;
 
-            return filter === 'All';
+            return filter === "All";
         });
 
     return (
@@ -216,6 +321,73 @@ export default function TasksScreen() {
                 📝 Tasks & Habits
 
             </Text>
+
+            <View
+                style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+
+                    backgroundColor: "#fff",
+
+                    borderWidth: 1,
+
+                    borderColor: "#ddd",
+
+                    borderRadius: 12,
+
+                    paddingHorizontal: 12,
+
+                    marginBottom: 15,
+                }}
+            >
+
+                <Ionicons
+                    name="search-outline"
+                    size={20}
+                    color="#777"
+                />
+
+                <TextInput
+
+                    placeholder="Search tasks..."
+
+                    value={searchText}
+
+                    onChangeText={
+                        setSearchText
+                    }
+
+                    style={{
+                        flex: 1,
+
+                        paddingVertical: 12,
+
+                        paddingHorizontal: 10,
+
+                        fontSize: 15,
+                    }}
+                />
+
+                {
+                    searchText.length > 0 && (
+
+                        <TouchableOpacity
+                            onPress={() =>
+                                setSearchText("")
+                            }
+                        >
+
+                            <Ionicons
+                                name="close-circle"
+                                size={20}
+                                color="#777"
+                            />
+
+                        </TouchableOpacity>
+                    )
+                }
+
+            </View>
 
             {/* Dashboard */}
 
