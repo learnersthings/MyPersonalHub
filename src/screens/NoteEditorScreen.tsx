@@ -168,6 +168,29 @@ export default function NoteEditorScreen() {
                 }}
             >
 
+                {/* HEADER */}
+
+                <Text
+                    style={{
+                        fontSize: 24,
+
+                        fontWeight: "700",
+
+                        marginBottom: 20,
+
+                        color:
+                            colors.text,
+                    }}
+                >
+
+                    {
+                        note
+                            ? "📝 Edit Note"
+                            : "📝 Create Note"
+                    }
+
+                </Text>
+
                 <Text
                     style={{
                         fontWeight: "600",
@@ -286,11 +309,11 @@ export default function NoteEditorScreen() {
                                 colors.subText,
 
                             contentCSSText: `
-                                font-size: 16px;
-                                color: ${colors.text};
-                                background-color: ${colors.card};
-                                padding: 10px;
-                            `,
+                            font-size: 16px;
+                            color: ${colors.text};
+                            background-color: ${colors.card};
+                            padding: 10px;
+                        `,
                         }}
                     />
 

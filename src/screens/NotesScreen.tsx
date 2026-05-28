@@ -144,6 +144,21 @@ export default function NotesScreen() {
             ]}
         >
 
+            {/* HEADER */}
+
+            <Text
+                style={{
+                    fontSize: 24,
+                    fontWeight: "700",
+                    marginBottom: 15,
+                    color: colors.text,
+                }}
+            >
+
+                📝 Notes
+
+            </Text>
+
             {/* SEARCH */}
 
             <View

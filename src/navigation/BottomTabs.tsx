@@ -6,6 +6,7 @@ import HomeScreen from "../screens/HomeScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import ScreenStack from "./NotesStack";
 import TasksStack from "./TasksStack";
+import AnalyticsScreen from "../screens/AnalyticsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -69,6 +70,20 @@ export default function BottomTabs() {
                     component={TasksStack}
                     options={{
                         headerShown: false,
+                    }}
+                />
+
+                <Tab.Screen
+                    name="Analytics"
+                    component={AnalyticsScreen}
+                    options={{
+                        tabBarIcon: ({ color, size }) => (
+                            <Ionicons
+                                name="stats-chart"
+                                size={size}
+                                color={color}
+                            />
+                        ),
                     }}
                 />
 
