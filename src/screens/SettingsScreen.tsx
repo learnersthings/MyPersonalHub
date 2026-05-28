@@ -1,7 +1,6 @@
 import {
     View,
     Text,
-    TouchableOpacity,
     Switch,
     ScrollView,
 } from "react-native";
@@ -31,6 +30,7 @@ export default function SettingsScreen() {
     const {
         darkMode,
         toggleTheme,
+        colors,
     } = useTheme();
 
     const [
@@ -44,15 +44,12 @@ export default function SettingsScreen() {
     ] = useState(true);
 
     useEffect(() => {
+
         loadSettings();
+
     }, []);
 
     async function loadSettings() {
-
-        const dark =
-            await AsyncStorage.getItem(
-                "darkMode"
-            );
 
         const save =
             await AsyncStorage.getItem(
@@ -65,24 +62,16 @@ export default function SettingsScreen() {
             );
 
         if (save !== null)
+
             setAutoSave(
                 JSON.parse(save)
             );
 
         if (completed !== null)
+
             setShowCompleted(
                 JSON.parse(completed)
             );
-    }
-
-    async function toggleDarkMode(
-        value: boolean
-    ) {
-
-        await AsyncStorage.setItem(
-            "darkMode",
-            JSON.stringify(value)
-        );
     }
 
     async function toggleAutoSave(
@@ -132,7 +121,7 @@ export default function SettingsScreen() {
                     borderBottomWidth: 1,
 
                     borderBottomColor:
-                        "#ECECEC",
+                        colors.border,
                 }}
             >
 
@@ -147,7 +136,7 @@ export default function SettingsScreen() {
                     <Ionicons
                         name={icon}
                         size={22}
-                        color="#2196F3"
+                        color={colors.primary}
                     />
 
                     <Text
@@ -157,6 +146,9 @@ export default function SettingsScreen() {
                             fontSize: 16,
 
                             fontWeight: "500",
+
+                            color:
+                                colors.text,
                         }}
                     >
 
@@ -171,6 +163,17 @@ export default function SettingsScreen() {
                     onValueChange={
                         onValueChange
                     }
+
+                    trackColor={{
+                        false: "#777",
+                        true: colors.primary,
+                    }}
+
+                    thumbColor={
+                        value
+                            ? "#fff"
+                            : "#f4f3f4"
+                    }
                 />
 
             </View>
@@ -180,9 +183,14 @@ export default function SettingsScreen() {
     return (
 
         <ScrollView
-            style={
-                globalStyles.screen
-            }
+
+            style={[
+                globalStyles.screen,
+                {
+                    backgroundColor:
+                        colors.background,
+                },
+            ]}
 
             showsVerticalScrollIndicator={
                 false
@@ -196,6 +204,9 @@ export default function SettingsScreen() {
                     fontWeight: "700",
 
                     marginBottom: 20,
+
+                    color:
+                        colors.text,
                 }}
             >
 
@@ -207,7 +218,8 @@ export default function SettingsScreen() {
 
             <View
                 style={{
-                    backgroundColor: "#fff",
+                    backgroundColor:
+                        colors.card,
 
                     borderRadius: 16,
 
@@ -226,6 +238,9 @@ export default function SettingsScreen() {
                         marginTop: 16,
 
                         marginBottom: 8,
+
+                        color:
+                            colors.text,
                     }}
                 >
 
@@ -248,7 +263,8 @@ export default function SettingsScreen() {
 
             <View
                 style={{
-                    backgroundColor: "#fff",
+                    backgroundColor:
+                        colors.card,
 
                     borderRadius: 16,
 
@@ -267,6 +283,9 @@ export default function SettingsScreen() {
                         marginTop: 16,
 
                         marginBottom: 8,
+
+                        color:
+                            colors.text,
                     }}
                 >
 
@@ -289,7 +308,8 @@ export default function SettingsScreen() {
 
             <View
                 style={{
-                    backgroundColor: "#fff",
+                    backgroundColor:
+                        colors.card,
 
                     borderRadius: 16,
 
@@ -308,6 +328,9 @@ export default function SettingsScreen() {
                         marginTop: 16,
 
                         marginBottom: 8,
+
+                        color:
+                            colors.text,
                     }}
                 >
 
@@ -330,7 +353,8 @@ export default function SettingsScreen() {
 
             <View
                 style={{
-                    backgroundColor: "#fff",
+                    backgroundColor:
+                        colors.card,
 
                     borderRadius: 16,
 
@@ -347,6 +371,9 @@ export default function SettingsScreen() {
                         fontWeight: "700",
 
                         marginBottom: 14,
+
+                        color:
+                            colors.text,
                     }}
                 >
 
@@ -356,7 +383,8 @@ export default function SettingsScreen() {
 
                 <Text
                     style={{
-                        color: "#555",
+                        color:
+                            colors.subText,
 
                         marginBottom: 8,
                     }}
@@ -368,7 +396,8 @@ export default function SettingsScreen() {
 
                 <Text
                     style={{
-                        color: "#555",
+                        color:
+                            colors.subText,
                     }}
                 >
 

@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-import colors from "./colors";
+import { lightTheme as colors } from "./colors";
 
 export const globalStyles =
     StyleSheet.create({
@@ -17,7 +17,7 @@ export const globalStyles =
         input: {
 
             backgroundColor:
-                colors.white,
+                "#FFFFFF",
 
             borderWidth: 1,
 
@@ -36,7 +36,7 @@ export const globalStyles =
         card: {
 
             backgroundColor:
-                colors.white,
+                "#FFFFFF",
 
             padding: 15,
 
@@ -66,7 +66,7 @@ export const globalStyles =
         buttonText: {
 
             color:
-                colors.white,
+                "#FFFFFF",
 
             fontSize: 16,
 
