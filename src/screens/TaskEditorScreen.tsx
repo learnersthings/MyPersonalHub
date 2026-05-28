@@ -49,6 +49,12 @@ export default function TaskEditorScreen() {
     ] =
         useState("Personal");
 
+    const [
+        priority,
+        setPriority,
+    ] =
+        useState("Medium");
+
     async function saveTask() {
 
         if (
@@ -81,6 +87,8 @@ export default function TaskEditorScreen() {
             createdAt:
                 new Date()
                     .toISOString(),
+
+            priority,
         };
 
         await saveTasks([
@@ -272,6 +280,87 @@ export default function TaskEditorScreen() {
 
                 ))}
 
+            </View>
+
+            <Text
+                style={{
+                    fontSize: 16,
+                    fontWeight: "600",
+                    marginBottom: 10,
+                }}
+            >
+
+                Priority
+
+            </Text>
+
+            <View
+                style={{
+                    flexDirection: "row",
+                    gap: 10,
+                    marginBottom: 18,
+                }}
+            >
+
+                {[
+                    {
+                        label: "High",
+                        color: "#F44336",
+                    },
+                    {
+                        label: "Medium",
+                        color: "#FF9800",
+                    },
+                    {
+                        label: "Low",
+                        color: "#2196F3",
+                    },
+                ].map(item => (
+
+                    <TouchableOpacity
+
+                        key={item.label}
+
+                        onPress={() =>
+                            setPriority(
+                                item.label
+                            )
+                        }
+
+                        style={{
+                            flex: 1,
+
+                            backgroundColor:
+                                priority === item.label
+                                    ? item.color
+                                    : "#E0E0E0",
+
+                            paddingVertical: 10,
+
+                            borderRadius: 10,
+
+                            alignItems: "center",
+                        }}
+                    >
+
+                        <Text
+                            style={{
+                                color:
+                                    priority === item.label
+                                        ? "#fff"
+                                        : "#333",
+
+                                fontWeight: "600",
+                            }}
+                        >
+
+                            {item.label}
+
+                        </Text>
+
+                    </TouchableOpacity>
+
+                ))}
             </View>
 
             <TouchableOpacity

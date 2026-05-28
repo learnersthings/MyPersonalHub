@@ -92,6 +92,22 @@ export default function TasksScreen() {
         const data =
             await getTasks();
 
+        const priorityOrder: Record<
+            string,
+            number
+        > = {
+            High: 1,
+            Medium: 2,
+            Low: 3,
+        };
+
+        data.sort(
+            (a, b) =>
+                priorityOrder[a.priority]
+                -
+                priorityOrder[b.priority]
+        );
+
         setTasks(data);
     }
 
@@ -707,6 +723,44 @@ export default function TasksScreen() {
                                 </View>
 
                             </TouchableOpacity>
+
+                        </View>
+
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                marginTop: 10,
+                            }}
+                        >
+
+                            <View
+                                style={{
+                                    width: 10,
+                                    height: 10,
+                                    borderRadius: 5,
+
+                                    backgroundColor:
+                                        item.priority === "High"
+                                            ? "#F44336"
+                                            : item.priority === "Medium"
+                                                ? "#FF9800"
+                                                : "#4CAF50",
+                                }}
+                            />
+
+                            <Text
+                                style={{
+                                    marginLeft: 6,
+                                    fontSize: 13,
+                                    fontWeight: "600",
+                                    color: "#555",
+                                }}
+                            >
+
+                                {item.priority}
+
+                            </Text>
 
                         </View>
 

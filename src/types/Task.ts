@@ -3,5 +3,8 @@ export interface Task {
     title: string;
     completed: boolean;
     isHabit: boolean;
+    taskMode: boolean;
+    category: string;
+    priority: string;
     createdAt: string;
 }
