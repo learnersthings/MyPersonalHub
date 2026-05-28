@@ -75,6 +75,12 @@ export default function AnalyticsScreen() {
                 task.isHabit
         ).length;
 
+    const taskCount =
+        tasks.filter(
+            task =>
+                !task.isHabit
+        ).length;
+
     const progress =
         totalTasks > 0
 
@@ -326,32 +332,17 @@ export default function AnalyticsScreen() {
             >
 
                 <StatCard
-                    title="Total Tasks"
+                    title="All"
                     value={totalTasks}
-                    icon="list"
+                    icon="apps"
                     color="#2196F3"
                 />
 
                 <StatCard
-                    title="Completed"
-                    value={completedTasks}
-                    icon="checkmark-done"
-                    color="#4CAF50"
-                />
-
-            </View>
-
-            <View
-                style={{
-                    flexDirection: "row",
-                }}
-            >
-
-                <StatCard
-                    title="Pending"
-                    value={pendingTasks}
-                    icon="time"
-                    color="#F44336"
+                    title="Tasks"
+                    value={taskCount}
+                    icon="clipboard"
+                    color="#9C27B0"
                 />
 
                 <StatCard
@@ -363,91 +354,25 @@ export default function AnalyticsScreen() {
 
             </View>
 
-            {/* Categories */}
-
             <View
                 style={{
-                    backgroundColor:
-                        colors.card,
-
-                    borderRadius: 18,
-
-                    padding: 18,
-
-                    marginTop: 10,
+                    flexDirection: "row",
                 }}
             >
 
-                <Text
-                    style={{
-                        color:
-                            colors.text,
+                <StatCard
+                    title="Completed"
+                    value={completedTasks}
+                    icon="checkmark-done"
+                    color="#4CAF50"
+                />
 
-                        fontSize: 20,
-
-                        fontWeight: "700",
-
-                        marginBottom: 18,
-                    }}
-                >
-
-                    Categories
-
-                </Text>
-
-                {
-                    categories.map(
-                        category => (
-
-                            <View
-                                key={category}
-
-                                style={{
-                                    flexDirection:
-                                        "row",
-
-                                    justifyContent:
-                                        "space-between",
-
-                                    marginBottom: 14,
-                                }}
-                            >
-
-                                <Text
-                                    style={{
-                                        color:
-                                            colors.text,
-
-                                        fontSize: 15,
-                                    }}
-                                >
-
-                                    {category}
-
-                                </Text>
-
-                                <Text
-                                    style={{
-                                        color:
-                                            colors.primary,
-
-                                        fontWeight:
-                                            "700",
-                                    }}
-                                >
-
-                                    {
-                                        getCategoryCount(
-                                            category
-                                        )
-                                    }
-
-                                </Text>
-
-                            </View>
-                        )
-                    )
-                }
+                <StatCard
+                    title="Pending"
+                    value={pendingTasks}
+                    icon="time"
+                    color="#F44336"
+                />
 
             </View>
 
