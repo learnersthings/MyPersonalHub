@@ -1,7 +1,16 @@
 import {
     View,
     Text,
+    TouchableOpacity,
 } from "react-native";
+
+import {
+    Ionicons,
+} from "@expo/vector-icons";
+
+import {
+    useNavigation,
+} from "@react-navigation/native";
 
 import {
     useTheme,
@@ -11,11 +20,10 @@ import {
     globalStyles,
 } from "../theme/styles";
 
-import {
-    Ionicons,
-} from "@expo/vector-icons";
-
 export default function HomeScreen() {
+
+    const navigation =
+        useNavigation<any>();
 
     const {
         colors,
@@ -87,6 +95,103 @@ export default function HomeScreen() {
             "#5C6BC0";
     }
 
+    function FeatureCard({
+        title,
+        subtitle,
+        icon,
+        color,
+        screen,
+    }: any) {
+
+        return (
+
+            <TouchableOpacity
+
+                onPress={() =>
+                    navigation.navigate(
+                        screen
+                    )
+                }
+
+                style={{
+                    backgroundColor:
+                        colors.card,
+
+                    borderRadius: 22,
+
+                    padding: 20,
+
+                    marginBottom: 16,
+
+                    borderWidth: 1,
+
+                    borderColor:
+                        colors.border,
+                }}
+            >
+
+                <View
+                    style={{
+                        width: 60,
+                        height: 60,
+
+                        borderRadius: 30,
+
+                        backgroundColor:
+                            `${color}20`,
+
+                        alignItems:
+                            "center",
+
+                        justifyContent:
+                            "center",
+
+                        marginBottom: 16,
+                    }}
+                >
+
+                    <Ionicons
+                        name={icon}
+                        size={28}
+                        color={color}
+                    />
+
+                </View>
+
+                <Text
+                    style={{
+                        fontSize: 22,
+
+                        fontWeight: "700",
+
+                        color:
+                            colors.text,
+                    }}
+                >
+
+                    {title}
+
+                </Text>
+
+                <Text
+                    style={{
+                        color:
+                            colors.subText,
+
+                        marginTop: 6,
+
+                        fontSize: 15,
+                    }}
+                >
+
+                    {subtitle}
+
+                </Text>
+
+            </TouchableOpacity>
+        );
+    }
+
     return (
 
         <View
@@ -116,7 +221,9 @@ export default function HomeScreen() {
                 >
 
                     <Ionicons
-                        name={greetingIcon as any}
+                        name={
+                            greetingIcon as any
+                        }
                         size={22}
                         color={iconColor}
                     />
@@ -124,6 +231,7 @@ export default function HomeScreen() {
                     <Text
                         style={{
                             fontSize: 18,
+
                             color:
                                 colors.subText,
 
@@ -142,9 +250,12 @@ export default function HomeScreen() {
                 <Text
                     style={{
                         fontSize: 34,
+
                         fontWeight: "800",
+
                         color:
                             colors.text,
+
                         marginTop: 4,
                     }}
                 >
@@ -154,6 +265,24 @@ export default function HomeScreen() {
                 </Text>
 
             </View>
+
+            {/* Tiles */}
+
+            <FeatureCard
+                title="Brain Activity"
+                subtitle="Train your brain daily"
+                icon="fitness"
+                color="#2096F3"
+                screen="BrainActivity"
+            />
+
+            <FeatureCard
+                title="Memory Challenge"
+                subtitle="Improve memory power"
+                icon="sparkles"
+                color="#FDC913"
+                screen="MemoryChallenge"
+            />
 
         </View>
     );

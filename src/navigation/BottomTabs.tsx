@@ -2,7 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
-import HomeScreen from "../screens/HomeScreen";
+import HomeStack from "./HomeStack";
 import SettingsScreen from "../screens/SettingsScreen";
 import ScreenStack from "./NotesStack";
 import TasksStack from "./TasksStack";
@@ -56,7 +56,7 @@ export default function BottomTabs() {
             >
                 <Tab.Screen
                     name="Home"
-                    component={HomeScreen}
+                    component={HomeStack}
                 />
 
                 <Tab.Screen
