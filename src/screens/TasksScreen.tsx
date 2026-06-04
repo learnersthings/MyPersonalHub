@@ -4,6 +4,7 @@ import {
     FlatList,
     TouchableOpacity,
     TextInput,
+    Alert,
 } from "react-native";
 
 import {
@@ -150,15 +151,35 @@ export default function TasksScreen() {
         id: string
     ) {
 
-        const updated =
-            tasks.filter(
-                task =>
-                    task.id !== id
-            );
+        Alert.alert(
+            "Delete",
+            "Are you sure you want to delete this?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel",
+                },
+                {
+                    text: "Delete",
+                    style: "destructive",
 
-        setTasks(updated);
+                    onPress: async () => {
 
-        await saveTasks(updated);
+                        const updated =
+                            tasks.filter(
+                                task =>
+                                    task.id !== id
+                            );
+
+                        setTasks(updated);
+
+                        await saveTasks(
+                            updated
+                        );
+                    },
+                },
+            ]
+        );
     }
 
     const completedCount =

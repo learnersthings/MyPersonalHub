@@ -25,7 +25,8 @@ import {
 } from "../services/notesStorage";
 
 import {
-    MaterialIcons
+    MaterialIcons,
+    Ionicons
 } from "@expo/vector-icons";
 
 import {
@@ -170,26 +171,44 @@ export default function NoteEditorScreen() {
 
                 {/* HEADER */}
 
-                <Text
+                <View
                     style={{
-                        fontSize: 24,
-
-                        fontWeight: "700",
-
+                        flexDirection: "row",
+                        alignItems: "center",
                         marginBottom: 20,
-
-                        color:
-                            colors.text,
                     }}
                 >
 
-                    {
-                        note
-                            ? "📝 Edit Note"
-                            : "📝 Create Note"
-                    }
+                    <TouchableOpacity
+                        onPress={() =>
+                            navigation.goBack()
+                        }
+                        style={{
+                            marginRight: 12,
+                        }}
+                    >
+                        <Ionicons
+                            name="arrow-back"
+                            size={28}
+                            color={colors.text}
+                        />
+                    </TouchableOpacity>
 
-                </Text>
+                    <Text
+                        style={{
+                            fontSize: 24,
+                            fontWeight: "700",
+                            color: colors.text,
+                        }}
+                    >
+                        {
+                            note
+                                ? "Edit Note"
+                                : "Create Note"
+                        }
+                    </Text>
+
+                </View>
 
                 <Text
                     style={{

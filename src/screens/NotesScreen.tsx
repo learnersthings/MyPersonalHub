@@ -4,6 +4,7 @@ import {
     FlatList,
     TextInput,
     TouchableOpacity,
+    Alert,
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -79,17 +80,35 @@ export default function NotesScreen() {
         id: string
     ) {
 
-        const updated =
-            notes.filter(
-                note =>
-                    note.id !==
-                    id
-            );
+        Alert.alert(
+            "Delete Note",
+            "Are you sure you want to delete this note?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel",
+                },
 
-        setNotes(updated);
+                {
+                    text: "Delete",
+                    style: "destructive",
 
-        await saveNotes(
-            updated
+                    onPress: async () => {
+
+                        const updated =
+                            notes.filter(
+                                note =>
+                                    note.id !== id
+                            );
+
+                        setNotes(updated);
+
+                        await saveNotes(
+                            updated
+                        );
+                    },
+                },
+            ]
         );
     }
 

@@ -231,28 +231,44 @@ export default function TaskEditorScreen() {
             }
         >
 
-            <Text
+            <View
                 style={{
-                    fontSize: 24,
-
-                    fontWeight:
-                        "700",
-
-                    marginBottom:
-                        20,
-
-                    color:
-                        colors.text,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginBottom: 20,
                 }}
             >
 
-                {
-                    editingTask
-                        ? "✏️ Edit Task or Habit"
-                        : "✍️ Create Task or Habit"
-                }
+                <TouchableOpacity
+                    onPress={() =>
+                        navigation.goBack()
+                    }
+                    style={{
+                        marginRight: 12,
+                    }}
+                >
+                    <Ionicons
+                        name="arrow-back"
+                        size={28}
+                        color={colors.text}
+                    />
+                </TouchableOpacity>
 
-            </Text>
+                <Text
+                    style={{
+                        fontSize: 24,
+                        fontWeight: "700",
+                        color: colors.text,
+                    }}
+                >
+                    {
+                        editingTask
+                            ? "Edit Task or Habit"
+                            : "Create Task or Habit"
+                    }
+                </Text>
+
+            </View>
 
             <TextInput
 
