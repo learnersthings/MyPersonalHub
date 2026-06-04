@@ -76,24 +76,29 @@ export default function MemoryChallengeScreen() {
         setGameOver,
     ] = useState(false);
 
+    const [
+        canSubmit,
+        setCanSubmit,
+    ] = useState(false);
+
     function generateSequence() {
 
-        if (gameStarted)
+        if (
+            gameStarted ||
+            gameOver
+        ) {
             return;
+        }
 
         const digitCount =
             rounds[currentRound];
 
-        if (!digitCount) {
-
-            setResult(
-                `🏁 Game Over! Final Score: ${score}/${totalRounds}`
-            );
-
+        if (!digitCount)
             return;
-        }
 
         setGameStarted(true);
+
+        setCanSubmit(false);
 
         const numbers = [];
 
@@ -123,14 +128,30 @@ export default function MemoryChallengeScreen() {
 
         setResult("");
 
+        setCanSubmit(false);
+
         setTimeout(() => {
 
             setHidden(true);
+
+            setCanSubmit(true);
 
         }, 5000);
     }
 
     function checkAnswer() {
+
+        if (
+            !canSubmit ||
+            gameOver ||
+            userAnswer.trim().length === 0
+        ) {
+            return;
+        }
+
+        setCanSubmit(false);
+
+        setGameStarted(false);
 
         const cleanUserAnswer =
             userAnswer.replace(/\s/g, "");
@@ -186,13 +207,17 @@ export default function MemoryChallengeScreen() {
 
             setGameStarted(false);
 
+            setGameOver(true);
+
             setTimeout(() => {
 
                 setResult(
-                    `🏁 Game Over! Final Score: ${nextScore}/${nextTotal}`
+                    `🏁 Game Over! Final Score: ${nextScore}/${MAX_ROUNDS}`
                 );
 
                 setSequence("");
+
+                setUserAnswer("");
 
             }, 1500);
 
@@ -232,9 +257,13 @@ export default function MemoryChallengeScreen() {
 
             setGameStarted(true);
 
+            setCanSubmit(false);
+
             setTimeout(() => {
 
                 setHidden(true);
+
+                setCanSubmit(true);
 
             }, 5000);
 
@@ -255,9 +284,13 @@ export default function MemoryChallengeScreen() {
 
         setTotalRounds(0);
 
+        setCurrentRound(0);
+
         setGameStarted(false);
 
         setGameOver(false);
+
+        setCanSubmit(false);
     }
 
     return (
@@ -468,7 +501,8 @@ export default function MemoryChallengeScreen() {
                 disabled={
                     gameStarted
                     ||
-                    gameOver
+                    gameOver ||
+                    sequence.length > 0
                 }
 
                 onPress={
@@ -505,21 +539,22 @@ export default function MemoryChallengeScreen() {
             <TouchableOpacity
 
                 disabled={
-                    gameOver
+                    !canSubmit ||
+                    gameOver ||
+                    userAnswer.trim().length === 0
                 }
 
-                onPress={
-                    checkAnswer
-                }
+                onPress={checkAnswer}
 
                 style={[
                     globalStyles.button,
                     {
-                        backgroundColor:
-                            "#4CAF50",
+                        backgroundColor: "#4CAF50",
 
                         opacity:
-                            gameOver
+                            !canSubmit ||
+                                gameOver ||
+                                userAnswer.trim().length === 0
                                 ? 0.5
                                 : 1,
                     },
@@ -531,9 +566,7 @@ export default function MemoryChallengeScreen() {
                         globalStyles.buttonText
                     }
                 >
-
                     Check Answer
-
                 </Text>
 
             </TouchableOpacity>
