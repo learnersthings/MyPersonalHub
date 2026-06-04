@@ -151,8 +151,6 @@ export default function MemoryChallengeScreen() {
 
         setCanSubmit(false);
 
-        setGameStarted(false);
-
         const cleanUserAnswer =
             userAnswer.replace(/\s/g, "");
 
@@ -229,6 +227,8 @@ export default function MemoryChallengeScreen() {
             const digitCount =
                 rounds[nextRound];
 
+            setGameStarted(true);
+
             const numbers = [];
 
             for (
@@ -286,11 +286,11 @@ export default function MemoryChallengeScreen() {
 
         setCurrentRound(0);
 
+        setCanSubmit(false);
+
         setGameStarted(false);
 
         setGameOver(false);
-
-        setCanSubmit(false);
     }
 
     return (
@@ -499,10 +499,8 @@ export default function MemoryChallengeScreen() {
             <TouchableOpacity
 
                 disabled={
-                    gameStarted
-                    ||
-                    gameOver ||
-                    sequence.length > 0
+                    sequence.length > 0 ||
+                    gameOver
                 }
 
                 onPress={
@@ -515,8 +513,7 @@ export default function MemoryChallengeScreen() {
                         marginBottom: 14,
 
                         opacity:
-                            gameStarted
-                                ||
+                            sequence.length > 0 ||
                                 gameOver
                                 ? 0.5
                                 : 1,
