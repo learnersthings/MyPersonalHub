@@ -22,6 +22,8 @@ import {
     globalStyles,
 } from "../theme/styles";
 
+import { useEffect } from "react";
+
 export default function MemoryChallengeScreen() {
 
     const {
@@ -85,6 +87,22 @@ export default function MemoryChallengeScreen() {
     const inputRef =
         useRef(null);
 
+    const [inputEnabled, setInputEnabled] =
+        useState(false);
+
+    useEffect(() => {
+
+        if (inputEnabled) {
+
+            setTimeout(() => {
+
+                (inputRef.current as any)?.focus();
+
+            }, 300);
+        }
+
+    }, [inputEnabled]);
+
     function generateSequence() {
 
         if (
@@ -140,7 +158,7 @@ export default function MemoryChallengeScreen() {
 
             setCanSubmit(true);
 
-            (inputRef.current as any)?.focus();
+            setInputEnabled(true);
 
         }, 5000);
     }
@@ -156,6 +174,8 @@ export default function MemoryChallengeScreen() {
         }
 
         setCanSubmit(false);
+
+        setInputEnabled(false);
 
         (inputRef.current as any)?.blur();
 
@@ -225,8 +245,6 @@ export default function MemoryChallengeScreen() {
 
                 setUserAnswer("");
 
-                (inputRef.current as any)?.focus();
-
             }, 1500);
 
             return;
@@ -275,7 +293,13 @@ export default function MemoryChallengeScreen() {
 
                 setCanSubmit(true);
 
-                (inputRef.current as any)?.focus();
+                setInputEnabled(false);
+
+                setTimeout(() => {
+
+                    setInputEnabled(true);
+
+                }, 50);
 
             }, 5000);
 
@@ -299,6 +323,8 @@ export default function MemoryChallengeScreen() {
         setCurrentRound(0);
 
         setCanSubmit(false);
+
+        setInputEnabled(false);
 
         setGameStarted(false);
 
@@ -471,6 +497,10 @@ export default function MemoryChallengeScreen() {
                 ref={inputRef}
 
                 placeholder="Enter sequence"
+
+                keyboardType="number-pad"
+
+                showSoftInputOnFocus={true}
 
                 placeholderTextColor={
                     colors.subText
