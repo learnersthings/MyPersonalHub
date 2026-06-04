@@ -467,12 +467,15 @@ export default function MemoryChallengeScreen() {
                 }
 
                 editable={
+                    gameStarted &&
                     !gameOver
                 }
 
                 style={{
                     backgroundColor:
-                        colors.card,
+                        gameStarted
+                            ? colors.card
+                            : colors.border,
 
                     color:
                         colors.text,
