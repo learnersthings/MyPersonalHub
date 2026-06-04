@@ -7,6 +7,7 @@ import {
 
 import {
     useState,
+    useRef,
 } from "react";
 
 import {
@@ -81,6 +82,9 @@ export default function MemoryChallengeScreen() {
         setCanSubmit,
     ] = useState(false);
 
+    const inputRef =
+        useRef(null);
+
     function generateSequence() {
 
         if (
@@ -136,6 +140,8 @@ export default function MemoryChallengeScreen() {
 
             setCanSubmit(true);
 
+            (inputRef.current as any)?.focus();
+
         }, 5000);
     }
 
@@ -150,6 +156,8 @@ export default function MemoryChallengeScreen() {
         }
 
         setCanSubmit(false);
+
+        (inputRef.current as any)?.blur();
 
         const cleanUserAnswer =
             userAnswer.replace(/\s/g, "");
@@ -217,6 +225,8 @@ export default function MemoryChallengeScreen() {
 
                 setUserAnswer("");
 
+                (inputRef.current as any)?.focus();
+
             }, 1500);
 
             return;
@@ -265,6 +275,8 @@ export default function MemoryChallengeScreen() {
 
                 setCanSubmit(true);
 
+                (inputRef.current as any)?.focus();
+
             }, 5000);
 
         }, 2000);
@@ -291,6 +303,8 @@ export default function MemoryChallengeScreen() {
         setGameStarted(false);
 
         setGameOver(false);
+
+        (inputRef.current as any)?.blur();
     }
 
     return (
@@ -454,6 +468,8 @@ export default function MemoryChallengeScreen() {
 
             <TextInput
 
+                ref={inputRef}
+
                 placeholder="Enter sequence"
 
                 placeholderTextColor={
@@ -467,7 +483,8 @@ export default function MemoryChallengeScreen() {
                 }
 
                 editable={
-                    gameStarted &&
+                    hidden &&
+                    sequence.length > 0 &&
                     !gameOver
                 }
 
