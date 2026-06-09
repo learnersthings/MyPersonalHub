@@ -4,11 +4,16 @@ import {
     TouchableOpacity,
     TextInput,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
     useState,
     useRef,
 } from "react";
+
+import {
+    Ionicons,
+} from "@expo/vector-icons";
 
 import {
     useTheme,
@@ -18,30 +23,17 @@ import {
     globalStyles,
 } from "../theme/styles";
 
+import { useEffect } from "react";
+
 export default function NumberRecallScreen() {
 
     const {
         colors,
     } = useTheme();
 
-    const rounds = [
-        3,
-        4,
-        5,
-        6,
-        8,
-    ];
-
-    const MAX_ROUNDS = 5;
-
     const [
-        currentRound,
-        setCurrentRound,
-    ] = useState(0);
-
-    const [
-        number,
-        setNumber,
+        sequence,
+        setSequence,
     ] = useState("");
 
     const [
@@ -55,14 +47,33 @@ export default function NumberRecallScreen() {
     ] = useState("");
 
     const [
+        result,
+        setResult,
+    ] = useState("");
+
+    const [
         score,
         setScore,
     ] = useState(0);
 
     const [
-        result,
-        setResult,
-    ] = useState("");
+        totalRounds,
+        setTotalRounds,
+    ] = useState(0);
+
+    const [
+        gameStarted,
+        setGameStarted,
+    ] = useState(false);
+
+    const rounds = [4, 5, 6, 8, 8];
+
+    const [
+        currentRound,
+        setCurrentRound,
+    ] = useState(0);
+
+    const MAX_ROUNDS = 5;
 
     const [
         gameOver,
@@ -77,28 +88,61 @@ export default function NumberRecallScreen() {
     const inputRef =
         useRef(null);
 
-    function generateRound() {
+    const [inputEnabled, setInputEnabled] =
+        useState(false);
 
-        const digits =
+    useEffect(() => {
+
+        if (inputEnabled) {
+
+            setTimeout(() => {
+
+                (inputRef.current as any)?.focus();
+
+            }, 300);
+        }
+
+    }, [inputEnabled]);
+
+    function generateSequence() {
+
+        if (
+            gameStarted ||
+            gameOver
+        ) {
+            return;
+        }
+
+        const digitCount =
             rounds[currentRound];
 
-        let generated =
-            "";
+        if (!digitCount)
+            return;
+
+        setGameStarted(true);
+
+        setCanSubmit(false);
+
+        const numbers = [];
 
         for (
             let i = 0;
-            i < digits;
+            i < digitCount;
             i++
         ) {
 
-            generated +=
+            numbers.push(
                 Math.floor(
                     Math.random() * 10
-                );
+                )
+            );
         }
 
-        setNumber(
-            generated
+        const finalSequence =
+            numbers.join(" ");
+
+        setSequence(
+            finalSequence
         );
 
         setHidden(false);
@@ -115,72 +159,92 @@ export default function NumberRecallScreen() {
 
             setCanSubmit(true);
 
-            setTimeout(() => {
+            setInputEnabled(true);
 
-                (
-                    inputRef.current as any
-                )?.focus();
-
-            }, 200);
-
-        }, 3000);
-    }
-
-    function startGame() {
-
-        generateRound();
+        }, 5000);
     }
 
     function checkAnswer() {
 
         if (
-            !canSubmit
+            !canSubmit ||
+            gameOver ||
+            userAnswer.trim().length === 0
         ) {
             return;
         }
 
-        (
-            inputRef.current as any
-        )?.blur();
+        setCanSubmit(false);
+
+        setInputEnabled(false);
+
+        (inputRef.current as any)?.blur();
+
+        const cleanUserAnswer =
+            userAnswer.replace(/\s/g, "");
+
+        const cleanSequence =
+            sequence.replace(/\s/g, "");
+
+        const nextTotal =
+            totalRounds + 1;
+
+        setTotalRounds(
+            nextTotal
+        );
 
         let nextScore =
             score;
 
         if (
-            userAnswer ===
-            number
+            cleanUserAnswer
+            ===
+            cleanSequence
         ) {
 
-            nextScore++;
+            nextScore =
+                score + 1;
 
             setScore(
                 nextScore
             );
 
             setResult(
-                "✅ Correct"
+                `✅ Correct! (${nextScore}/${nextTotal})`
             );
 
         } else {
 
             setResult(
-                `❌ Wrong (${number})`
+                `❌ Wrong! (${score}/${nextTotal})`
             );
         }
 
         const nextRound =
             currentRound + 1;
 
+        setCurrentRound(
+            nextRound
+        );
+
         if (
             nextRound >=
-            MAX_ROUNDS
+            rounds.length
         ) {
+
+            setGameStarted(false);
+
+            setGameOver(true);
 
             setTimeout(() => {
 
-                setGameOver(
-                    true
+                setResult(
+                    `🏁 Game Over! Final Score: ${nextScore}/${MAX_ROUNDS}`
                 );
+
+                setSequence("");
+
+                setUserAnswer("");
 
             }, 1500);
 
@@ -189,39 +253,40 @@ export default function NumberRecallScreen() {
 
         setTimeout(() => {
 
-            setCurrentRound(
-                nextRound
-            );
-
-            const digits =
+            const digitCount =
                 rounds[nextRound];
 
-            let generated =
-                "";
+            setGameStarted(true);
+
+            const numbers = [];
 
             for (
                 let i = 0;
-                i < digits;
+                i < digitCount;
                 i++
             ) {
 
-                generated +=
+                numbers.push(
                     Math.floor(
                         Math.random() * 10
-                    );
+                    )
+                );
             }
 
-            setNumber(
-                generated
+            const finalSequence =
+                numbers.join(" ");
+
+            setSequence(
+                finalSequence
             );
 
             setHidden(false);
 
             setUserAnswer("");
 
-            setCanSubmit(false);
+            setGameStarted(true);
 
-            setResult("");
+            setCanSubmit(false);
 
             setTimeout(() => {
 
@@ -229,125 +294,217 @@ export default function NumberRecallScreen() {
 
                 setCanSubmit(true);
 
+                setInputEnabled(false);
+
                 setTimeout(() => {
 
-                    (
-                        inputRef.current as any
-                    )?.focus();
+                    setInputEnabled(true);
 
-                }, 200);
+                }, 50);
 
-            }, 3000);
+            }, 5000);
 
-        }, 1500);
+        }, 2000);
     }
 
     function restartGame() {
 
-        setCurrentRound(0);
-
-        setNumber("");
+        setSequence("");
 
         setHidden(true);
 
         setUserAnswer("");
 
+        setResult("");
+
         setScore(0);
 
-        setResult("");
+        setTotalRounds(0);
+
+        setCurrentRound(0);
+
+        setCanSubmit(false);
+
+        setInputEnabled(false);
+
+        setGameStarted(false);
 
         setGameOver(false);
 
-        setCanSubmit(false);
+        (inputRef.current as any)?.blur();
     }
 
     return (
-
-        <View
-            style={[
-                globalStyles.screen,
-                {
-                    backgroundColor:
-                        colors.background,
-                },
-            ]}
-        >
-
-            <Text
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+            <View
                 style={{
-                    fontSize: 30,
-                    fontWeight: "800",
-                    color:
-                        colors.text,
-                    textAlign:
-                        "center",
-                    marginBottom: 25,
+                    flex: 1,
+                    justifyContent: "center",
+                    padding: 16,
                 }}
             >
-                🔢 Number Recall
-            </Text>
 
-            {
-                !gameOver && (
+                <Text
+                    style={{
+                        fontSize: 30,
 
-                    <>
+                        fontWeight: "800",
 
-                        <Text
-                            style={{
-                                color:
-                                    colors.primary,
-                                textAlign:
-                                    "center",
-                                marginBottom: 15,
-                                fontSize: 18,
-                            }}
-                        >
-                            Round {currentRound + 1}/{MAX_ROUNDS}
-                        </Text>
+                        color:
+                            colors.text,
 
-                        <View
-                            style={{
-                                backgroundColor:
-                                    colors.card,
+                        textAlign: "center",
 
-                                padding: 35,
+                        marginBottom: 10,
+                    }}
+                >
 
-                                borderRadius: 20,
+                    🔢 Number Recall
 
-                                marginBottom: 25,
+                </Text>
 
-                                alignItems:
-                                    "center",
-                            }}
-                        >
+                <Text
+                    style={{
+                        color:
+                            colors.subText,
+
+                        textAlign: "center",
+
+                        marginBottom: 30,
+
+                        fontSize: 16,
+                    }}
+                >
+
+                    Memorize the sequence before it disappears
+
+                </Text>
+
+                {/* SCORE */}
+
+                <View
+                    style={{
+                        backgroundColor:
+                            colors.card,
+
+                        padding: 18,
+
+                        borderRadius: 18,
+
+                        marginBottom: 25,
+
+                        alignItems: "center",
+                    }}
+                >
+
+                    <Text
+                        style={{
+                            color:
+                                colors.subText,
+
+                            fontSize: 16,
+                        }}
+                    >
+
+                        Score
+
+                    </Text>
+
+                    <Text
+                        style={{
+                            color:
+                                colors.primary,
+
+                            fontSize: 40,
+
+                            fontWeight: "800",
+                        }}
+                    >
+
+                        {score}/{MAX_ROUNDS}
+
+                    </Text>
+
+                </View>
+
+                {/* MEMORY CARD */}
+
+                <View
+                    style={{
+                        backgroundColor:
+                            colors.card,
+
+                        padding: 30,
+
+                        borderRadius: 24,
+
+                        alignItems: "center",
+
+                        marginBottom: 25,
+
+                        minHeight: 140,
+
+                        justifyContent: "center",
+                    }}
+                >
+
+                    {
+                        sequence.length > 0 ? (
 
                             <Text
+                                numberOfLines={1}
+                                adjustsFontSizeToFit
                                 style={{
-                                    fontSize: 42,
+                                    fontSize: 36,
 
-                                    fontWeight:
-                                        "800",
+                                    fontWeight: "800",
 
                                     color:
                                         colors.text,
+
+                                    letterSpacing: 6,
                                 }}
                             >
+
                                 {
-                                    number.length > 0
-                                        ? (
-                                            hidden
-                                                ? "• • • •"
-                                                : number
-                                        )
-                                        : "?"
+                                    hidden
+                                        ? "• • • •"
+                                        : sequence
                                 }
+
                             </Text>
 
-                        </View>
+                        ) : (
 
+                            <Ionicons
+                                name="sparkles"
+                                size={50}
+                                color={
+                                    colors.primary
+                                }
+                            />
+                        )
+                    }
+
+                </View>
+
+                {/* INPUT */}
+
+                {!gameOver && (
+                    <>
                         <TextInput
 
                             ref={inputRef}
+
+                            placeholder="Enter sequence"
+
+                            keyboardType="number-pad"
+
+                            showSoftInputOnFocus={true}
+
+                            placeholderTextColor={
+                                colors.subText
+                            }
 
                             value={userAnswer}
 
@@ -355,21 +512,17 @@ export default function NumberRecallScreen() {
                                 setUserAnswer
                             }
 
-                            keyboardType="number-pad"
-
                             editable={
-                                canSubmit
-                            }
-
-                            placeholder="Enter Number"
-
-                            placeholderTextColor={
-                                colors.subText
+                                hidden &&
+                                sequence.length > 0 &&
+                                !gameOver
                             }
 
                             style={{
                                 backgroundColor:
-                                    colors.card,
+                                    gameStarted
+                                        ? colors.card
+                                        : colors.border,
 
                                 color:
                                     colors.text,
@@ -383,167 +536,39 @@ export default function NumberRecallScreen() {
 
                                 padding: 16,
 
-                                fontSize: 20,
+                                fontSize: 18,
 
-                                textAlign:
-                                    "center",
+                                marginBottom: 18,
 
-                                marginBottom: 20,
+                                textAlign: "center",
                             }}
                         />
 
-                        {
-                            number.length === 0 ? (
-
-                                <TouchableOpacity
-
-                                    onPress={
-                                        startGame
-                                    }
-
-                                    style={
-                                        globalStyles.button
-                                    }
-                                >
-
-                                    <Text
-                                        style={
-                                            globalStyles.buttonText
-                                        }
-                                    >
-                                        Start Challenge
-                                    </Text>
-
-                                </TouchableOpacity>
-
-                            ) : (
-
-                                <TouchableOpacity
-
-                                    onPress={
-                                        checkAnswer
-                                    }
-
-                                    disabled={
-                                        !canSubmit ||
-                                        userAnswer.length === 0
-                                    }
-
-                                    style={[
-                                        globalStyles.button,
-                                        {
-                                            opacity:
-                                                !canSubmit ||
-                                                    userAnswer.length === 0
-                                                    ? 0.5
-                                                    : 1,
-                                        },
-                                    ]}
-                                >
-
-                                    <Text
-                                        style={
-                                            globalStyles.buttonText
-                                        }
-                                    >
-                                        Check Answer
-                                    </Text>
-
-                                </TouchableOpacity>
-
-                            )
-                        }
-
-                        <Text
-                            style={{
-                                textAlign:
-                                    "center",
-
-                                marginTop: 20,
-
-                                color:
-                                    colors.primary,
-
-                                fontSize: 18,
-                            }}
-                        >
-                            Score: {score}/{MAX_ROUNDS}
-                        </Text>
-
-                        {
-                            result.length > 0 && (
-
-                                <Text
-                                    style={{
-                                        textAlign:
-                                            "center",
-
-                                        marginTop: 15,
-
-                                        fontSize: 18,
-
-                                        fontWeight:
-                                            "700",
-                                    }}
-                                >
-                                    {result}
-                                </Text>
-                            )
-                        }
-
-                    </>
-
-                )
-            }
-
-            {
-                gameOver && (
-
-                    <View
-                        style={{
-                            flex: 1,
-                            justifyContent:
-                                "center",
-                            alignItems:
-                                "center",
-                        }}
-                    >
-
-                        <Text
-                            style={{
-                                fontSize: 32,
-                                fontWeight:
-                                    "800",
-                                color:
-                                    colors.text,
-                                marginBottom: 15,
-                            }}
-                        >
-                            🎉 Game Over
-                        </Text>
-
-                        <Text
-                            style={{
-                                fontSize: 22,
-                                color:
-                                    colors.primary,
-                                marginBottom: 25,
-                            }}
-                        >
-                            Final Score:
-                            {" "}
-                            {score}/{MAX_ROUNDS}
-                        </Text>
+                        {/* BUTTONS */}
 
                         <TouchableOpacity
 
-                            onPress={
-                                restartGame
+                            disabled={
+                                sequence.length > 0 ||
+                                gameOver
                             }
 
-                            style={
-                                globalStyles.button
+                            onPress={
+                                generateSequence
                             }
+
+                            style={[
+                                globalStyles.button,
+                                {
+                                    marginBottom: 14,
+
+                                    opacity:
+                                        sequence.length > 0 ||
+                                            gameOver
+                                            ? 0.5
+                                            : 1,
+                                },
+                            ]}
                         >
 
                             <Text
@@ -551,15 +576,156 @@ export default function NumberRecallScreen() {
                                     globalStyles.buttonText
                                 }
                             >
-                                Play Again
+
+                                Start Challenge
+
                             </Text>
 
                         </TouchableOpacity>
 
-                    </View>
-                )
-            }
+                        <TouchableOpacity
 
-        </View>
+                            disabled={
+                                !canSubmit ||
+                                gameOver ||
+                                userAnswer.trim().length === 0
+                            }
+
+                            onPress={checkAnswer}
+
+                            style={[
+                                globalStyles.button,
+                                {
+                                    backgroundColor: "#4CAF50",
+
+                                    opacity:
+                                        !canSubmit ||
+                                            gameOver ||
+                                            userAnswer.trim().length === 0
+                                            ? 0.5
+                                            : 1,
+                                },
+                            ]}
+                        >
+
+                            <Text
+                                style={
+                                    globalStyles.buttonText
+                                }
+                            >
+                                Check Answer
+                            </Text>
+
+                        </TouchableOpacity>
+                    </>
+                )}
+
+                {
+                    gameOver && (
+
+                        <View
+                            style={{
+                                marginTop: 30,
+
+                                alignItems: "center",
+                            }}
+                        >
+
+                            <Text
+                                style={{
+                                    fontSize: 28,
+
+                                    fontWeight: "800",
+
+                                    color:
+                                        colors.text,
+
+                                    marginBottom: 10,
+                                }}
+                            >
+
+                                🎉 Game Over
+
+                            </Text>
+
+                            <Text
+                                style={{
+                                    fontSize: 20,
+
+                                    color:
+                                        colors.primary,
+
+                                    fontWeight: "700",
+
+                                    marginBottom: 20,
+                                }}
+                            >
+
+                                Final Score:
+                                {" "}
+                                {score}/{MAX_ROUNDS}
+
+                            </Text>
+
+                            <TouchableOpacity
+
+                                onPress={
+                                    restartGame
+                                }
+
+                                style={[
+                                    globalStyles.button,
+                                    {
+                                        paddingHorizontal: 30,
+                                    },
+                                ]}
+                            >
+
+                                <Text
+                                    style={
+                                        globalStyles.buttonText
+                                    }
+                                >
+
+                                    Play Again
+
+                                </Text>
+
+                            </TouchableOpacity>
+
+                        </View>
+                    )
+                }
+
+                {/* RESULT */}
+
+                {
+                    result.length > 0 && (
+
+                        <Text
+                            style={{
+                                marginTop: 25,
+
+                                textAlign: "center",
+
+                                fontSize: 18,
+
+                                fontWeight: "700",
+
+                                color:
+                                    result.includes("Correct")
+                                        ? "#4CAF50"
+                                        : "#F44336",
+                            }}
+                        >
+
+                            {result}
+
+                        </Text>
+                    )
+                }
+
+            </View>
+        </SafeAreaView>
     );
 }

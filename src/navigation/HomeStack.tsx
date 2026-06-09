@@ -6,8 +6,6 @@ import HomeScreen from "../screens/HomeScreen";
 
 import BrainActivityScreen from "../screens/BrainActivityScreen";
 
-import MemoryChallengeScreen from "../screens/MemoryChallengeScreen";
-
 import PatternChallengeScreen from "../screens/PatternChallengeScreen";
 
 import MathChallengeScreen from "../screens/MathChallengeScreen";
@@ -47,8 +45,8 @@ export default function HomeStack() {
             />
 
             <Stack.Screen
-                name="MemoryChallenge"
-                component={MemoryChallengeScreen}
+                name="NumberRecall"
+                component={NumberRecallScreen}
             />
 
             <Stack.Screen
@@ -79,11 +77,6 @@ export default function HomeStack() {
             <Stack.Screen
                 name="ColorMatch"
                 component={ColorMatchScreen}
-            />
-
-            <Stack.Screen
-                name="NumberRecall"
-                component={NumberRecallScreen}
             />
 
             <Stack.Screen

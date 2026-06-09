@@ -172,14 +172,14 @@ export default function BrainActivityScreen() {
 
             </Text>
 
-            {/* MEMORY CHALLENGE */}
+            {/* Number RECALL */}
 
             <GameCard
-                title="Memory Challenge"
-                subtitle="Remember number sequences"
-                icon="sparkles"
-                color="#FDC913"
-                screen="MemoryChallenge"
+                title="Number Recall"
+                subtitle="Recall the number sequence"
+                icon="list"
+                color="#c8e91e"
+                screen="NumberRecall"
             />
 
             {/* PATTERN CHALLENGE */}
@@ -240,16 +240,6 @@ export default function BrainActivityScreen() {
                 icon="color-palette"
                 color="#E91E63"
                 screen="ColorMatch"
-            />
-
-            {/* Number RECALL */}
-
-            <GameCard
-                title="Number Recall"
-                subtitle="Recall the number sequence"
-                icon="list"
-                color="#c8e91e"
-                screen="NumberRecall"
             />
 
             {/* Quick Decision */}
