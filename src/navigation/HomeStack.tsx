@@ -8,6 +8,14 @@ import BrainActivityScreen from "../screens/BrainActivityScreen";
 
 import MemoryChallengeScreen from "../screens/MemoryChallengeScreen";
 
+import PatternChallengeScreen from "../screens/PatternChallengeScreen";
+
+import MathChallengeScreen from "../screens/MathChallengeScreen";
+
+import ReactionChallengeScreen from "../screens/ReactionChallengeScreen";
+
+import WordPuzzleScreen from "../screens/WordPuzzleScreen";
+
 const Stack = createNativeStackNavigator();
 
 export default function HomeStack() {
@@ -33,6 +41,26 @@ export default function HomeStack() {
             <Stack.Screen
                 name="MemoryChallenge"
                 component={MemoryChallengeScreen}
+            />
+
+            <Stack.Screen
+                name="PatternChallenge"
+                component={PatternChallengeScreen}
+            />
+
+            <Stack.Screen
+                name="MathChallenge"
+                component={MathChallengeScreen}
+            />
+
+            <Stack.Screen
+                name="ReactionChallenge"
+                component={ReactionChallengeScreen}
+            />
+
+            <Stack.Screen
+                name="WordPuzzle"
+                component={WordPuzzleScreen}
             />
 
         </Stack.Navigator>

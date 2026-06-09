@@ -276,14 +276,6 @@ export default function HomeScreen() {
                 screen="BrainActivity"
             />
 
-            <FeatureCard
-                title="Memory Challenge"
-                subtitle="Improve memory power"
-                icon="sparkles"
-                color="#FDC913"
-                screen="MemoryChallenge"
-            />
-
         </View>
     );
 }

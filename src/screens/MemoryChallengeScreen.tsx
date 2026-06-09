@@ -344,339 +344,229 @@ export default function MemoryChallengeScreen() {
                 }}
             >
 
-            <Text
-                style={{
-                    fontSize: 30,
+                <Text
+                    style={{
+                        fontSize: 30,
 
-                    fontWeight: "800",
+                        fontWeight: "800",
 
-                    color:
-                        colors.text,
+                        color:
+                            colors.text,
 
-                    textAlign: "center",
+                        textAlign: "center",
 
-                    marginBottom: 10,
-                }}
-            >
+                        marginBottom: 10,
+                    }}
+                >
 
-                🧠 Memory Challenge
+                    🧠 Memory Challenge
 
-            </Text>
-
-            <Text
-                style={{
-                    color:
-                        colors.subText,
-
-                    textAlign: "center",
-
-                    marginBottom: 30,
-
-                    fontSize: 16,
-                }}
-            >
-
-                Memorize the sequence before it disappears
-
-            </Text>
-
-            {/* SCORE */}
-
-            <View
-                style={{
-                    backgroundColor:
-                        colors.card,
-
-                    padding: 18,
-
-                    borderRadius: 18,
-
-                    marginBottom: 25,
-
-                    alignItems: "center",
-                }}
-            >
+                </Text>
 
                 <Text
                     style={{
                         color:
                             colors.subText,
 
+                        textAlign: "center",
+
+                        marginBottom: 30,
+
                         fontSize: 16,
                     }}
                 >
 
-                    Score
+                    Memorize the sequence before it disappears
 
                 </Text>
 
-                <Text
+                {/* SCORE */}
+
+                <View
                     style={{
-                        color:
-                            colors.primary,
+                        backgroundColor:
+                            colors.card,
 
-                        fontSize: 40,
+                        padding: 18,
 
-                        fontWeight: "800",
+                        borderRadius: 18,
+
+                        marginBottom: 25,
+
+                        alignItems: "center",
                     }}
                 >
 
-                    {score}/{MAX_ROUNDS}
-
-                </Text>
-
-            </View>
-
-            {/* MEMORY CARD */}
-
-            <View
-                style={{
-                    backgroundColor:
-                        colors.card,
-
-                    padding: 30,
-
-                    borderRadius: 24,
-
-                    alignItems: "center",
-
-                    marginBottom: 25,
-
-                    minHeight: 140,
-
-                    justifyContent: "center",
-                }}
-            >
-
-                {
-                    sequence.length > 0 ? (
-
-                        <Text
-                            numberOfLines={1}
-                            adjustsFontSizeToFit
-                            style={{
-                                fontSize: 36,
-
-                                fontWeight: "800",
-
-                                color:
-                                    colors.text,
-
-                                letterSpacing: 6,
-                            }}
-                        >
-
-                            {
-                                hidden
-                                    ? "• • • •"
-                                    : sequence
-                            }
-
-                        </Text>
-
-                    ) : (
-
-                        <Ionicons
-                            name="sparkles"
-                            size={50}
-                            color={
-                                colors.primary
-                            }
-                        />
-                    )
-                }
-
-            </View>
-
-            {/* INPUT */}
-
-            {!gameOver && (
-                <>
-            <TextInput
-
-                ref={inputRef}
-
-                placeholder="Enter sequence"
-
-                keyboardType="number-pad"
-
-                showSoftInputOnFocus={true}
-
-                placeholderTextColor={
-                    colors.subText
-                }
-
-                value={userAnswer}
-
-                onChangeText={
-                    setUserAnswer
-                }
-
-                editable={
-                    hidden &&
-                    sequence.length > 0 &&
-                    !gameOver
-                }
-
-                style={{
-                    backgroundColor:
-                        gameStarted
-                            ? colors.card
-                            : colors.border,
-
-                    color:
-                        colors.text,
-
-                    borderWidth: 1,
-
-                    borderColor:
-                        colors.border,
-
-                    borderRadius: 14,
-
-                    padding: 16,
-
-                    fontSize: 18,
-
-                    marginBottom: 18,
-
-                    textAlign: "center",
-                }}
-            />
-
-            {/* BUTTONS */}
-
-            <TouchableOpacity
-
-                disabled={
-                    sequence.length > 0 ||
-                    gameOver
-                }
-
-                onPress={
-                    generateSequence
-                }
-
-                style={[
-                    globalStyles.button,
-                    {
-                        marginBottom: 14,
-
-                        opacity:
-                            sequence.length > 0 ||
-                                gameOver
-                                ? 0.5
-                                : 1,
-                    },
-                ]}
-            >
-
-                <Text
-                    style={
-                        globalStyles.buttonText
-                    }
-                >
-
-                    Start Challenge
-
-                </Text>
-
-            </TouchableOpacity>
-
-            <TouchableOpacity
-
-                disabled={
-                    !canSubmit ||
-                    gameOver ||
-                    userAnswer.trim().length === 0
-                }
-
-                onPress={checkAnswer}
-
-                style={[
-                    globalStyles.button,
-                    {
-                        backgroundColor: "#4CAF50",
-
-                        opacity:
-                            !canSubmit ||
-                                gameOver ||
-                                userAnswer.trim().length === 0
-                                ? 0.5
-                                : 1,
-                    },
-                ]}
-            >
-
-                <Text
-                    style={
-                        globalStyles.buttonText
-                    }
-                >
-                    Check Answer
-                </Text>
-
-            </TouchableOpacity>
-            </>
-            )}
-
-            {
-                gameOver && (
-
-                    <View
+                    <Text
                         style={{
-                            marginTop: 30,
+                            color:
+                                colors.subText,
 
-                            alignItems: "center",
+                            fontSize: 16,
                         }}
                     >
 
-                        <Text
-                            style={{
-                                fontSize: 28,
+                        Score
 
-                                fontWeight: "800",
+                    </Text>
+
+                    <Text
+                        style={{
+                            color:
+                                colors.primary,
+
+                            fontSize: 40,
+
+                            fontWeight: "800",
+                        }}
+                    >
+
+                        {score}/{MAX_ROUNDS}
+
+                    </Text>
+
+                </View>
+
+                {/* MEMORY CARD */}
+
+                <View
+                    style={{
+                        backgroundColor:
+                            colors.card,
+
+                        padding: 30,
+
+                        borderRadius: 24,
+
+                        alignItems: "center",
+
+                        marginBottom: 25,
+
+                        minHeight: 140,
+
+                        justifyContent: "center",
+                    }}
+                >
+
+                    {
+                        sequence.length > 0 ? (
+
+                            <Text
+                                numberOfLines={1}
+                                adjustsFontSizeToFit
+                                style={{
+                                    fontSize: 36,
+
+                                    fontWeight: "800",
+
+                                    color:
+                                        colors.text,
+
+                                    letterSpacing: 6,
+                                }}
+                            >
+
+                                {
+                                    hidden
+                                        ? "• • • •"
+                                        : sequence
+                                }
+
+                            </Text>
+
+                        ) : (
+
+                            <Ionicons
+                                name="sparkles"
+                                size={50}
+                                color={
+                                    colors.primary
+                                }
+                            />
+                        )
+                    }
+
+                </View>
+
+                {/* INPUT */}
+
+                {!gameOver && (
+                    <>
+                        <TextInput
+
+                            ref={inputRef}
+
+                            placeholder="Enter sequence"
+
+                            keyboardType="number-pad"
+
+                            showSoftInputOnFocus={true}
+
+                            placeholderTextColor={
+                                colors.subText
+                            }
+
+                            value={userAnswer}
+
+                            onChangeText={
+                                setUserAnswer
+                            }
+
+                            editable={
+                                hidden &&
+                                sequence.length > 0 &&
+                                !gameOver
+                            }
+
+                            style={{
+                                backgroundColor:
+                                    gameStarted
+                                        ? colors.card
+                                        : colors.border,
 
                                 color:
                                     colors.text,
 
-                                marginBottom: 10,
+                                borderWidth: 1,
+
+                                borderColor:
+                                    colors.border,
+
+                                borderRadius: 14,
+
+                                padding: 16,
+
+                                fontSize: 18,
+
+                                marginBottom: 18,
+
+                                textAlign: "center",
                             }}
-                        >
+                        />
 
-                            🎉 Game Over
-
-                        </Text>
-
-                        <Text
-                            style={{
-                                fontSize: 20,
-
-                                color:
-                                    colors.primary,
-
-                                fontWeight: "700",
-
-                                marginBottom: 20,
-                            }}
-                        >
-
-                            Final Score:
-                            {" "}
-                            {score}/{MAX_ROUNDS}
-
-                        </Text>
+                        {/* BUTTONS */}
 
                         <TouchableOpacity
 
+                            disabled={
+                                sequence.length > 0 ||
+                                gameOver
+                            }
+
                             onPress={
-                                restartGame
+                                generateSequence
                             }
 
                             style={[
                                 globalStyles.button,
                                 {
-                                    paddingHorizontal: 30,
+                                    marginBottom: 14,
+
+                                    opacity:
+                                        sequence.length > 0 ||
+                                            gameOver
+                                            ? 0.5
+                                            : 1,
                                 },
                             ]}
                         >
@@ -687,43 +577,153 @@ export default function MemoryChallengeScreen() {
                                 }
                             >
 
-                                Play Again
+                                Start Challenge
 
                             </Text>
 
                         </TouchableOpacity>
 
-                    </View>
-                )
-            }
+                        <TouchableOpacity
 
-            {/* RESULT */}
+                            disabled={
+                                !canSubmit ||
+                                gameOver ||
+                                userAnswer.trim().length === 0
+                            }
 
-            {
-                result.length > 0 && (
+                            onPress={checkAnswer}
 
-                    <Text
-                        style={{
-                            marginTop: 25,
+                            style={[
+                                globalStyles.button,
+                                {
+                                    backgroundColor: "#4CAF50",
 
-                            textAlign: "center",
+                                    opacity:
+                                        !canSubmit ||
+                                            gameOver ||
+                                            userAnswer.trim().length === 0
+                                            ? 0.5
+                                            : 1,
+                                },
+                            ]}
+                        >
 
-                            fontSize: 18,
+                            <Text
+                                style={
+                                    globalStyles.buttonText
+                                }
+                            >
+                                Check Answer
+                            </Text>
 
-                            fontWeight: "700",
+                        </TouchableOpacity>
+                    </>
+                )}
 
-                            color:
-                                result.includes("Correct")
-                                    ? "#4CAF50"
-                                    : "#F44336",
-                        }}
-                    >
+                {
+                    gameOver && (
 
-                        {result}
+                        <View
+                            style={{
+                                marginTop: 30,
 
-                    </Text>
-                )
-            }
+                                alignItems: "center",
+                            }}
+                        >
+
+                            <Text
+                                style={{
+                                    fontSize: 28,
+
+                                    fontWeight: "800",
+
+                                    color:
+                                        colors.text,
+
+                                    marginBottom: 10,
+                                }}
+                            >
+
+                                🎉 Game Over
+
+                            </Text>
+
+                            <Text
+                                style={{
+                                    fontSize: 20,
+
+                                    color:
+                                        colors.primary,
+
+                                    fontWeight: "700",
+
+                                    marginBottom: 20,
+                                }}
+                            >
+
+                                Final Score:
+                                {" "}
+                                {score}/{MAX_ROUNDS}
+
+                            </Text>
+
+                            <TouchableOpacity
+
+                                onPress={
+                                    restartGame
+                                }
+
+                                style={[
+                                    globalStyles.button,
+                                    {
+                                        paddingHorizontal: 30,
+                                    },
+                                ]}
+                            >
+
+                                <Text
+                                    style={
+                                        globalStyles.buttonText
+                                    }
+                                >
+
+                                    Play Again
+
+                                </Text>
+
+                            </TouchableOpacity>
+
+                        </View>
+                    )
+                }
+
+                {/* RESULT */}
+
+                {
+                    result.length > 0 && (
+
+                        <Text
+                            style={{
+                                marginTop: 25,
+
+                                textAlign: "center",
+
+                                fontSize: 18,
+
+                                fontWeight: "700",
+
+                                color:
+                                    result.includes("Correct")
+                                        ? "#4CAF50"
+                                        : "#F44336",
+                            }}
+                        >
+
+                            {result}
+
+                        </Text>
+                    )
+                }
 
             </View>
         </SafeAreaView>
