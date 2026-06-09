@@ -17,6 +17,11 @@ import {
     globalStyles,
 } from "../theme/styles";
 
+import {
+    getBrainStats,
+    saveBrainStats,
+} from "../services/brainStorage";
+
 export default function ColorMatchScreen() {
 
     const {
@@ -97,6 +102,35 @@ export default function ColorMatchScreen() {
         result,
         setResult,
     ] = useState("");
+
+    async function updateBrainStats(
+        finalScore: number
+    ) {
+
+        const stats =
+            await getBrainStats();
+
+        stats.totalGames += 1;
+
+        stats.totalScore +=
+            finalScore;
+
+        stats.xp +=
+            finalScore * 10;
+
+        if (
+            finalScore >
+            stats.colorBest
+        ) {
+
+            stats.colorBest =
+                finalScore;
+        }
+
+        await saveBrainStats(
+            stats
+        );
+    }
 
     function shuffleArray(
         array: any[]
@@ -206,28 +240,6 @@ export default function ColorMatchScreen() {
         gameOver,
     ]);
 
-    function nextRound() {
-
-        if (
-            round >=
-            MAX_ROUNDS
-        ) {
-
-            setGameOver(
-                true
-            );
-
-            return;
-        }
-
-        setRound(
-            prev =>
-                prev + 1
-        );
-
-        generateQuestion();
-    }
-
     function handleAnswer(
         answer: string
     ) {
@@ -238,14 +250,19 @@ export default function ColorMatchScreen() {
             return;
         }
 
+        let finalScore =
+            score;
+
         if (
             answer ===
             displayColor.name
         ) {
 
+            finalScore =
+                score + 1;
+
             setScore(
-                prev =>
-                    prev + 1
+                finalScore
             );
 
             setResult(
@@ -262,7 +279,28 @@ export default function ColorMatchScreen() {
         setTimeout(
             () => {
 
-                nextRound();
+                if (
+                    round >=
+                    MAX_ROUNDS
+                ) {
+
+                    updateBrainStats(
+                        finalScore
+                    );
+
+                    setGameOver(
+                        true
+                    );
+
+                    return;
+                }
+
+                setRound(
+                    prev =>
+                        prev + 1
+                );
+
+                generateQuestion();
 
             },
             1000

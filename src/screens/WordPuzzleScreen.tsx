@@ -18,6 +18,11 @@ import {
     globalStyles,
 } from "../theme/styles";
 
+import {
+    getBrainStats,
+    saveBrainStats,
+} from "../services/brainStorage";
+
 export default function WordPuzzleScreen() {
 
     const {
@@ -103,6 +108,35 @@ export default function WordPuzzleScreen() {
         currentRound,
         setCurrentRound,
     ] = useState(1);
+
+    async function updateBrainStats(
+        finalScore: number
+    ) {
+
+        const stats =
+            await getBrainStats();
+
+        stats.totalGames += 1;
+
+        stats.totalScore +=
+            finalScore;
+
+        stats.xp +=
+            finalScore * 10;
+
+        if (
+            finalScore >
+            stats.wordBest
+        ) {
+
+            stats.wordBest =
+                finalScore;
+        }
+
+        await saveBrainStats(
+            stats
+        );
+    }
 
     function shuffleWord(
         word: string
@@ -245,7 +279,11 @@ export default function WordPuzzleScreen() {
             TOTAL_ROUNDS
         ) {
 
-            setTimeout(() => {
+            setTimeout(async () => {
+
+                await updateBrainStats(
+                    nextScore
+                );
 
                 setGameOver(
                     true

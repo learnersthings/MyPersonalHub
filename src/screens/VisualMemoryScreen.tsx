@@ -17,6 +17,11 @@ import {
     globalStyles,
 } from "../theme/styles";
 
+import {
+    getBrainStats,
+    saveBrainStats,
+} from "../services/brainStorage";
+
 export default function VisualMemoryScreen() {
 
     const {
@@ -59,6 +64,35 @@ export default function VisualMemoryScreen() {
         gameOver,
         setGameOver,
     ] = useState(false);
+
+    async function updateBrainStats(
+        finalScore: number
+    ) {
+
+        const stats =
+            await getBrainStats();
+
+        stats.totalGames += 1;
+
+        stats.totalScore +=
+            finalScore;
+
+        stats.xp +=
+            finalScore * 10;
+
+        if (
+            finalScore >
+            stats.visualBest
+        ) {
+
+            stats.visualBest =
+                finalScore;
+        }
+
+        await saveBrainStats(
+            stats
+        );
+    }
 
     function generatePattern(
         count: number
@@ -193,7 +227,11 @@ export default function VisualMemoryScreen() {
                 MAX_ROUNDS
             ) {
 
-                setTimeout(() => {
+                setTimeout(async () => {
+
+                    await updateBrainStats(
+                        score
+                    );
 
                     setGameOver(
                         true

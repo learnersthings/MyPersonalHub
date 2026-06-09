@@ -17,6 +17,11 @@ import {
     globalStyles,
 } from "../theme/styles";
 
+import {
+    getBrainStats,
+    saveBrainStats,
+} from "../services/brainStorage";
+
 export default function QuickDecisionScreen() {
 
     const {
@@ -59,6 +64,35 @@ export default function QuickDecisionScreen() {
         result,
         setResult,
     ] = useState("");
+
+    async function updateBrainStats(
+        finalScore: number
+    ) {
+
+        const stats =
+            await getBrainStats();
+
+        stats.totalGames += 1;
+
+        stats.totalScore +=
+            finalScore;
+
+        stats.xp +=
+            finalScore * 10;
+
+        if (
+            finalScore >
+            stats.decisionBest
+        ) {
+
+            stats.decisionBest =
+                finalScore;
+        }
+
+        await saveBrainStats(
+            stats
+        );
+    }
 
     function generateQuestion() {
 
@@ -191,7 +225,7 @@ export default function QuickDecisionScreen() {
         ) {
 
             handleAnswer(
-                null
+                false
             );
 
             return;
@@ -220,67 +254,33 @@ export default function QuickDecisionScreen() {
         gameOver,
     ]);
 
-    function nextRound() {
-
-        if (
-            round >=
-            MAX_ROUNDS
-        ) {
-
-            setGameOver(
-                true
-            );
-
+    function nextRound(currentScore: number) {
+        if (round >= MAX_ROUNDS) {
+            updateBrainStats(currentScore);
+            setGameOver(true);
             return;
         }
 
-        setRound(
-            prev =>
-                prev + 1
-        );
-
+        setRound(prev => prev + 1);
         generateQuestion();
     }
 
-    function handleAnswer(
-        answer: boolean | null
-    ) {
+    function handleAnswer(answer: boolean | null) {
+        if (gameOver) return;
 
-        if (
-            gameOver
-        ) {
-            return;
-        }
+        let nextScore = score;
 
-        if (
-            answer ===
-            correctAnswer
-        ) {
-
-            setScore(
-                prev =>
-                    prev + 1
-            );
-
-            setResult(
-                "✅ Correct"
-            );
-
+        if (answer === correctAnswer) {
+            nextScore = score + 1;
+            setScore(nextScore);
+            setResult("✅ Correct");
         } else {
-
-            setResult(
-                "❌ Wrong"
-            );
+            setResult("❌ Wrong");
         }
 
-        setTimeout(
-            () => {
-
-                nextRound();
-
-            },
-            1000
-        );
+        setTimeout(() => {
+            nextRound(nextScore);
+        }, 1000);
     }
 
     function restartGame() {

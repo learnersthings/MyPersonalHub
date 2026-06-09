@@ -17,6 +17,11 @@ import {
     globalStyles,
 } from "../theme/styles";
 
+import {
+    getBrainStats,
+    saveBrainStats,
+} from "../services/brainStorage";
+
 export default function PatternChallengeScreen() {
 
     const {
@@ -54,6 +59,35 @@ export default function PatternChallengeScreen() {
     ] = useState(false);
 
     const MAX_ROUNDS = 5;
+
+    async function updateBrainStats(
+        finalScore: number
+    ) {
+
+        const stats =
+            await getBrainStats();
+
+        stats.totalGames += 1;
+
+        stats.totalScore +=
+            finalScore;
+
+        stats.xp +=
+            finalScore * 10;
+
+        if (
+            finalScore >
+            stats.patternBest
+        ) {
+
+            stats.patternBest =
+                finalScore;
+        }
+
+        await saveBrainStats(
+            stats
+        );
+    }
 
     function generatePattern() {
 
@@ -174,58 +208,31 @@ export default function PatternChallengeScreen() {
             return;
         }
 
-        let nextScore =
-            score;
+        let nextScore = score;
 
-        if (
-            userAnswer.trim() ===
-            currentPattern.answer
-        ) {
-
-            nextScore++;
-
-            setScore(
-                nextScore
-            );
-
-            setResult(
-                "✅ Correct"
-            );
-
+        if (userAnswer.trim() === currentPattern.answer) {
+            nextScore = score + 1;
+            setScore(nextScore);
+            setResult("✅ Correct");
         } else {
-
-            setResult(
-                `❌ Wrong (Answer: ${currentPattern.answer})`
-            );
+            setResult(`❌ Wrong (Answer: ${currentPattern.answer})`);
         }
 
-        if (
-            round >= MAX_ROUNDS
-        ) {
+        const nextRound = round + 1;
 
-            setTimeout(() => {
-
+        if (nextRound > MAX_ROUNDS) {
+            setTimeout(async () => {
+                await updateBrainStats(nextScore);
                 setGameOver(true);
-
             }, 1000);
-
             return;
         }
 
         setTimeout(() => {
-
-            setRound(
-                prev => prev + 1
-            );
-
-            setCurrentPattern(
-                generatePattern()
-            );
-
+            setRound(nextRound);
+            setCurrentPattern(generatePattern());
             setUserAnswer("");
-
             setResult("");
-
         }, 1000);
     }
 

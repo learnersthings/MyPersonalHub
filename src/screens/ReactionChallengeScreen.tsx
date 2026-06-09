@@ -16,6 +16,11 @@ import {
     globalStyles,
 } from "../theme/styles";
 
+import {
+    getBrainStats,
+    saveBrainStats,
+} from "../services/brainStorage";
+
 export default function ReactionTimeScreen() {
 
     const { colors } = useTheme();
@@ -28,6 +33,37 @@ export default function ReactionTimeScreen() {
 
     const [startTime, setStartTime] =
         useState(0);
+
+    async function updateBrainStats(
+        brainScore: number,
+        reactionTime: number
+    ) {
+
+        const stats =
+            await getBrainStats();
+
+        stats.totalGames += 1;
+
+        stats.totalScore +=
+            brainScore;
+
+        stats.xp +=
+            brainScore * 10;
+
+        if (
+            stats.reactionBest === 9999 ||
+            reactionTime <
+            stats.reactionBest
+        ) {
+
+            stats.reactionBest =
+                reactionTime;
+        }
+
+        await saveBrainStats(
+            stats
+        );
+    }
 
     function startGame() {
 
@@ -70,6 +106,19 @@ export default function ReactionTimeScreen() {
                 Date.now() - startTime;
 
             setResult(
+                reactionTime
+            );
+
+            const brainScore =
+                Math.max(
+                    1,
+                    Math.floor(
+                        1000 / reactionTime * 100
+                    )
+                );
+
+            updateBrainStats(
+                brainScore,
                 reactionTime
             );
 

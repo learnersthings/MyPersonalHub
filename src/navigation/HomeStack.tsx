@@ -6,6 +6,8 @@ import HomeScreen from "../screens/HomeScreen";
 
 import BrainActivityScreen from "../screens/BrainActivityScreen";
 
+import BrainDashboardScreen from "../screens/BrainDashboardScreen";
+
 import PatternChallengeScreen from "../screens/PatternChallengeScreen";
 
 import MathChallengeScreen from "../screens/MathChallengeScreen";
@@ -42,6 +44,11 @@ export default function HomeStack() {
             <Stack.Screen
                 name="BrainActivity"
                 component={BrainActivityScreen}
+            />
+
+            <Stack.Screen
+                name="BrainDashboard"
+                component={BrainDashboardScreen}
             />
 
             <Stack.Screen

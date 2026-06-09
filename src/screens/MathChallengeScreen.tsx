@@ -18,6 +18,11 @@ import {
     globalStyles,
 } from "../theme/styles";
 
+import {
+    getBrainStats,
+    saveBrainStats,
+} from "../services/brainStorage";
+
 export default function MathChallengeScreen() {
 
     const { colors } =
@@ -74,6 +79,35 @@ export default function MathChallengeScreen() {
         timer,
         setTimer,
     ] = useState(15);
+
+    async function updateBrainStats(
+        finalScore: number
+    ) {
+
+        const stats =
+            await getBrainStats();
+
+        stats.totalGames += 1;
+
+        stats.totalScore +=
+            finalScore;
+
+        stats.xp +=
+            finalScore * 10;
+
+        if (
+            finalScore >
+            stats.mathBest
+        ) {
+
+            stats.mathBest =
+                finalScore;
+        }
+
+        await saveBrainStats(
+            stats
+        );
+    }
 
     function generateQuestion() {
 
@@ -228,7 +262,11 @@ export default function MathChallengeScreen() {
             TOTAL_QUESTIONS
         ) {
 
-            setTimeout(() => {
+            setTimeout(async () => {
+
+                await updateBrainStats(
+                    nextScore
+                );
 
                 setGameOver(
                     true

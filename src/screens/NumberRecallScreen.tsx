@@ -25,6 +25,11 @@ import {
 
 import { useEffect } from "react";
 
+import {
+    getBrainStats,
+    saveBrainStats,
+} from "../services/brainStorage";
+
 export default function NumberRecallScreen() {
 
     const {
@@ -103,6 +108,35 @@ export default function NumberRecallScreen() {
         }
 
     }, [inputEnabled]);
+
+    async function updateBrainStats(
+        finalScore: number
+    ) {
+
+        const stats =
+            await getBrainStats();
+
+        stats.totalGames += 1;
+
+        stats.totalScore +=
+            finalScore;
+
+        stats.xp +=
+            finalScore * 10;
+
+        if (
+            finalScore >
+            stats.numberBest
+        ) {
+
+            stats.numberBest =
+                finalScore;
+        }
+
+        await saveBrainStats(
+            stats
+        );
+    }
 
     function generateSequence() {
 
@@ -232,9 +266,13 @@ export default function NumberRecallScreen() {
             rounds.length
         ) {
 
-            setGameStarted(false);
+            if (nextRound >= rounds.length) {
+                setGameStarted(false);
 
-            setGameOver(true);
+                updateBrainStats(nextScore);
+
+                setGameOver(true);
+            }
 
             setTimeout(() => {
 
