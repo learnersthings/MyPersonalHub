@@ -4,6 +4,7 @@ import {
     TouchableOpacity,
     TextInput,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
     useState,
@@ -334,19 +335,14 @@ export default function MemoryChallengeScreen() {
     }
 
     return (
-
-        <View
-            style={[
-                globalStyles.screen,
-                {
-                    backgroundColor:
-                        colors.background,
-
-                    justifyContent:
-                        "center",
-                },
-            ]}
-        >
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    padding: 16,
+                }}
+            >
 
             <Text
                 style={{
@@ -492,6 +488,8 @@ export default function MemoryChallengeScreen() {
 
             {/* INPUT */}
 
+            {!gameOver && (
+                <>
             <TextInput
 
                 ref={inputRef}
@@ -617,6 +615,8 @@ export default function MemoryChallengeScreen() {
                 </Text>
 
             </TouchableOpacity>
+            </>
+            )}
 
             {
                 gameOver && (
@@ -723,6 +723,7 @@ export default function MemoryChallengeScreen() {
                 )
             }
 
-        </View>
+            </View>
+        </SafeAreaView>
     );
 }
