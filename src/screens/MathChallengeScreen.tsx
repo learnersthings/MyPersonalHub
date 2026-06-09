@@ -7,6 +7,7 @@ import {
 
 import {
     useState,
+    useEffect,
 } from "react";
 
 import {
@@ -19,14 +20,35 @@ import {
 
 export default function MathChallengeScreen() {
 
-    const {
-        colors,
-    } = useTheme();
+    const { colors } =
+        useTheme();
+
+    const TOTAL_QUESTIONS = 10;
 
     const [
         difficulty,
         setDifficulty,
-    ] = useState("Easy");
+    ] = useState<
+        "Easy" |
+        "Medium" |
+        "Hard" |
+        null
+    >(null);
+
+    const [
+        question,
+        setQuestion,
+    ] = useState("");
+
+    const [
+        answer,
+        setAnswer,
+    ] = useState(0);
+
+    const [
+        userAnswer,
+        setUserAnswer,
+    ] = useState("");
 
     const [
         score,
@@ -34,14 +56,9 @@ export default function MathChallengeScreen() {
     ] = useState(0);
 
     const [
-        round,
-        setRound,
+        currentQuestion,
+        setCurrentQuestion,
     ] = useState(1);
-
-    const [
-        userAnswer,
-        setUserAnswer,
-    ] = useState("");
 
     const [
         result,
@@ -53,15 +70,15 @@ export default function MathChallengeScreen() {
         setGameOver,
     ] = useState(false);
 
-    const MAX_ROUNDS = 5;
+    const [
+        timer,
+        setTimer,
+    ] = useState(15);
 
     function generateQuestion() {
 
         let a = 0;
         let b = 0;
-
-        let question = "";
-        let answer = 0;
 
         if (
             difficulty === "Easy"
@@ -69,19 +86,19 @@ export default function MathChallengeScreen() {
 
             a =
                 Math.floor(
-                    Math.random() * 20
+                    Math.random() * 10
                 ) + 1;
 
             b =
                 Math.floor(
-                    Math.random() * 20
+                    Math.random() * 10
                 ) + 1;
 
-            question =
-                `${a} + ${b}`;
+            setQuestion(
+                `${a} + ${b}`
+            );
 
-            answer =
-                a + b;
+            setAnswer(a + b);
 
         } else if (
             difficulty === "Medium"
@@ -89,68 +106,104 @@ export default function MathChallengeScreen() {
 
             a =
                 Math.floor(
-                    Math.random() * 12
-                ) + 1;
+                    Math.random() * 50
+                ) + 10;
 
             b =
                 Math.floor(
-                    Math.random() * 12
-                ) + 1;
+                    Math.random() * 50
+                ) + 10;
 
-            question =
-                `${a} × ${b}`;
+            setQuestion(
+                `${a} - ${b}`
+            );
 
-            answer =
-                a * b;
+            setAnswer(a - b);
 
         } else {
 
+            a =
+                Math.floor(
+                    Math.random() * 12
+                ) + 1;
+
             b =
                 Math.floor(
                     Math.random() * 12
                 ) + 1;
 
-            answer =
-                Math.floor(
-                    Math.random() * 12
-                ) + 1;
+            setQuestion(
+                `${a} × ${b}`
+            );
 
-            a =
-                b * answer;
-
-            question =
-                `${a} ÷ ${b}`;
+            setAnswer(a * b);
         }
 
-        return {
-            question,
-            answer:
-                answer.toString(),
-        };
+        setTimer(15);
+
+        setUserAnswer("");
     }
 
-    const [
-        currentQuestion,
-        setCurrentQuestion,
-    ] = useState(
-        generateQuestion()
-    );
-
-    function checkAnswer() {
+    useEffect(() => {
 
         if (
-            userAnswer.trim().length === 0
+            difficulty &&
+            !gameOver
+        ) {
+            generateQuestion();
+        }
+
+    }, [difficulty]);
+
+    useEffect(() => {
+
+        if (
+            !difficulty ||
+            gameOver
         ) {
             return;
         }
+
+        const interval =
+            setInterval(() => {
+
+                setTimer(prev => {
+
+                    if (prev <= 1) {
+
+                        clearInterval(interval);
+
+                        checkAnswer(true);
+
+                        return 0;
+                    }
+
+                    return prev - 1;
+                });
+
+            }, 1000);
+
+        return () =>
+            clearInterval(interval);
+
+    }, [
+        difficulty,
+        gameOver,
+        currentQuestion,
+    ]);
+
+    function checkAnswer(
+        timeout = false
+    ) {
 
         let nextScore =
             score;
 
         if (
-            userAnswer.trim()
-            ===
-            currentQuestion.answer
+            !timeout &&
+            Number(
+                userAnswer
+            ) === answer
         ) {
 
             nextScore++;
@@ -166,17 +219,20 @@ export default function MathChallengeScreen() {
         } else {
 
             setResult(
-                `❌ Wrong (Answer: ${currentQuestion.answer})`
+                `❌ Answer: ${answer}`
             );
         }
 
         if (
-            round >= MAX_ROUNDS
+            currentQuestion >=
+            TOTAL_QUESTIONS
         ) {
 
             setTimeout(() => {
 
-                setGameOver(true);
+                setGameOver(
+                    true
+                );
 
             }, 1000);
 
@@ -185,15 +241,12 @@ export default function MathChallengeScreen() {
 
         setTimeout(() => {
 
-            setRound(
-                prev => prev + 1
-            );
-
             setCurrentQuestion(
-                generateQuestion()
+                prev =>
+                    prev + 1
             );
 
-            setUserAnswer("");
+            generateQuestion();
 
             setResult("");
 
@@ -202,18 +255,88 @@ export default function MathChallengeScreen() {
 
     function restartGame() {
 
+        setDifficulty(
+            null
+        );
+
         setScore(0);
 
-        setRound(1);
-
-        setUserAnswer("");
+        setCurrentQuestion(
+            1
+        );
 
         setResult("");
 
-        setGameOver(false);
+        setGameOver(
+            false
+        );
+    }
 
-        setCurrentQuestion(
-            generateQuestion()
+    if (!difficulty) {
+
+        return (
+
+            <View
+                style={[
+                    globalStyles.screen,
+                    {
+                        backgroundColor:
+                            colors.background,
+                        justifyContent:
+                            "center",
+                    },
+                ]}
+            >
+
+                <Text
+                    style={{
+                        fontSize: 30,
+                        fontWeight: "800",
+                        textAlign: "center",
+                        color:
+                            colors.text,
+                        marginBottom: 30,
+                    }}
+                >
+                    ➕ Math Challenge
+                </Text>
+
+                {[
+                    "Easy",
+                    "Medium",
+                    "Hard",
+                ].map(level => (
+
+                    <TouchableOpacity
+
+                        key={level}
+
+                        onPress={() =>
+                            setDifficulty(
+                                level as any
+                            )
+                        }
+
+                        style={[
+                            globalStyles.button,
+                            {
+                                marginBottom: 15,
+                            },
+                        ]}
+                    >
+
+                        <Text
+                            style={
+                                globalStyles.buttonText
+                            }
+                        >
+                            {level}
+                        </Text>
+
+                    </TouchableOpacity>
+                ))}
+
+            </View>
         );
     }
 
@@ -225,7 +348,6 @@ export default function MathChallengeScreen() {
                 {
                     backgroundColor:
                         colors.background,
-
                     justifyContent:
                         "center",
                 },
@@ -234,124 +356,36 @@ export default function MathChallengeScreen() {
 
             <Text
                 style={{
-                    fontSize: 30,
-                    fontWeight: "800",
-                    textAlign: "center",
-                    color: colors.text,
-                    marginBottom: 25,
+                    color:
+                        colors.primary,
+                    textAlign:
+                        "center",
+                    fontSize: 20,
+                    marginBottom: 15,
                 }}
             >
-
-                ➗ Math Challenge
-
+                ⏱ {timer}s
             </Text>
 
-            <View
+            <Text
                 style={{
-                    flexDirection: "row",
+                    color:
+                        colors.text,
+                    fontSize: 30,
+                    textAlign:
+                        "center",
+                    fontWeight: "800",
                     marginBottom: 20,
                 }}
             >
-
-                {
-                    [
-                        "Easy",
-                        "Medium",
-                        "Hard",
-                    ].map(level => (
-
-                        <TouchableOpacity
-
-                            key={level}
-
-                            disabled={
-                                round > 1
-                            }
-
-                            onPress={() =>
-                                setDifficulty(
-                                    level
-                                )
-                            }
-
-                            style={{
-                                flex: 1,
-
-                                marginHorizontal: 4,
-
-                                padding: 12,
-
-                                borderRadius: 12,
-
-                                backgroundColor:
-                                    difficulty === level
-                                        ? colors.primary
-                                        : colors.card,
-                            }}
-                        >
-
-                            <Text
-                                style={{
-                                    textAlign:
-                                        "center",
-
-                                    color:
-                                        difficulty === level
-                                            ? "#FFF"
-                                            : colors.text,
-
-                                    fontWeight:
-                                        "700",
-                                }}
-                            >
-
-                                {level}
-
-                            </Text>
-
-                        </TouchableOpacity>
-                    ))
-                }
-
-            </View>
-
-            <View
-                style={{
-                    backgroundColor:
-                        colors.card,
-
-                    padding: 30,
-
-                    borderRadius: 20,
-
-                    marginBottom: 20,
-                }}
-            >
-
-                <Text
-                    style={{
-                        fontSize: 36,
-
-                        textAlign: "center",
-
-                        fontWeight: "800",
-
-                        color:
-                            colors.text,
-                    }}
-                >
-
-                    {
-                        currentQuestion.question
-                    }
-
-                </Text>
-
-            </View>
+                {question}
+            </Text>
 
             <TextInput
 
-                value={userAnswer}
+                value={
+                    userAnswer
+                }
 
                 onChangeText={
                     setUserAnswer
@@ -365,7 +399,9 @@ export default function MathChallengeScreen() {
                     colors.subText
                 }
 
-                editable={!gameOver}
+                editable={
+                    !gameOver
+                }
 
                 style={{
                     backgroundColor:
@@ -383,9 +419,10 @@ export default function MathChallengeScreen() {
 
                     padding: 16,
 
-                    textAlign: "center",
-
                     fontSize: 20,
+
+                    textAlign:
+                        "center",
 
                     marginBottom: 20,
                 }}
@@ -393,25 +430,13 @@ export default function MathChallengeScreen() {
 
             <TouchableOpacity
 
-                onPress={
-                    checkAnswer
+                onPress={() =>
+                    checkAnswer()
                 }
 
-                disabled={
-                    gameOver ||
-                    userAnswer.trim().length === 0
+                style={
+                    globalStyles.button
                 }
-
-                style={[
-                    globalStyles.button,
-                    {
-                        opacity:
-                            gameOver ||
-                                userAnswer.trim().length === 0
-                                ? 0.5
-                                : 1,
-                    },
-                ]}
             >
 
                 <Text
@@ -419,16 +444,15 @@ export default function MathChallengeScreen() {
                         globalStyles.buttonText
                     }
                 >
-
-                    Check Answer
-
+                    Submit
                 </Text>
 
             </TouchableOpacity>
 
             <Text
                 style={{
-                    textAlign: "center",
+                    textAlign:
+                        "center",
 
                     marginTop: 20,
 
@@ -438,84 +462,62 @@ export default function MathChallengeScreen() {
                     fontSize: 18,
                 }}
             >
-
-                Round {round}/{MAX_ROUNDS}
-
+                Score: {score}/{TOTAL_QUESTIONS}
             </Text>
 
-            <Text
-                style={{
-                    textAlign: "center",
+            {result ? (
 
-                    marginTop: 5,
+                <Text
+                    style={{
+                        textAlign:
+                            "center",
 
-                    color:
-                        colors.primary,
+                        marginTop: 15,
 
-                    fontSize: 18,
-                }}
-            >
+                        fontSize: 18,
 
-                Score {score}/{MAX_ROUNDS}
+                        fontWeight:
+                            "700",
 
-            </Text>
+                        color:
+                            result.includes(
+                                "Correct"
+                            )
+                                ? "#4CAF50"
+                                : "#F44336",
+                    }}
+                >
+                    {result}
+                </Text>
 
-            {
-                result.length > 0 && (
+            ) : null}
+
+            {gameOver && (
+
+                <TouchableOpacity
+
+                    onPress={
+                        restartGame
+                    }
+
+                    style={[
+                        globalStyles.button,
+                        {
+                            marginTop: 30,
+                        },
+                    ]}
+                >
 
                     <Text
-                        style={{
-                            textAlign: "center",
-
-                            marginTop: 15,
-
-                            fontSize: 18,
-
-                            fontWeight: "700",
-
-                            color:
-                                result.includes("Correct")
-                                    ? "#4CAF50"
-                                    : "#F44336",
-                        }}
-                    >
-
-                        {result}
-
-                    </Text>
-                )
-            }
-
-            {
-                gameOver && (
-
-                    <TouchableOpacity
-
-                        onPress={
-                            restartGame
+                        style={
+                            globalStyles.buttonText
                         }
-
-                        style={[
-                            globalStyles.button,
-                            {
-                                marginTop: 30,
-                            },
-                        ]}
                     >
+                        Play Again
+                    </Text>
 
-                        <Text
-                            style={
-                                globalStyles.buttonText
-                            }
-                        >
-
-                            Play Again
-
-                        </Text>
-
-                    </TouchableOpacity>
-                )
-            }
+                </TouchableOpacity>
+            )}
 
         </View>
     );
