@@ -452,6 +452,8 @@ export default function MemoryChallengeScreen() {
                     sequence.length > 0 ? (
 
                         <Text
+                            numberOfLines={1}
+                            adjustsFontSizeToFit
                             style={{
                                 fontSize: 36,
 
