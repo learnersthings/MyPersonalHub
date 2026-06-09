@@ -232,6 +232,36 @@ export default function BrainActivityScreen() {
                 screen="VisualMemory"
             />
 
+            {/* COLOR MATCH */}
+
+            <GameCard
+                title="Color Match"
+                subtitle="Match the color, not the word"
+                icon="color-palette"
+                color="#E91E63"
+                screen="ColorMatch"
+            />
+
+            {/* Number RECALL */}
+
+            <GameCard
+                title="Number Recall"
+                subtitle="Recall the number sequence"
+                icon="list"
+                color="#c8e91e"
+                screen="NumberRecall"
+            />
+
+            {/* Quick Decision */}
+
+            <GameCard
+                title="Quick Decision"
+                subtitle="Make quick decisions"
+                icon="ellipse"
+                color="#1e49e9"
+                screen="QuickDecision"
+            />
+
         </ScrollView>
     );
 }

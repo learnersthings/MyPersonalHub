@@ -18,6 +18,12 @@ import WordPuzzleScreen from "../screens/WordPuzzleScreen";
 
 import VisualMemoryScreen from "../screens/VisualMemoryScreen";
 
+import ColorMatchScreen from "../screens/ColorMatchScreen";
+
+import NumberRecallScreen from "../screens/NumberRecallScreen";
+
+import QuickDecisionScreen from "../screens/QuickDecisionScreen";
+
 const Stack = createNativeStackNavigator();
 
 export default function HomeStack() {
@@ -68,6 +74,21 @@ export default function HomeStack() {
             <Stack.Screen
                 name="VisualMemory"
                 component={VisualMemoryScreen}
+            />
+
+            <Stack.Screen
+                name="ColorMatch"
+                component={ColorMatchScreen}
+            />
+
+            <Stack.Screen
+                name="NumberRecall"
+                component={NumberRecallScreen}
+            />
+
+            <Stack.Screen
+                name="QuickDecision"
+                component={QuickDecisionScreen}
             />
 
         </Stack.Navigator>
