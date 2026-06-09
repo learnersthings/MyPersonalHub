@@ -16,6 +16,8 @@ import ReactionChallengeScreen from "../screens/ReactionChallengeScreen";
 
 import WordPuzzleScreen from "../screens/WordPuzzleScreen";
 
+import VisualMemoryScreen from "../screens/VisualMemoryScreen";
+
 const Stack = createNativeStackNavigator();
 
 export default function HomeStack() {
@@ -61,6 +63,11 @@ export default function HomeStack() {
             <Stack.Screen
                 name="WordPuzzle"
                 component={WordPuzzleScreen}
+            />
+
+            <Stack.Screen
+                name="VisualMemory"
+                component={VisualMemoryScreen}
             />
 
         </Stack.Navigator>

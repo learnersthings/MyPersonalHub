@@ -172,7 +172,7 @@ export default function BrainActivityScreen() {
 
             </Text>
 
-            {/* MEMORY */}
+            {/* MEMORY CHALLENGE */}
 
             <GameCard
                 title="Memory Challenge"
@@ -182,7 +182,7 @@ export default function BrainActivityScreen() {
                 screen="MemoryChallenge"
             />
 
-            {/* PATTERN */}
+            {/* PATTERN CHALLENGE */}
 
             <GameCard
                 title="Pattern Challenge"
@@ -192,7 +192,7 @@ export default function BrainActivityScreen() {
                 screen="PatternChallenge"
             />
 
-            {/* MATH */}
+            {/* MATH CHALLENGE */}
 
             <GameCard
                 title="Math Challenge"
@@ -202,7 +202,7 @@ export default function BrainActivityScreen() {
                 screen="MathChallenge"
             />
 
-            {/* REACTION */}
+            {/* REACTION TIME */}
 
             <GameCard
                 title="Reaction Time"
@@ -212,7 +212,7 @@ export default function BrainActivityScreen() {
                 screen="ReactionChallenge"
             />
 
-            {/* WORD */}
+            {/* WORD PUZZLE */}
 
             <GameCard
                 title="Word Puzzle"
@@ -220,6 +220,16 @@ export default function BrainActivityScreen() {
                 icon="text"
                 color="#9C27B0"
                 screen="WordPuzzle"
+            />
+
+            {/* VISUAL MEMORY */}
+
+            <GameCard
+                title="Visual Memory"
+                subtitle="Remember tile positions"
+                icon="grid"
+                color="#3F51B5"
+                screen="VisualMemory"
             />
 
         </ScrollView>
