@@ -269,6 +269,14 @@ export default function HomeScreen() {
             {/* Tiles */}
 
             <FeatureCard
+                title="Brain Dashboard"
+                subtitle="View overall progress"
+                icon="stats-chart"
+                color="#2196F3"
+                screen="BrainDashboard"
+            />
+
+            <FeatureCard
                 title="Brain Activity"
                 subtitle="Train your brain daily"
                 icon="fitness"

@@ -180,14 +180,6 @@ export default function BrainActivityScreen() {
             >
 
                 <GameCard
-                    title="Brain Dashboard"
-                    subtitle="View overall progress"
-                    icon="stats-chart"
-                    color="#2196F3"
-                    screen="BrainDashboard"
-                />
-
-                <GameCard
                     title="Memory Recall"
                     subtitle="Recall the memory sequence"
                     icon="list"
