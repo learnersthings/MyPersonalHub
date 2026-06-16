@@ -98,7 +98,7 @@ export default function QuickDecisionScreen() {
 
         const type =
             Math.floor(
-                Math.random() * 3
+                Math.random() * 4
             );
 
         let questionText =
@@ -190,6 +190,36 @@ export default function QuickDecisionScreen() {
 
                 answer =
                     num % 2 !== 0;
+            }
+        }
+
+        if (type === 3) {
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const isBefore = Math.random() > 0.5;
+            const isTrueStatement = Math.random() > 0.5;
+            
+            const idx1 = Math.floor(Math.random() * 25);
+            const idx2 = idx1 + 1;
+            
+            const l1 = letters[idx1];
+            const l2 = letters[idx2];
+            
+            if (isBefore) {
+                if (isTrueStatement) {
+                    questionText = `${l1} is before ${l2}`;
+                    answer = true;
+                } else {
+                    questionText = `${l2} is before ${l1}`;
+                    answer = false;
+                }
+            } else {
+                if (isTrueStatement) {
+                    questionText = `${l2} is after ${l1}`;
+                    answer = true;
+                } else {
+                    questionText = `${l1} is after ${l2}`;
+                    answer = false;
+                }
             }
         }
 
