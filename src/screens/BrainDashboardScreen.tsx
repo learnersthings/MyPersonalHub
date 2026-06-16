@@ -241,7 +241,7 @@ export default function BrainDashboardScreen() {
                 </Text>
 
                 <Text style={{ color: colors.text }}>
-                    Number Recall: {stats.numberBest}
+                    Memory Recall: {stats.numberBest}
                 </Text>
 
                 <Text style={{ color: colors.text }}>

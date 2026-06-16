@@ -10,7 +10,7 @@ import BrainDashboardScreen from "../screens/BrainDashboardScreen";
 
 import ReactionChallengeScreen from "../screens/ReactionChallengeScreen";
 
-import NumberRecallScreen from "../screens/NumberRecallScreen";
+import MemoryRecallScreen from "../screens/MemoryRecallScreen";
 
 import QuickDecisionScreen from "../screens/QuickDecisionScreen";
 
@@ -43,7 +43,7 @@ export default function HomeStack() {
 
             <Stack.Screen
                 name="NumberRecall"
-                component={NumberRecallScreen}
+                component={MemoryRecallScreen}
             />
 
             <Stack.Screen

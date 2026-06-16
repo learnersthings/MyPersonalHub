@@ -1,0 +1,796 @@
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    TextInput,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import {
+    useState,
+    useRef,
+} from "react";
+
+import {
+    Ionicons,
+} from "@expo/vector-icons";
+
+import {
+    useTheme,
+} from "../context/ThemeContext";
+
+import {
+    globalStyles,
+} from "../theme/styles";
+
+import { useEffect } from "react";
+
+import {
+    getBrainStats,
+    saveBrainStats,
+} from "../services/brainStorage";
+
+export default function MemoryRecallScreen() {
+
+    const {
+        colors,
+    } = useTheme();
+
+    const [gameMode, setGameMode] = useState<"Number" | "Alphabet" | "Both" | null>(null);
+
+    const [
+        sequence,
+        setSequence,
+    ] = useState("");
+
+    const [
+        hidden,
+        setHidden,
+    ] = useState(true);
+
+    const [
+        userAnswer,
+        setUserAnswer,
+    ] = useState("");
+
+    const [
+        result,
+        setResult,
+    ] = useState("");
+
+    const [
+        score,
+        setScore,
+    ] = useState(0);
+
+    const [
+        totalRounds,
+        setTotalRounds,
+    ] = useState(0);
+
+    const [
+        gameStarted,
+        setGameStarted,
+    ] = useState(false);
+
+    const rounds = [4, 5, 6, 8, 8];
+
+    const [
+        currentRound,
+        setCurrentRound,
+    ] = useState(0);
+
+    const MAX_ROUNDS = 5;
+
+    const [
+        gameOver,
+        setGameOver,
+    ] = useState(false);
+
+    const [
+        canSubmit,
+        setCanSubmit,
+    ] = useState(false);
+
+    const inputRef =
+        useRef(null);
+
+    const [inputEnabled, setInputEnabled] =
+        useState(false);
+
+    useEffect(() => {
+
+        if (inputEnabled) {
+
+            setTimeout(() => {
+
+                (inputRef.current as any)?.focus();
+
+            }, 300);
+        }
+
+    }, [inputEnabled]);
+
+    async function updateBrainStats(
+        finalScore: number
+    ) {
+
+        const stats =
+            await getBrainStats();
+
+        stats.totalGames += 1;
+
+        stats.totalScore +=
+            finalScore;
+
+        stats.xp +=
+            finalScore * 10;
+
+        if (
+            finalScore >
+            stats.numberBest
+        ) {
+
+            stats.numberBest =
+                finalScore;
+        }
+
+        await saveBrainStats(
+            stats
+        );
+    }
+
+    function generateSequenceChars(digitCount: number) {
+        const chars = [];
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (let i = 0; i < digitCount; i++) {
+            if (gameMode === "Number") {
+                chars.push(Math.floor(Math.random() * 10).toString());
+            } else if (gameMode === "Alphabet") {
+                chars.push(letters[Math.floor(Math.random() * letters.length)]);
+            } else if (gameMode === "Both") {
+                if (Math.random() > 0.5) {
+                    chars.push(Math.floor(Math.random() * 10).toString());
+                } else {
+                    chars.push(letters[Math.floor(Math.random() * letters.length)]);
+                }
+            }
+        }
+        return chars.join(" ");
+    }
+
+    function generateSequence() {
+
+        if (
+            gameStarted ||
+            gameOver
+        ) {
+            return;
+        }
+
+        const digitCount =
+            rounds[currentRound];
+
+        if (!digitCount)
+            return;
+
+        setGameStarted(true);
+
+        setCanSubmit(false);
+
+        const finalSequence = generateSequenceChars(digitCount);
+
+        setSequence(
+            finalSequence
+        );
+
+        setHidden(false);
+
+        setUserAnswer("");
+
+        setResult("");
+
+        setCanSubmit(false);
+
+        setTimeout(() => {
+
+            setHidden(true);
+
+            setCanSubmit(true);
+
+            setInputEnabled(true);
+
+        }, 5000);
+    }
+
+    function checkAnswer() {
+
+        if (
+            !canSubmit ||
+            gameOver ||
+            userAnswer.trim().length === 0
+        ) {
+            return;
+        }
+
+        setCanSubmit(false);
+
+        setInputEnabled(false);
+
+        (inputRef.current as any)?.blur();
+
+        const cleanUserAnswer =
+            userAnswer.replace(/\s/g, "").toUpperCase();
+
+        const cleanSequence =
+            sequence.replace(/\s/g, "").toUpperCase();
+
+        const nextTotal =
+            totalRounds + 1;
+
+        setTotalRounds(
+            nextTotal
+        );
+
+        let nextScore =
+            score;
+
+        if (
+            cleanUserAnswer
+            ===
+            cleanSequence
+        ) {
+
+            nextScore =
+                score + 1;
+
+            setScore(
+                nextScore
+            );
+
+            setResult(
+                `✅ Correct! (${nextScore}/${nextTotal})`
+            );
+
+        } else {
+
+            setResult(
+                `❌ Wrong! (${score}/${nextTotal})`
+            );
+        }
+
+        const nextRound =
+            currentRound + 1;
+
+        setCurrentRound(
+            nextRound
+        );
+
+        if (
+            nextRound >=
+            rounds.length
+        ) {
+
+            if (nextRound >= rounds.length) {
+                setGameStarted(false);
+
+                updateBrainStats(nextScore);
+
+                setGameOver(true);
+            }
+
+            setTimeout(() => {
+
+                setResult(
+                    `🏁 Game Over! Final Score: ${nextScore}/${MAX_ROUNDS}`
+                );
+
+                setSequence("");
+
+                setUserAnswer("");
+
+            }, 1500);
+
+            return;
+        }
+
+        setTimeout(() => {
+
+            const digitCount =
+                rounds[nextRound];
+
+            setGameStarted(true);
+
+            const finalSequence = generateSequenceChars(digitCount);
+
+            setSequence(
+                finalSequence
+            );
+
+            setHidden(false);
+
+            setUserAnswer("");
+
+            setGameStarted(true);
+
+            setCanSubmit(false);
+
+            setTimeout(() => {
+
+                setHidden(true);
+
+                setCanSubmit(true);
+
+                setInputEnabled(false);
+
+                setTimeout(() => {
+
+                    setInputEnabled(true);
+
+                }, 50);
+
+            }, 5000);
+
+        }, 2000);
+    }
+
+    function restartGame() {
+
+        setSequence("");
+
+        setHidden(true);
+
+        setUserAnswer("");
+
+        setResult("");
+
+        setScore(0);
+
+        setTotalRounds(0);
+
+        setCurrentRound(0);
+
+        setCanSubmit(false);
+
+        setInputEnabled(false);
+
+        setGameStarted(false);
+
+        setGameOver(false);
+
+        setGameMode(null);
+
+        (inputRef.current as any)?.blur();
+    }
+
+    return (
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    padding: 16,
+                }}
+            >
+                {!gameMode ? (
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", width: "100%" }}>
+                        <Text style={{ fontSize: 32, fontWeight: "800", color: colors.text, marginBottom: 10 }}>🧠 Memory Recall</Text>
+                        <Text style={{ color: colors.subText, fontSize: 16, marginBottom: 40, textAlign: "center" }}>Choose what you want to memorize</Text>
+
+                        <TouchableOpacity onPress={() => setGameMode("Number")} style={[globalStyles.button, { marginBottom: 16, width: "100%", backgroundColor: colors.card, borderWidth: 1, borderColor: colors.primary }]}>
+                            <Text style={{ color: colors.text, fontSize: 18, fontWeight: "700" }}>🔢 Number Recall</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => setGameMode("Alphabet")} style={[globalStyles.button, { marginBottom: 16, width: "100%", backgroundColor: colors.card, borderWidth: 1, borderColor: colors.primary }]}>
+                            <Text style={{ color: colors.text, fontSize: 18, fontWeight: "700" }}>🔤 Alphabet Recall</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={() => setGameMode("Both")} style={[globalStyles.button, { marginBottom: 16, width: "100%", backgroundColor: colors.card, borderWidth: 1, borderColor: colors.primary }]}>
+                            <Text style={{ color: colors.text, fontSize: 18, fontWeight: "700" }}>🌪️ Both (Mixed)</Text>
+                        </TouchableOpacity>
+                    </View>
+                ) : (
+                    <>
+                        <TouchableOpacity onPress={() => {
+                            setGameMode(null);
+                            setGameStarted(false);
+                            setGameOver(false);
+                            setSequence("");
+                            setUserAnswer("");
+                            setResult("");
+                            setScore(0);
+                            setTotalRounds(0);
+                            setCurrentRound(0);
+                        }} style={{ position: "absolute", top: 10, left: 16, zIndex: 10 }}>
+                            <Ionicons name="arrow-back" size={28} color={colors.text} />
+                        </TouchableOpacity>
+
+                        <Text
+                            style={{
+                                fontSize: 30,
+
+                                fontWeight: "800",
+
+                                color:
+                                    colors.text,
+
+                                textAlign: "center",
+
+                                marginBottom: 10,
+                                marginTop: 40,
+                            }}
+                        >
+
+                            {gameMode === "Number" ? "🔢 Number Recall" : gameMode === "Alphabet" ? "🔤 Alphabet Recall" : "🌪️ Mixed Recall"}
+
+                        </Text>
+
+                        <Text
+                            style={{
+                                color:
+                                    colors.subText,
+
+                                textAlign: "center",
+
+                                marginBottom: 30,
+
+                                fontSize: 16,
+                            }}
+                        >
+
+                            Memorize the sequence before it disappears
+
+                        </Text>
+
+                        {/* SCORE */}
+
+                        <View
+                            style={{
+                                backgroundColor:
+                                    colors.card,
+
+                                padding: 18,
+
+                                borderRadius: 18,
+
+                                marginBottom: 25,
+
+                                alignItems: "center",
+                            }}
+                        >
+
+                            <Text
+                                style={{
+                                    color:
+                                        colors.subText,
+
+                                    fontSize: 16,
+                                }}
+                            >
+
+                                Score
+
+                            </Text>
+
+                            <Text
+                                style={{
+                                    color:
+                                        colors.primary,
+
+                                    fontSize: 40,
+
+                                    fontWeight: "800",
+                                }}
+                            >
+
+                                {score}/{MAX_ROUNDS}
+
+                            </Text>
+
+                        </View>
+
+                        {/* MEMORY CARD */}
+
+                        <View
+                            style={{
+                                backgroundColor:
+                                    colors.card,
+
+                                padding: 30,
+
+                                borderRadius: 24,
+
+                                alignItems: "center",
+
+                                marginBottom: 25,
+
+                                minHeight: 140,
+
+                                justifyContent: "center",
+                            }}
+                        >
+
+                            {
+                                sequence.length > 0 ? (
+
+                                    <Text
+                                        numberOfLines={1}
+                                        adjustsFontSizeToFit
+                                        style={{
+                                            fontSize: 36,
+
+                                            fontWeight: "800",
+
+                                            color:
+                                                colors.text,
+
+                                            letterSpacing: 6,
+                                        }}
+                                    >
+
+                                        {
+                                            hidden
+                                                ? "• • • •"
+                                                : sequence
+                                        }
+
+                                    </Text>
+
+                                ) : (
+
+                                    <Ionicons
+                                        name="sparkles"
+                                        size={50}
+                                        color={
+                                            colors.primary
+                                        }
+                                    />
+                                )
+                            }
+
+                        </View>
+
+                        {/* INPUT */}
+
+                        {!gameOver && (
+                            <>
+                                <TextInput
+
+                                    ref={inputRef}
+
+                                    placeholder="Enter sequence"
+
+                                    keyboardType={gameMode === "Number" ? "number-pad" : "default"}
+
+                                    autoCapitalize="characters"
+
+                                    showSoftInputOnFocus={true}
+
+                                    placeholderTextColor={
+                                        colors.subText
+                                    }
+
+                                    value={userAnswer}
+
+                                    onChangeText={
+                                        setUserAnswer
+                                    }
+
+                                    editable={
+                                        hidden &&
+                                        sequence.length > 0 &&
+                                        !gameOver
+                                    }
+
+                                    style={{
+                                        backgroundColor:
+                                            gameStarted
+                                                ? colors.card
+                                                : colors.border,
+
+                                        color:
+                                            colors.text,
+
+                                        borderWidth: 1,
+
+                                        borderColor:
+                                            colors.border,
+
+                                        borderRadius: 14,
+
+                                        padding: 16,
+
+                                        fontSize: 18,
+
+                                        marginBottom: 18,
+
+                                        textAlign: "center",
+                                    }}
+                                />
+
+                                {/* BUTTONS */}
+
+                                <TouchableOpacity
+
+                                    disabled={
+                                        sequence.length > 0 ||
+                                        gameOver
+                                    }
+
+                                    onPress={
+                                        generateSequence
+                                    }
+
+                                    style={[
+                                        globalStyles.button,
+                                        {
+                                            marginBottom: 14,
+
+                                            opacity:
+                                                sequence.length > 0 ||
+                                                    gameOver
+                                                    ? 0.5
+                                                    : 1,
+                                        },
+                                    ]}
+                                >
+
+                                    <Text
+                                        style={
+                                            globalStyles.buttonText
+                                        }
+                                    >
+
+                                        Start Challenge
+
+                                    </Text>
+
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+
+                                    disabled={
+                                        !canSubmit ||
+                                        gameOver ||
+                                        userAnswer.trim().length === 0
+                                    }
+
+                                    onPress={checkAnswer}
+
+                                    style={[
+                                        globalStyles.button,
+                                        {
+                                            backgroundColor: "#4CAF50",
+
+                                            opacity:
+                                                !canSubmit ||
+                                                    gameOver ||
+                                                    userAnswer.trim().length === 0
+                                                    ? 0.5
+                                                    : 1,
+                                        },
+                                    ]}
+                                >
+
+                                    <Text
+                                        style={
+                                            globalStyles.buttonText
+                                        }
+                                    >
+                                        Check Answer
+                                    </Text>
+
+                                </TouchableOpacity>
+                            </>
+                        )}
+
+                        {
+                            gameOver && (
+
+                                <View
+                                    style={{
+                                        marginTop: 30,
+
+                                        alignItems: "center",
+                                    }}
+                                >
+
+                                    <Text
+                                        style={{
+                                            fontSize: 28,
+
+                                            fontWeight: "800",
+
+                                            color:
+                                                colors.text,
+
+                                            marginBottom: 10,
+                                        }}
+                                    >
+
+                                        🎉 Game Over
+
+                                    </Text>
+
+                                    <Text
+                                        style={{
+                                            fontSize: 20,
+
+                                            color:
+                                                colors.primary,
+
+                                            fontWeight: "700",
+
+                                            marginBottom: 20,
+                                        }}
+                                    >
+
+                                        Final Score:
+                                        {" "}
+                                        {score}/{MAX_ROUNDS}
+
+                                    </Text>
+
+                                    <TouchableOpacity
+
+                                        onPress={
+                                            restartGame
+                                        }
+
+                                        style={[
+                                            globalStyles.button,
+                                            {
+                                                paddingHorizontal: 30,
+                                            },
+                                        ]}
+                                    >
+
+                                        <Text
+                                            style={
+                                                globalStyles.buttonText
+                                            }
+                                        >
+
+                                            Play Again
+
+                                        </Text>
+
+                                    </TouchableOpacity>
+
+                                </View>
+                            )
+                        }
+
+                        {/* RESULT */}
+
+                        {
+                            result.length > 0 && (
+
+                                <Text
+                                    style={{
+                                        marginTop: 25,
+
+                                        textAlign: "center",
+
+                                        fontSize: 18,
+
+                                        fontWeight: "700",
+
+                                        color:
+                                            result.includes("Correct")
+                                                ? "#4CAF50"
+                                                : "#F44336",
+                                    }}
+                                >
+
+                                    {result}
+
+                                </Text>
+                            )
+                        }
+                    </>
+                )}
+            </View>
+        </SafeAreaView>
+    );
+}

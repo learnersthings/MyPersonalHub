@@ -188,8 +188,8 @@ export default function BrainActivityScreen() {
                 />
 
                 <GameCard
-                    title="Number Recall"
-                    subtitle="Recall the number sequence"
+                    title="Memory Recall"
+                    subtitle="Recall the memory sequence"
                     icon="list"
                     color="#c8e91e"
                     screen="NumberRecall"
