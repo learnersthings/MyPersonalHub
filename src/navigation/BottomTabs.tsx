@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import HomeStack from "./HomeStack";
 import SettingsStack from "./SettingsStack";
 import ScreenStack from "./NotesStack";
+import RemindersStack from "./RemindersStack";
 import TasksStack from "./TasksStack";
 import AnalyticsScreen from "../screens/AnalyticsScreen";
 
@@ -20,6 +21,8 @@ export default function BottomTabs() {
 
                         if (route.name === "Home") {
                             iconName = focused ? "home" : "home-outline";
+                        } else if (route.name === "Reminders") {
+                            iconName = focused ? "alarm" : "alarm-outline";
                         } else if (route.name === "Notes") {
                             iconName = focused ? "document-text" : "document-text-outline";
                         } else if (route.name === "Tasks") {
@@ -57,6 +60,14 @@ export default function BottomTabs() {
                 <Tab.Screen
                     name="Home"
                     component={HomeStack}
+                />
+
+                <Tab.Screen
+                    name="Reminders"
+                    component={RemindersStack}
+                    options={{
+                        headerShown: false,
+                    }}
                 />
 
                 <Tab.Screen
