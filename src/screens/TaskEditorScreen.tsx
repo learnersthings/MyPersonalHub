@@ -26,6 +26,12 @@ import {
 } from "../services/tasksStorage";
 
 import {
+    getCategories,
+} from "../services/categoryStorage";
+
+import { Category } from "../types/Category";
+
+import {
     globalStyles,
 } from "../theme/styles";
 
@@ -62,7 +68,7 @@ export default function TaskEditorScreen() {
         category,
         setCategory,
     ] =
-        useState("Personal");
+        useState("");
 
     const [
         priority,
@@ -84,6 +90,11 @@ export default function TaskEditorScreen() {
     ] =
         useState(false);
 
+    const [
+        categories,
+        setCategories,
+    ] = useState<Category[]>([]);
+
     useEffect(() => {
 
         if (editingTask) {
@@ -94,7 +105,7 @@ export default function TaskEditorScreen() {
 
             setCategory(
                 editingTask.category
-                || "Personal"
+                || ""
             );
 
             setPriority(
@@ -113,6 +124,12 @@ export default function TaskEditorScreen() {
                 );
             }
         }
+
+        async function fetchCategories() {
+            const cats = await getCategories();
+            setCategories(cats);
+        }
+        fetchCategories();
 
     }, []);
 
@@ -301,46 +318,49 @@ export default function TaskEditorScreen() {
                 }}
             >
 
-                {[
-                    "Personal",
-                    "Study",
-                    "Work",
-                    "Fitness",
-                    "Shopping",
-                    "Travel",
-                    "Other"
-                ].map(item => (
+                {categories.map(item => (
 
                     <TouchableOpacity
 
-                        key={item}
+                        key={item.id}
 
                         onPress={() =>
-                            setCategory(item)
+                            setCategory(item.name)
                         }
 
                         style={{
+                            flexDirection: "row",
+                            alignItems: "center",
                             paddingVertical: 10,
                             paddingHorizontal: 16,
 
                             borderRadius: 20,
 
                             backgroundColor:
-                                category === item
-                                    ? colors.primary
+                                category === item.name
+                                    ? item.color
                                     : colors.card,
 
                             borderWidth: 1,
 
                             borderColor:
-                                colors.border,
+                                category === item.name
+                                    ? item.color
+                                    : colors.border,
                         }}
                     >
+
+                        <Ionicons 
+                            name={item.icon as any} 
+                            size={16} 
+                            color={category === item.name ? "#fff" : item.color} 
+                            style={{ marginRight: 6 }} 
+                        />
 
                         <Text
                             style={{
                                 color:
-                                    category === item
+                                    category === item.name
                                         ? "#fff"
                                         : colors.text,
 
@@ -348,7 +368,7 @@ export default function TaskEditorScreen() {
                             }}
                         >
 
-                            {item}
+                            {item.name}
 
                         </Text>
 

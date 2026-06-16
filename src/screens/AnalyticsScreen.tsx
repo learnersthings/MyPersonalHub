@@ -22,6 +22,12 @@ import {
 } from "../services/tasksStorage";
 
 import {
+    getCategories,
+} from "../services/categoryStorage";
+
+import { Category } from "../types/Category";
+
+import {
     globalStyles,
 } from "../theme/styles";
 
@@ -40,6 +46,11 @@ export default function AnalyticsScreen() {
         setTasks,
     ] = useState<any[]>([]);
 
+    const [
+        categories,
+        setCategories,
+    ] = useState<Category[]>([]);
+
     useFocusEffect(
         useCallback(() => {
 
@@ -52,8 +63,12 @@ export default function AnalyticsScreen() {
 
         const data =
             await getTasks();
+            
+        const cats = 
+            await getCategories();
 
         setTasks(data);
+        setCategories(cats);
     }
 
     const totalTasks =
@@ -82,15 +97,6 @@ export default function AnalyticsScreen() {
 
             : 0;
 
-    const categories = [
-        "Personal",
-        "Study",
-        "Work",
-        "Fitness",
-        "Shopping",
-        "Travel",
-        "Other",
-    ];
 
     function getCategoryCount(
         category: string

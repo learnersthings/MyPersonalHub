@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
 import HomeStack from "./HomeStack";
-import SettingsScreen from "../screens/SettingsScreen";
+import SettingsStack from "./SettingsStack";
 import ScreenStack from "./NotesStack";
 import TasksStack from "./TasksStack";
 import AnalyticsScreen from "../screens/AnalyticsScreen";
@@ -91,7 +91,7 @@ export default function BottomTabs() {
 
                 <Tab.Screen
                     name="Settings"
-                    component={SettingsScreen}
+                    component={SettingsStack}
                 />
             </Tab.Navigator>
         </NavigationContainer>

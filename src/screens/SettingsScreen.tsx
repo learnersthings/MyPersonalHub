@@ -3,6 +3,7 @@ import {
     Text,
     Switch,
     ScrollView,
+    TouchableOpacity,
 } from "react-native";
 
 import {
@@ -25,7 +26,14 @@ import {
     useTheme,
 } from "../context/ThemeContext";
 
+import {
+    useNavigation,
+} from "@react-navigation/native";
+
 export default function SettingsScreen() {
+
+    const navigation =
+        useNavigation<any>();
 
     const {
         darkMode,
@@ -346,6 +354,60 @@ export default function SettingsScreen() {
                         toggleCompleted
                     }
                 />
+
+            </View>
+
+            <View
+                style={{
+                    backgroundColor:
+                        colors.card,
+
+                    borderRadius: 16,
+
+                    paddingHorizontal: 16,
+
+                    marginBottom: 18,
+                }}
+            >
+
+                <Text
+                    style={{
+                        fontSize: 18,
+
+                        fontWeight: "700",
+
+                        marginTop: 16,
+
+                        marginBottom: 8,
+
+                        color:
+                            colors.text,
+                    }}
+                >
+
+                    Categories
+
+                </Text>
+
+                <TouchableOpacity
+                    onPress={() => navigation.navigate("ManageCategories")}
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        paddingVertical: 16,
+                        borderBottomWidth: 1,
+                        borderBottomColor: colors.border,
+                    }}
+                >
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <Ionicons name="pricetags-outline" size={22} color={colors.primary} />
+                        <Text style={{ marginLeft: 12, fontSize: 16, fontWeight: "500", color: colors.text }}>
+                            Manage Categories
+                        </Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={20} color={colors.subText} />
+                </TouchableOpacity>
 
             </View>
 

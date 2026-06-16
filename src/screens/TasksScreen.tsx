@@ -26,6 +26,12 @@ import {
 } from "../services/tasksStorage";
 
 import {
+    getCategories,
+} from "../services/categoryStorage";
+
+import { Category } from "../types/Category";
+
+import {
     globalStyles,
 } from "../theme/styles";
 
@@ -36,43 +42,6 @@ import {
     useTheme,
 } from "../context/ThemeContext";
 
-const categoryStyles: any = {
-
-    Personal: {
-        color: "#2196F3",
-        icon: "person",
-    },
-
-    Study: {
-        color: "#9C27B0",
-        icon: "book",
-    },
-
-    Work: {
-        color: "#FF9800",
-        icon: "briefcase",
-    },
-
-    Fitness: {
-        color: "#4CAF50",
-        icon: "barbell",
-    },
-
-    Shopping: {
-        color: "#E91E63",
-        icon: "cart",
-    },
-
-    Travel: {
-        color: "#43B581",
-        icon: "train",
-    },
-
-    Other: {
-        color: "#7F8C8D",
-        icon: "ellipsis-horizontal",
-    },
-};
 
 export default function TasksScreen() {
 
@@ -97,6 +66,11 @@ export default function TasksScreen() {
         setSearchText,
     ] = useState("");
 
+    const [
+        categories,
+        setCategories,
+    ] = useState<Category[]>([]);
+
     useFocusEffect(
         useCallback(() => {
             loadTasks();
@@ -107,6 +81,11 @@ export default function TasksScreen() {
 
         const data =
             await getTasks();
+
+        const cats = 
+            await getCategories();
+            
+        setCategories(cats);
 
         const priorityOrder: Record<
             string,
@@ -553,13 +532,7 @@ export default function TasksScreen() {
                         "All",
                         "Completed",
                         "Pending",
-                        "Personal",
-                        "Study",
-                        "Work",
-                        "Fitness",
-                        "Shopping",
-                        "Travel",
-                        "Other",
+                        ...categories.map(c => c.name),
                     ]}
 
                     keyExtractor={
@@ -821,7 +794,6 @@ export default function TasksScreen() {
                                 },
                             ]}
                         >
-
                             <Text
                                 style={{
                                     fontSize: 16,
@@ -846,63 +818,60 @@ export default function TasksScreen() {
 
                             </Text>
 
-                            <View
-                                style={{
-                                    flexDirection: "row",
-
-                                    alignItems: "center",
-
-                                    alignSelf: "flex-start",
-
-                                    marginTop: 8,
-
-                                    backgroundColor:
-                                        `${categoryStyles[item.category]?.color}20`,
-
-                                    paddingVertical: 5,
-
-                                    paddingHorizontal: 10,
-
-                                    borderRadius: 20,
-                                }}
-                            >
-
-                                <Ionicons
-                                    name={
-                                        categoryStyles[
-                                            item.category
-                                        ]?.icon
-                                    }
-
-                                    size={14}
-
-                                    color={
-                                        categoryStyles[
-                                            item.category
-                                        ]?.color
-                                    }
-                                />
-
-                                <Text
+                            {item.category ? (
+                                <View
                                     style={{
-                                        color:
-                                            categoryStyles[
-                                                item.category
-                                            ]?.color,
+                                        flexDirection: "row",
 
-                                        fontSize: 12,
+                                        alignItems: "center",
 
-                                        fontWeight: "700",
+                                        alignSelf: "flex-start",
 
-                                        marginLeft: 5,
+                                        marginTop: 8,
+
+                                        backgroundColor:
+                                            `${categories.find(c => c.name === item.category)?.color || "#7F8C8D"}20`,
+
+                                        paddingVertical: 5,
+
+                                        paddingHorizontal: 10,
+
+                                        borderRadius: 20,
                                     }}
                                 >
 
-                                    {item.category}
+                                    <Ionicons
+                                        name={
+                                            (categories.find(c => c.name === item.category)?.icon as any)
+                                            || "ellipsis-horizontal"
+                                        }
 
-                                </Text>
+                                        size={14}
 
-                            </View>
+                                        color={
+                                            categories.find(c => c.name === item.category)?.color || "#7F8C8D"
+                                        }
+                                    />
+
+                                    <Text
+                                        style={{
+                                            color:
+                                                categories.find(c => c.name === item.category)?.color || "#7F8C8D",
+
+                                            fontSize: 12,
+
+                                            fontWeight: "700",
+
+                                            marginLeft: 5,
+                                        }}
+                                    >
+
+                                        {item.category}
+
+                                    </Text>
+
+                                </View>
+                            ) : null}
 
                             <View
                                 style={{
