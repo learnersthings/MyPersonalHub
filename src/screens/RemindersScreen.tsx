@@ -11,6 +11,7 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 
 import { getReminders, saveReminders } from "../services/remindersStorage";
+import { cancelReminderNotification } from "../services/notificationService";
 import { Reminder } from "../types/Reminder";
 import { globalStyles } from "../theme/styles";
 import { useTheme } from "../context/ThemeContext";
@@ -34,10 +35,16 @@ export default function RemindersScreen() {
     }
 
     async function toggleReminder(id: string) {
-        const updated = reminders.map(reminder =>
-            reminder.id === id
-                ? { ...reminder, completed: !reminder.completed }
-                : reminder
+        const reminder = reminders.find(r => r.id === id);
+        if (reminder && !reminder.completed && reminder.notificationId) {
+            // It is being marked as completed. Cancel the notification.
+            await cancelReminderNotification(reminder.notificationId);
+        }
+
+        const updated = reminders.map(r =>
+            r.id === id
+                ? { ...r, completed: !r.completed }
+                : r
         );
         setReminders(updated);
         await saveReminders(updated);
@@ -53,7 +60,12 @@ export default function RemindersScreen() {
                     text: "Delete",
                     style: "destructive",
                     onPress: async () => {
-                        const updated = reminders.filter(reminder => reminder.id !== id);
+                        const reminderToDelete = reminders.find(r => r.id === id);
+                        if (reminderToDelete?.notificationId) {
+                            await cancelReminderNotification(reminderToDelete.notificationId);
+                        }
+
+                        const updated = reminders.filter(r => r.id !== id);
                         setReminders(updated);
                         await saveReminders(updated);
                     },

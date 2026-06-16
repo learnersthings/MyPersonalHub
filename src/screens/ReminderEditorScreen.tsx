@@ -29,6 +29,11 @@ import {
 } from "../services/remindersStorage";
 
 import {
+    scheduleReminderNotification,
+    cancelReminderNotification,
+} from "../services/notificationService";
+
+import {
     globalStyles,
 } from "../theme/styles";
 
@@ -97,6 +102,16 @@ export default function ReminderEditorScreen() {
         )
             return;
 
+        let newNotificationId: string | undefined = undefined;
+
+        if (editingReminder) {
+            await cancelReminderNotification(editingReminder.notificationId);
+        }
+
+        if (dueDate) {
+            newNotificationId = await scheduleReminderNotification(title, dueDate);
+        }
+
         const reminders =
             await getReminders();
 
@@ -115,6 +130,7 @@ export default function ReminderEditorScreen() {
                             ...reminder,
                             title,
                             dueDate: dueDate ? dueDate.toISOString() : undefined,
+                            notificationId: newNotificationId,
                         }
 
                         : reminder
@@ -134,6 +150,7 @@ export default function ReminderEditorScreen() {
                     false,
 
                 dueDate: dueDate ? dueDate.toISOString() : undefined,
+                notificationId: newNotificationId,
 
                 createdAt:
                     new Date()

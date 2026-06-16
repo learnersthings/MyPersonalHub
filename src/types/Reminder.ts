@@ -3,5 +3,6 @@ export interface Reminder {
     title: string;
     completed: boolean;
     dueDate?: string;
+    notificationId?: string;
     createdAt: string;
 }
