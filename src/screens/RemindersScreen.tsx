@@ -128,6 +128,15 @@ export default function RemindersScreen() {
                             >
                                 ⏰ {item.title}
                             </Text>
+
+                            {item.dueDate && (
+                                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6, gap: 4 }}>
+                                    <Ionicons name="calendar-outline" size={14} color={colors.subText} />
+                                    <Text style={{ fontSize: 12, color: colors.subText }}>
+                                        {new Date(item.dueDate).toLocaleDateString()} at {new Date(item.dueDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </Text>
+                                </View>
+                            )}
                         </TouchableOpacity>
                     </Swipeable>
                 )}
