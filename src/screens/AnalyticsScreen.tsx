@@ -63,8 +63,8 @@ export default function AnalyticsScreen() {
 
         const data =
             await getTasks();
-            
-        const cats = 
+
+        const cats =
             await getCategories();
 
         setTasks(data);
@@ -331,14 +331,6 @@ export default function AnalyticsScreen() {
                     icon="apps"
                     color="#2196F3"
                 />
-
-            </View>
-
-            <View
-                style={{
-                    flexDirection: "row",
-                }}
-            >
 
                 <StatCard
                     title="Completed"

@@ -19,6 +19,7 @@ import {
 } from "@react-navigation/native";
 
 import { useCallback } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import {
     getTasks,
@@ -57,6 +58,11 @@ export default function TasksScreen() {
     ] = useState<any[]>([]);
 
     const [
+        showCompleted,
+        setShowCompleted,
+    ] = useState(true);
+
+    const [
         filter,
         setFilter,
     ] = useState("All");
@@ -86,6 +92,11 @@ export default function TasksScreen() {
             await getCategories();
             
         setCategories(cats);
+
+        const completedSetting = await AsyncStorage.getItem("showCompleted");
+        if (completedSetting !== null) {
+            setShowCompleted(JSON.parse(completedSetting));
+        }
 
         const priorityOrder: Record<
             string,
@@ -221,6 +232,10 @@ export default function TasksScreen() {
 
             if (!matchesSearch)
                 return false;
+
+            if (!showCompleted && filter !== "Completed" && task.completed) {
+                return false;
+            }
 
             if (
                 filter ===
