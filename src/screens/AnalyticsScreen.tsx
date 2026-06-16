@@ -69,18 +69,6 @@ export default function AnalyticsScreen() {
         totalTasks -
         completedTasks;
 
-    const habitsCount =
-        tasks.filter(
-            task =>
-                task.isHabit
-        ).length;
-
-    const taskCount =
-        tasks.filter(
-            task =>
-                !task.isHabit
-        ).length;
-
     const progress =
         totalTasks > 0
 
@@ -336,20 +324,6 @@ export default function AnalyticsScreen() {
                     value={totalTasks}
                     icon="apps"
                     color="#2196F3"
-                />
-
-                <StatCard
-                    title="Tasks"
-                    value={taskCount}
-                    icon="clipboard"
-                    color="#9C27B0"
-                />
-
-                <StatCard
-                    title="Habits"
-                    value={habitsCount}
-                    icon="flame"
-                    color="#FF9800"
                 />
 
             </View>

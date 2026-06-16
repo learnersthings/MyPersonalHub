@@ -59,12 +59,6 @@ export default function TaskEditorScreen() {
         useState("");
 
     const [
-        habitMode,
-        setHabitMode,
-    ] =
-        useState(false);
-
-    const [
         category,
         setCategory,
     ] =
@@ -96,10 +90,6 @@ export default function TaskEditorScreen() {
 
             setTitle(
                 editingTask.title
-            );
-
-            setHabitMode(
-                editingTask.isHabit
             );
 
             setCategory(
@@ -152,12 +142,6 @@ export default function TaskEditorScreen() {
 
                             title,
 
-                            isHabit:
-                                habitMode,
-
-                            taskMode:
-                                !habitMode,
-
                             category,
 
                             priority,
@@ -181,12 +165,6 @@ export default function TaskEditorScreen() {
 
                 completed:
                     false,
-
-                isHabit:
-                    habitMode,
-
-                taskMode:
-                    !habitMode,
 
                 category,
 
@@ -263,8 +241,8 @@ export default function TaskEditorScreen() {
                 >
                     {
                         editingTask
-                            ? "Edit Task or Habit"
-                            : "Create Task or Habit"
+                            ? "Edit Task"
+                            : "Create Task"
                     }
                 </Text>
 
@@ -272,7 +250,7 @@ export default function TaskEditorScreen() {
 
             <TextInput
 
-                placeholder="Enter task or habit..."
+                placeholder="Enter task..."
 
                 placeholderTextColor={
                     colors.subText
@@ -300,143 +278,6 @@ export default function TaskEditorScreen() {
                     },
                 ]}
             />
-
-            <Text
-                style={{
-                    fontSize: 16,
-                    fontWeight: "600",
-                    marginBottom: 10,
-                    color: colors.text,
-                }}
-            >
-
-                Mode
-
-            </Text>
-
-            <View
-                style={{
-                    flexDirection: "row",
-                    backgroundColor: colors.card,
-                    borderRadius: 14,
-                    padding: 4,
-                    marginBottom: 20,
-                    borderWidth: 1,
-                    borderColor: colors.border,
-                }}
-            >
-
-                <TouchableOpacity
-
-                    onPress={() =>
-                        setHabitMode(false)
-                    }
-
-                    style={{
-                        flex: 1,
-
-                        backgroundColor:
-                            !habitMode
-                                ? "#2196F3"
-                                : "transparent",
-
-                        paddingVertical: 12,
-
-                        borderRadius: 10,
-
-                        alignItems: "center",
-
-                        flexDirection: "row",
-
-                        justifyContent: "center",
-
-                        gap: 6,
-                    }}
-                >
-
-                    <Ionicons
-                        name="clipboard"
-                        size={18}
-                        color={
-                            !habitMode
-                                ? "#fff"
-                                : colors.text
-                        }
-                    />
-
-                    <Text
-                        style={{
-                            color:
-                                !habitMode
-                                    ? "#fff"
-                                    : colors.text,
-
-                            fontWeight: "700",
-                        }}
-                    >
-
-                        Task
-
-                    </Text>
-
-                </TouchableOpacity>
-
-                <TouchableOpacity
-
-                    onPress={() =>
-                        setHabitMode(true)
-                    }
-
-                    style={{
-                        flex: 1,
-
-                        backgroundColor:
-                            habitMode
-                                ? "#FF9800"
-                                : "transparent",
-
-                        paddingVertical: 12,
-
-                        borderRadius: 10,
-
-                        alignItems: "center",
-
-                        flexDirection: "row",
-
-                        justifyContent: "center",
-
-                        gap: 6,
-                    }}
-                >
-
-                    <Ionicons
-                        name="flame"
-                        size={18}
-                        color={
-                            habitMode
-                                ? "#fff"
-                                : colors.text
-                        }
-                    />
-
-                    <Text
-                        style={{
-                            color:
-                                habitMode
-                                    ? "#fff"
-                                    : colors.text,
-
-                            fontWeight: "700",
-                        }}
-                    >
-
-                        Habit
-
-                    </Text>
-
-                </TouchableOpacity>
-
-            </View>
 
             <Text
                 style={{

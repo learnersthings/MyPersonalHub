@@ -257,18 +257,6 @@ export default function TasksScreen() {
 
             if (
                 filter ===
-                "Tasks"
-            )
-                return task.taskMode;
-
-            if (
-                filter ===
-                "Habits"
-            )
-                return task.isHabit;
-
-            if (
-                filter ===
                 "Today"
             )
 
@@ -353,7 +341,7 @@ export default function TasksScreen() {
                 }}
             >
 
-                📝 Tasks & Habits
+                📝 Tasks
 
             </Text>
 
@@ -563,8 +551,6 @@ export default function TasksScreen() {
 
                     data={[
                         "All",
-                        "Tasks",
-                        "Habits",
                         "Completed",
                         "Pending",
                         "Personal",
@@ -599,12 +585,6 @@ export default function TasksScreen() {
 
                                 if (item === "Pending")
                                     return !task.completed;
-
-                                if (item === "Tasks")
-                                    return task.taskMode;
-
-                                if (item === "Habits")
-                                    return task.isHabit;
 
                                 return (
                                     task.category === item
