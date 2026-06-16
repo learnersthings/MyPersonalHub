@@ -3,6 +3,7 @@ import {
 } from "@react-navigation/native-stack";
 
 import RemindersScreen from "../screens/RemindersScreen";
+import ReminderEditorScreen from "../screens/ReminderEditorScreen";
 
 const Stack =
     createNativeStackNavigator();
@@ -20,6 +21,11 @@ export default function RemindersStack() {
             <Stack.Screen
                 name="RemindersMain"
                 component={RemindersScreen}
+            />
+
+            <Stack.Screen
+                name="ReminderEditor"
+                component={ReminderEditorScreen}
             />
 
         </Stack.Navigator>
