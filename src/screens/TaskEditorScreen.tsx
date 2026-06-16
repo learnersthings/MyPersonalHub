@@ -35,10 +35,6 @@ import {
     globalStyles,
 } from "../theme/styles";
 
-import DateTimePicker
-    from
-    "@react-native-community/datetimepicker";
-
 import {
     useTheme,
 } from "../context/ThemeContext";
@@ -77,20 +73,6 @@ export default function TaskEditorScreen() {
         useState("Medium");
 
     const [
-        dueDate,
-        setDueDate,
-    ] =
-        useState(
-            new Date()
-        );
-
-    const [
-        showDatePicker,
-        setShowDatePicker,
-    ] =
-        useState(false);
-
-    const [
         categories,
         setCategories,
     ] = useState<Category[]>([]);
@@ -112,17 +94,6 @@ export default function TaskEditorScreen() {
                 editingTask.priority
                 || "Medium"
             );
-
-            if (
-                editingTask.dueDate
-            ) {
-
-                setDueDate(
-                    new Date(
-                        editingTask.dueDate
-                    )
-                );
-            }
         }
 
         async function fetchCategories() {
@@ -162,9 +133,6 @@ export default function TaskEditorScreen() {
                             category,
 
                             priority,
-
-                            dueDate:
-                                dueDate.toISOString(),
                         }
 
                         : task
@@ -186,10 +154,6 @@ export default function TaskEditorScreen() {
                 category,
 
                 priority,
-
-                dueDate:
-                    dueDate
-                        .toISOString(),
 
                 createdAt:
                     new Date()
@@ -465,105 +429,6 @@ export default function TaskEditorScreen() {
                 ))}
 
             </View>
-
-            <Text
-                style={{
-                    fontSize: 16,
-                    fontWeight: "600",
-                    marginBottom: 10,
-                    color: colors.text,
-                }}
-            >
-
-                Due Date
-
-            </Text>
-
-            <TouchableOpacity
-
-                onPress={() =>
-                    setShowDatePicker(
-                        true
-                    )
-                }
-
-                style={{
-                    backgroundColor:
-                        colors.card,
-
-                    borderWidth: 1,
-
-                    borderColor:
-                        colors.border,
-
-                    borderRadius: 12,
-
-                    padding: 14,
-
-                    marginBottom: 24,
-
-                    flexDirection: "row",
-
-                    alignItems: "center",
-
-                    justifyContent: "space-between",
-                }}
-            >
-
-                <Text
-                    style={{
-                        fontSize: 15,
-                        color: colors.text,
-                    }}
-                >
-
-                    {
-                        dueDate
-                            .toLocaleDateString()
-                    }
-
-                </Text>
-
-                <Ionicons
-                    name="calendar-outline"
-                    size={20}
-                    color={colors.subText}
-                />
-
-            </TouchableOpacity>
-
-            {
-                showDatePicker && (
-
-                    <DateTimePicker
-
-                        value={dueDate}
-
-                        mode="date"
-
-                        display="default"
-
-                        onChange={(
-                            event,
-                            selectedDate
-                        ) => {
-
-                            setShowDatePicker(
-                                false
-                            );
-
-                            if (
-                                selectedDate
-                            ) {
-
-                                setDueDate(
-                                    selectedDate
-                                );
-                            }
-                        }}
-                    />
-                )
-            }
 
             <TouchableOpacity
 

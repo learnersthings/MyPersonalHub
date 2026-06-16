@@ -88,9 +88,9 @@ export default function TasksScreen() {
         const data =
             await getTasks();
 
-        const cats = 
+        const cats =
             await getCategories();
-            
+
         setCategories(cats);
 
         const completedSetting = await AsyncStorage.getItem("showCompleted");
@@ -186,23 +186,6 @@ export default function TasksScreen() {
             ) * 100
             : 0;
 
-    const today =
-        new Date();
-
-    today.setHours(
-        0,
-        0,
-        0,
-        0
-    );
-
-    const weekLater =
-        new Date();
-
-    weekLater.setDate(
-        today.getDate() + 7
-    );
-
     const filteredTasks =
         tasks.filter(task => {
 
@@ -248,62 +231,6 @@ export default function TasksScreen() {
                 "Pending"
             )
                 return !task.completed;
-
-            if (
-                filter ===
-                "Today"
-            )
-
-                return (
-                    new Date(
-                        task.dueDate
-                    )
-                        .toDateString()
-                    ===
-                    today.toDateString()
-                );
-
-            if (
-                filter ===
-                "Upcoming"
-            )
-
-                return (
-                    new Date(
-                        task.dueDate
-                    ) > today
-                );
-
-            if (
-                filter ===
-                "Overdue"
-            )
-
-                return (
-                    !task.completed
-                    &&
-                    new Date(
-                        task.dueDate
-                    ) < today
-                );
-
-            if (
-                filter ===
-                "This Week"
-            )
-
-                return (
-
-                    new Date(
-                        task.dueDate
-                    ) >= today
-
-                    &&
-
-                    new Date(
-                        task.dueDate
-                    ) <= weekLater
-                );
 
             if (
                 task.category ===
@@ -802,10 +729,7 @@ export default function TasksScreen() {
                                     borderLeftColor:
                                         item.completed
                                             ? "#4CAF50"
-                                            : new Date() >
-                                                new Date(item.dueDate)
-                                                ? "#2196F3"
-                                                : "#F44336",
+                                            : "#2196F3",
                                 },
                             ]}
                         >
@@ -823,13 +747,7 @@ export default function TasksScreen() {
                                 }}
                             >
 
-                                {
-                                    item.isHabit
-                                        ? "🔥 "
-                                        : "✅ "
-                                }
-
-                                {item.title}
+                                ✅ {item.title}
 
                             </Text>
 
@@ -922,79 +840,6 @@ export default function TasksScreen() {
                                 >
 
                                     {item.priority}
-
-                                </Text>
-
-                            </View>
-
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    marginTop: 8,
-                                }}
-                            >
-
-                                <Ionicons
-                                    name="time-outline"
-                                    size={14}
-                                    color={
-                                        colors.subText
-                                    }
-                                />
-
-                                <Text
-                                    style={{
-                                        marginLeft: 5,
-                                        fontSize: 13,
-                                        color:
-                                            colors.subText,
-                                    }}
-                                >
-
-                                    Due:{" "}
-
-                                    {
-                                        new Date(
-                                            item.dueDate
-                                        ).toLocaleDateString()
-                                    }
-
-                                </Text>
-
-                            </View>
-
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    marginTop: 10,
-                                }}
-                            >
-
-                                <Ionicons
-                                    name="calendar-outline"
-                                    size={14}
-                                    color={
-                                        colors.subText
-                                    }
-                                />
-
-                                <Text
-                                    style={{
-                                        marginLeft: 5,
-                                        color:
-                                            colors.subText,
-
-                                        fontSize: 13,
-                                    }}
-                                >
-
-                                    {
-                                        new Date(
-                                            item.createdAt
-                                        ).toLocaleDateString()
-                                    }
 
                                 </Text>
 
