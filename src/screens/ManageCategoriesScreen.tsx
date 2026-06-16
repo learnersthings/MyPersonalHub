@@ -167,17 +167,29 @@ export default function ManageCategoriesScreen() {
 
             <TouchableOpacity
                 onPress={() => openModal()}
-                style={[globalStyles.button, { backgroundColor: colors.primary, position: "absolute", bottom: 40, left: 20, right: 20 }]}
+                style={{
+                    backgroundColor: colors.primary,
+                    position: "absolute",
+                    bottom: 40,
+                    right: 20,
+                    width: 60,
+                    height: 60,
+                    borderRadius: 30,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 4,
+                    elevation: 5,
+                }}
             >
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8 }}>
-                    <Ionicons name="add" size={22} color="#fff" />
-                    <Text style={globalStyles.buttonText}>Add Category</Text>
-                </View>
+                <Ionicons name="add" size={32} color="#fff" />
             </TouchableOpacity>
 
             <Modal visible={isModalVisible} animationType="slide" transparent={true}>
                 <View style={{ flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.5)" }}>
-                    <View style={{ backgroundColor: colors.background, padding: 24, borderTopLeftRadius: 24, borderTopRightRadius: 24, height: "80%" }}>
+                    <View style={{ backgroundColor: colors.background, paddingHorizontal: 24, paddingTop: 24, paddingBottom: 56, borderTopLeftRadius: 24, borderTopRightRadius: 24, height: "80%" }}>
                         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
                             <Text style={{ fontSize: 20, fontWeight: "700", color: colors.text }}>
                                 {editingId ? "Edit Category" : "New Category"}
