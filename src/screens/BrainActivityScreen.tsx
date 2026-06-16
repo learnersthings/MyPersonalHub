@@ -196,51 +196,11 @@ export default function BrainActivityScreen() {
                 />
 
                 <GameCard
-                    title="Pattern Challenge"
-                    subtitle="Find the missing number"
-                    icon="grid"
-                    color="#4CAF50"
-                    screen="PatternChallenge"
-                />
-
-                <GameCard
-                    title="Math Challenge"
-                    subtitle="Solve quick equations"
-                    icon="calculator"
-                    color="#FF9800"
-                    screen="MathChallenge"
-                />
-
-                <GameCard
                     title="Reaction Time"
                     subtitle="Test your reflex speed"
                     icon="flash"
                     color="#E91E63"
                     screen="ReactionChallenge"
-                />
-
-                <GameCard
-                    title="Word Puzzle"
-                    subtitle="Unscramble words"
-                    icon="text"
-                    color="#9C27B0"
-                    screen="WordPuzzle"
-                />
-
-                <GameCard
-                    title="Visual Memory"
-                    subtitle="Remember tile positions"
-                    icon="grid"
-                    color="#3F51B5"
-                    screen="VisualMemory"
-                />
-
-                <GameCard
-                    title="Color Match"
-                    subtitle="Match the color, not the word"
-                    icon="color-palette"
-                    color="#E91E63"
-                    screen="ColorMatch"
                 />
 
                 <GameCard

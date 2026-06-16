@@ -8,17 +8,7 @@ import BrainActivityScreen from "../screens/BrainActivityScreen";
 
 import BrainDashboardScreen from "../screens/BrainDashboardScreen";
 
-import PatternChallengeScreen from "../screens/PatternChallengeScreen";
-
-import MathChallengeScreen from "../screens/MathChallengeScreen";
-
 import ReactionChallengeScreen from "../screens/ReactionChallengeScreen";
-
-import WordPuzzleScreen from "../screens/WordPuzzleScreen";
-
-import VisualMemoryScreen from "../screens/VisualMemoryScreen";
-
-import ColorMatchScreen from "../screens/ColorMatchScreen";
 
 import NumberRecallScreen from "../screens/NumberRecallScreen";
 
@@ -57,33 +47,8 @@ export default function HomeStack() {
             />
 
             <Stack.Screen
-                name="PatternChallenge"
-                component={PatternChallengeScreen}
-            />
-
-            <Stack.Screen
-                name="MathChallenge"
-                component={MathChallengeScreen}
-            />
-
-            <Stack.Screen
                 name="ReactionChallenge"
                 component={ReactionChallengeScreen}
-            />
-
-            <Stack.Screen
-                name="WordPuzzle"
-                component={WordPuzzleScreen}
-            />
-
-            <Stack.Screen
-                name="VisualMemory"
-                component={VisualMemoryScreen}
-            />
-
-            <Stack.Screen
-                name="ColorMatch"
-                component={ColorMatchScreen}
             />
 
             <Stack.Screen

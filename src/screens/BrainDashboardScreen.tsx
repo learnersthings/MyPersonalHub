@@ -245,27 +245,7 @@ export default function BrainDashboardScreen() {
                 </Text>
 
                 <Text style={{ color: colors.text }}>
-                    Pattern Challenge: {stats.patternBest}
-                </Text>
-
-                <Text style={{ color: colors.text }}>
-                    Math Challenge: {stats.mathBest}
-                </Text>
-
-                <Text style={{ color: colors.text }}>
                     Reaction Time: {stats.reactionBest}
-                </Text>
-
-                <Text style={{ color: colors.text }}>
-                    Word Puzzle: {stats.wordBest}
-                </Text>
-
-                <Text style={{ color: colors.text }}>
-                    Visual Memory: {stats.visualBest}
-                </Text>
-
-                <Text style={{ color: colors.text }}>
-                    Color Match: {stats.colorBest}
                 </Text>
 
                 <Text style={{ color: colors.text }}>
