@@ -130,6 +130,25 @@ export default function ReminderEditorScreen() {
         setMode(currentMode);
     };
 
+    const daysOfWeek = [
+        { label: 'S', value: 0 },
+        { label: 'M', value: 1 },
+        { label: 'T', value: 2 },
+        { label: 'W', value: 3 },
+        { label: 'T', value: 4 },
+        { label: 'F', value: 5 },
+        { label: 'S', value: 6 },
+    ];
+
+    const handleDaySelect = (dayValue: number) => {
+        const current = dueDate || new Date();
+        const currentDay = current.getDay();
+        const diff = (dayValue + 7 - currentDay) % 7;
+        const nextDate = new Date(current);
+        nextDate.setDate(current.getDate() + diff);
+        setDueDate(nextDate);
+    };
+
     async function saveReminder() {
 
         if (
@@ -147,12 +166,23 @@ export default function ReminderEditorScreen() {
 
         const isCompleted = editingReminder ? editingReminder.completed : false;
 
-        let finalDueDate = scheduleType === 'specific' ? dueDate : null;
+        let finalDueDate = null;
         let finalRecurrence: RecurrenceType = 'none';
 
         if (scheduleType !== 'none' && scheduleType !== 'specific') {
             finalRecurrence = scheduleType as RecurrenceType;
-            finalDueDate = new Date(); // Use current time as base for intervals/daily
+        }
+
+        if (['specific', 'daily', 'weekly', 'monthly', 'yearly'].includes(scheduleType)) {
+            finalDueDate = dueDate;
+        } else if (scheduleType !== 'none') {
+            finalDueDate = new Date(); // Use current time as base for intervals like 5m
+        }
+
+        if (['specific', 'daily', 'weekly', 'monthly', 'yearly'].includes(scheduleType) && !finalDueDate) {
+            // Require a date/time to be set
+            setIsSaving(false);
+            return;
         }
 
         if (finalDueDate && !isCompleted) {
@@ -343,7 +373,7 @@ export default function ReminderEditorScreen() {
                 <Ionicons name="chevron-down" size={20} color={colors.subText} />
             </TouchableOpacity>
 
-            {scheduleType === 'specific' && (
+            {['specific', 'daily', 'weekly', 'monthly', 'yearly'].includes(scheduleType) && (
                 <>
                     <Text
                         style={{
@@ -353,30 +383,36 @@ export default function ReminderEditorScreen() {
                             color: colors.text,
                         }}
                     >
-                        Set Date & Time
+                        {scheduleType === 'specific' ? 'Set Date & Time' : 
+                         scheduleType === 'daily' ? 'Set Time' :
+                         scheduleType === 'weekly' ? 'Set Day & Time' :
+                         scheduleType === 'monthly' ? 'Set Date & Time' :
+                         'Set Month, Date & Time'}
                     </Text>
 
                     <View style={{ flexDirection: "row", gap: 10, marginBottom: 20 }}>
-                        <TouchableOpacity
-                            onPress={() => showMode('date')}
-                            style={{
-                                flex: 1,
-                                flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                paddingVertical: 12,
-                                backgroundColor: colors.card,
-                                borderWidth: 1,
-                                borderColor: colors.border,
-                                borderRadius: 10,
-                                gap: 8,
-                            }}
-                        >
-                            <Ionicons name="calendar-outline" size={20} color={colors.primary} />
-                            <Text style={{ color: colors.text, fontWeight: "600" }}>
-                                {dueDate ? dueDate.toLocaleDateString() : "Select Date"}
-                            </Text>
-                        </TouchableOpacity>
+                        {scheduleType !== 'daily' && scheduleType !== 'weekly' && (
+                            <TouchableOpacity
+                                onPress={() => showMode('date')}
+                                style={{
+                                    flex: 1,
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    paddingVertical: 12,
+                                    backgroundColor: colors.card,
+                                    borderWidth: 1,
+                                    borderColor: colors.border,
+                                    borderRadius: 10,
+                                    gap: 8,
+                                }}
+                            >
+                                <Ionicons name="calendar-outline" size={20} color={colors.primary} />
+                                <Text style={{ color: colors.text, fontWeight: "600" }}>
+                                    {dueDate ? dueDate.toLocaleDateString() : "Select Date"}
+                                </Text>
+                            </TouchableOpacity>
+                        )}
 
                         <TouchableOpacity
                             onPress={() => showMode('time')}
@@ -399,6 +435,37 @@ export default function ReminderEditorScreen() {
                             </Text>
                         </TouchableOpacity>
                     </View>
+
+                    {scheduleType === 'weekly' && (
+                        <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 20 }}>
+                            {daysOfWeek.map(day => {
+                                const isSelected = dueDate?.getDay() === day.value;
+                                return (
+                                    <TouchableOpacity
+                                        key={day.value}
+                                        onPress={() => handleDaySelect(day.value)}
+                                        style={{
+                                            width: 40,
+                                            height: 40,
+                                            borderRadius: 20,
+                                            backgroundColor: isSelected ? colors.primary : colors.card,
+                                            borderWidth: isSelected ? 0 : 1,
+                                            borderColor: colors.border,
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        <Text style={{ 
+                                            color: isSelected ? "#fff" : colors.text, 
+                                            fontWeight: "600" 
+                                        }}>
+                                            {day.label}
+                                        </Text>
+                                    </TouchableOpacity>
+                                );
+                            })}
+                        </View>
+                    )}
 
                     {dueDate && (
                         <TouchableOpacity
