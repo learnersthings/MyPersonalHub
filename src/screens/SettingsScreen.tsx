@@ -42,11 +42,6 @@ export default function SettingsScreen() {
     } = useTheme();
 
     const [
-        autoSave,
-        setAutoSave,
-    ] = useState(true);
-
-    const [
         showCompleted,
         setShowCompleted,
     ] = useState(true);
@@ -59,20 +54,9 @@ export default function SettingsScreen() {
 
     async function loadSettings() {
 
-        const save =
-            await AsyncStorage.getItem(
-                "autoSave"
-            );
-
         const completed =
             await AsyncStorage.getItem(
                 "showCompleted"
-            );
-
-        if (save !== null)
-
-            setAutoSave(
-                JSON.parse(save)
             );
 
         if (completed !== null)
@@ -80,18 +64,6 @@ export default function SettingsScreen() {
             setShowCompleted(
                 JSON.parse(completed)
             );
-    }
-
-    async function toggleAutoSave(
-        value: boolean
-    ) {
-
-        setAutoSave(value);
-
-        await AsyncStorage.setItem(
-            "autoSave",
-            JSON.stringify(value)
-        );
     }
 
     async function toggleCompleted(
@@ -262,51 +234,6 @@ export default function SettingsScreen() {
                     value={darkMode}
                     onValueChange={
                         toggleTheme
-                    }
-                />
-
-            </View>
-
-            {/* Notes */}
-
-            <View
-                style={{
-                    backgroundColor:
-                        colors.card,
-
-                    borderRadius: 16,
-
-                    paddingHorizontal: 16,
-
-                    marginBottom: 18,
-                }}
-            >
-
-                <Text
-                    style={{
-                        fontSize: 18,
-
-                        fontWeight: "700",
-
-                        marginTop: 16,
-
-                        marginBottom: 8,
-
-                        color:
-                            colors.text,
-                    }}
-                >
-
-                    Notes
-
-                </Text>
-
-                <SettingRow
-                    icon="save-outline"
-                    title="Auto Save"
-                    value={autoSave}
-                    onValueChange={
-                        toggleAutoSave
                     }
                 />
 
