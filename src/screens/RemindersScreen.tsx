@@ -11,7 +11,7 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 
 import { getReminders, saveReminders } from "../services/remindersStorage";
-import { cancelReminderNotification } from "../services/notificationService";
+import { cancelReminderNotification, scheduleReminderNotification } from "../services/notificationService";
 import { Reminder } from "../types/Reminder";
 import { globalStyles } from "../theme/styles";
 import { useTheme } from "../context/ThemeContext";
@@ -36,14 +36,29 @@ export default function RemindersScreen() {
 
     async function toggleReminder(id: string) {
         const reminder = reminders.find(r => r.id === id);
-        if (reminder && !reminder.completed && reminder.notificationId) {
-            // It is being marked as completed. Cancel the notification.
-            await cancelReminderNotification(reminder.notificationId);
-        }
+        let newNotificationId = reminder?.notificationId;
 
+        if (reminder) {
+            if (!reminder.completed) {
+                // It is being marked as completed. Cancel the notification.
+                if (reminder.notificationId) {
+                    await cancelReminderNotification(reminder.notificationId);
+                    newNotificationId = undefined;
+                }
+            } else {
+                // It is being marked as incomplete. Schedule the notification if due date is in the future.
+                if (reminder.dueDate) {
+                    const dueDateObj = new Date(reminder.dueDate);
+                    if (dueDateObj.getTime() > Date.now()) {
+                        newNotificationId = await scheduleReminderNotification(reminder.title, dueDateObj);
+                    }
+                }
+            }
+        }
+        
         const updated = reminders.map(r =>
             r.id === id
-                ? { ...r, completed: !r.completed }
+                ? { ...r, completed: !r.completed, notificationId: newNotificationId }
                 : r
         );
         setReminders(updated);

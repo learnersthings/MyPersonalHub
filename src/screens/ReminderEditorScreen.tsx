@@ -65,6 +65,7 @@ export default function ReminderEditorScreen() {
     const [dueDate, setDueDate] = useState<Date | null>(null);
     const [mode, setMode] = useState<any>('date');
     const [showPicker, setShowPicker] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
 
@@ -98,17 +99,21 @@ export default function ReminderEditorScreen() {
     async function saveReminder() {
 
         if (
-            !title.trim()
+            !title.trim() || isSaving
         )
             return;
+        
+        setIsSaving(true);
 
         let newNotificationId: string | undefined = undefined;
 
-        if (editingReminder) {
+        if (editingReminder && editingReminder.notificationId) {
             await cancelReminderNotification(editingReminder.notificationId);
         }
 
-        if (dueDate) {
+        const isCompleted = editingReminder ? editingReminder.completed : false;
+
+        if (dueDate && !isCompleted) {
             newNotificationId = await scheduleReminderNotification(title, dueDate);
         }
 
@@ -167,6 +172,7 @@ export default function ReminderEditorScreen() {
             updatedReminders
         );
 
+        setIsSaving(false);
         navigation.goBack();
     }
 
@@ -344,6 +350,7 @@ export default function ReminderEditorScreen() {
                 onPress={
                     saveReminder
                 }
+                disabled={isSaving}
 
                 style={[
                     globalStyles.button,
