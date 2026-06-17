@@ -5,7 +5,7 @@ export interface Reminder {
     title: string;
     completed: boolean;
     dueDate?: string;
-    notificationId?: string;
+    notificationId?: string | string[];
     recurrence?: RecurrenceType;
     createdAt: string;
 }

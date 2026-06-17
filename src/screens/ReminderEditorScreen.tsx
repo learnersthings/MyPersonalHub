@@ -139,7 +139,7 @@ export default function ReminderEditorScreen() {
         
         setIsSaving(true);
 
-        let newNotificationId: string | undefined = undefined;
+        let newNotificationId: string | string[] | undefined = undefined;
 
         if (editingReminder && editingReminder.notificationId) {
             await cancelReminderNotification(editingReminder.notificationId);

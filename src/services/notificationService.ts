@@ -3,11 +3,9 @@ import { Platform } from "react-native";
 
 import { RecurrenceType } from "../types/Reminder";
 
-export async function scheduleReminderNotification(title: string, date: Date, recurrence: RecurrenceType = 'none'): Promise<string | undefined> {
+export async function scheduleReminderNotification(title: string, date: Date, recurrence: RecurrenceType = 'none'): Promise<string | string[] | undefined> {
     const triggerDate = new Date(date);
     
-    // For non-repeating or calendar repeating, we generally don't schedule if it's strictly a one-time past event.
-    // However, if it's an interval (e.g. 5m), it just starts from now.
     if (recurrence === 'none' && triggerDate.getTime() <= Date.now()) {
         return undefined; // Do not schedule in the past
     }
@@ -33,6 +31,8 @@ export async function scheduleReminderNotification(title: string, date: Date, re
         };
 
         if (intervalMap[recurrence]) {
+            // Reverted back to TIME_INTERVAL because Android AlarmManager has a strict 500 alarm limit
+            // and scheduling hundreds of DAILY alarms causes crashes.
             trigger = {
                 type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
                 seconds: intervalMap[recurrence],
@@ -85,11 +85,15 @@ export async function scheduleReminderNotification(title: string, date: Date, re
     }
 }
 
-export async function cancelReminderNotification(notificationId?: string) {
+export async function cancelReminderNotification(notificationId?: string | string[]) {
     if (!notificationId) return;
 
     try {
-        await Notifications.cancelScheduledNotificationAsync(notificationId);
+        if (Array.isArray(notificationId)) {
+            await Promise.all(notificationId.map(id => Notifications.cancelScheduledNotificationAsync(id).catch(e => console.warn(e))));
+        } else {
+            await Notifications.cancelScheduledNotificationAsync(notificationId);
+        }
     } catch (e) {
         console.warn("Failed to cancel notification", e);
     }
