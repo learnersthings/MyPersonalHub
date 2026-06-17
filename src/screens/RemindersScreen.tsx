@@ -49,8 +49,8 @@ export default function RemindersScreen() {
                 // It is being marked as incomplete. Schedule the notification if due date is in the future.
                 if (reminder.dueDate) {
                     const dueDateObj = new Date(reminder.dueDate);
-                    if ((reminder.recurrence && reminder.recurrence !== 'none') || dueDateObj.getTime() > Date.now()) {
-                        newNotificationId = await scheduleReminderNotification(reminder.title, dueDateObj, reminder.recurrence);
+                    if (dueDateObj.getTime() > Date.now()) {
+                        newNotificationId = await scheduleReminderNotification(reminder.title, dueDateObj);
                     }
                 }
             }
@@ -162,29 +162,6 @@ export default function RemindersScreen() {
                                     <Text style={{ fontSize: 12, color: colors.subText }}>
                                         {new Date(item.dueDate).toLocaleDateString()} at {new Date(item.dueDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </Text>
-                                    {item.recurrence && item.recurrence !== 'none' && (
-                                        <>
-                                            <Text style={{ fontSize: 12, color: colors.subText }}>•</Text>
-                                            <Ionicons name="repeat" size={14} color={colors.primary} />
-                                            <Text style={{ fontSize: 12, color: colors.primary, fontWeight: '600' }}>
-                                                {item.recurrence === '5m' ? '5 Mins' : 
-                                                 item.recurrence === '10m' ? '10 Mins' :
-                                                 item.recurrence === '15m' ? '15 Mins' :
-                                                 item.recurrence === '20m' ? '20 Mins' :
-                                                 item.recurrence === '30m' ? '30 Mins' :
-                                                 item.recurrence === '45m' ? '45 Mins' :
-                                                 item.recurrence === '1h' ? '1 Hour' :
-                                                 item.recurrence === '2h' ? '2 Hours' :
-                                                 item.recurrence === '3h' ? '3 Hours' :
-                                                 item.recurrence === '6h' ? '6 Hours' :
-                                                 item.recurrence === '12h' ? '12 Hours' :
-                                                 item.recurrence === 'daily' ? 'Daily' :
-                                                 item.recurrence === 'weekly' ? 'Weekly' :
-                                                 item.recurrence === 'monthly' ? 'Monthly' :
-                                                 item.recurrence === 'yearly' ? 'Yearly' : ''}
-                                            </Text>
-                                        </>
-                                    )}
                                 </View>
                             )}
                         </TouchableOpacity>
