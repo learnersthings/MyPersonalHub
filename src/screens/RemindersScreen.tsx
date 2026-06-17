@@ -30,8 +30,26 @@ export default function RemindersScreen() {
 
     async function loadReminders() {
         const data = await getReminders();
-        // Sort by newest first or just keep array order
-        setReminders(data);
+        let hasChanges = false;
+        const now = Date.now();
+
+        const updatedData = data.map(reminder => {
+            if (!reminder.completed && reminder.dueDate) {
+                const dueTime = new Date(reminder.dueDate).getTime();
+                if (dueTime < now) {
+                    hasChanges = true;
+                    return { ...reminder, completed: true };
+                }
+            }
+            return reminder;
+        });
+
+        if (hasChanges) {
+            await saveReminders(updatedData);
+            setReminders(updatedData);
+        } else {
+            setReminders(data);
+        }
     }
 
     async function toggleReminder(id: string) {
