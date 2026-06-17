@@ -135,9 +135,9 @@ export default function TasksScreen() {
                 const newCompleted = !task.completed;
                 let updatedSubtasks = task.subtasks;
                 
-                // Auto-complete all subtasks if main task is checked off
-                if (newCompleted && updatedSubtasks) {
-                    updatedSubtasks = updatedSubtasks.map((s: any) => ({ ...s, completed: true }));
+                // Sync subtasks completion with main task completion
+                if (updatedSubtasks) {
+                    updatedSubtasks = updatedSubtasks.map((s: any) => ({ ...s, completed: newCompleted }));
                 }
 
                 return {
@@ -160,7 +160,14 @@ export default function TasksScreen() {
                 const updatedSubtasks = task.subtasks.map((s: any) => 
                     s.id === subtaskId ? { ...s, completed: !s.completed } : s
                 );
-                return { ...task, subtasks: updatedSubtasks };
+                
+                const allSubtasksCompleted = updatedSubtasks.length > 0 && updatedSubtasks.every((s: any) => s.completed);
+
+                return { 
+                    ...task, 
+                    subtasks: updatedSubtasks,
+                    completed: allSubtasksCompleted
+                };
             }
             return task;
         });

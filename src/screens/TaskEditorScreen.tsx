@@ -146,6 +146,9 @@ export default function TaskEditorScreen() {
         let updatedTasks =
             [];
 
+        const hasSubtasks = subtasks.length > 0;
+        const allCompleted = hasSubtasks && subtasks.every(s => s.completed);
+
         if (editingTask) {
 
             updatedTasks =
@@ -164,6 +167,8 @@ export default function TaskEditorScreen() {
                             priority,
 
                             subtasks,
+
+                            completed: hasSubtasks ? allCompleted : task.completed,
                         }
 
                         : task
@@ -180,7 +185,7 @@ export default function TaskEditorScreen() {
                 title,
 
                 completed:
-                    false,
+                    hasSubtasks ? allCompleted : false,
 
                 category,
 
