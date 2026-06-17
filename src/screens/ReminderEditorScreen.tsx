@@ -4,7 +4,9 @@ import {
     TextInput,
     TouchableOpacity,
     ScrollView,
-    Platform
+    Platform,
+    Modal,
+    FlatList
 } from "react-native";
 
 import {
@@ -22,6 +24,7 @@ import {
 } from "@expo/vector-icons";
 
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { RecurrenceType } from "../types/Reminder";
 
 import {
     getReminders,
@@ -66,6 +69,30 @@ export default function ReminderEditorScreen() {
     const [mode, setMode] = useState<any>('date');
     const [showPicker, setShowPicker] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    
+    // We add 'specific' to represent the "Specific Date & Time" option
+    const [scheduleType, setScheduleType] = useState<string>('none');
+    const [showRecurrencePicker, setShowRecurrencePicker] = useState(false);
+
+    const scheduleOptions: { label: string, value: string }[] = [
+        { label: "No Reminder", value: "none" },
+        { label: "Specific Date & Time", value: "specific" },
+        { label: "Every 5 Mins", value: "5m" },
+        { label: "Every 10 Mins", value: "10m" },
+        { label: "Every 15 Mins", value: "15m" },
+        { label: "Every 20 Mins", value: "20m" },
+        { label: "Every 30 Mins", value: "30m" },
+        { label: "Every 45 Mins", value: "45m" },
+        { label: "Every 1 Hour", value: "1h" },
+        { label: "Every 2 Hours", value: "2h" },
+        { label: "Every 3 Hours", value: "3h" },
+        { label: "Every 6 Hours", value: "6h" },
+        { label: "Every 12 Hours", value: "12h" },
+        { label: "Daily", value: "daily" },
+        { label: "Weekly", value: "weekly" },
+        { label: "Monthly", value: "monthly" },
+        { label: "Yearly", value: "yearly" },
+    ];
 
     useEffect(() => {
 
@@ -77,6 +104,13 @@ export default function ReminderEditorScreen() {
 
             if (editingReminder.dueDate) {
                 setDueDate(new Date(editingReminder.dueDate));
+            }
+            if (editingReminder.recurrence && editingReminder.recurrence !== 'none') {
+                setScheduleType(editingReminder.recurrence);
+            } else if (editingReminder.dueDate) {
+                setScheduleType('specific');
+            } else {
+                setScheduleType('none');
             }
 
         }
@@ -113,8 +147,16 @@ export default function ReminderEditorScreen() {
 
         const isCompleted = editingReminder ? editingReminder.completed : false;
 
-        if (dueDate && !isCompleted) {
-            newNotificationId = await scheduleReminderNotification(title, dueDate);
+        let finalDueDate = scheduleType === 'specific' ? dueDate : null;
+        let finalRecurrence: RecurrenceType = 'none';
+
+        if (scheduleType !== 'none' && scheduleType !== 'specific') {
+            finalRecurrence = scheduleType as RecurrenceType;
+            finalDueDate = new Date(); // Use current time as base for intervals/daily
+        }
+
+        if (finalDueDate && !isCompleted) {
+            newNotificationId = await scheduleReminderNotification(title, finalDueDate, finalRecurrence);
         }
 
         const reminders =
@@ -134,8 +176,9 @@ export default function ReminderEditorScreen() {
                         ? {
                             ...reminder,
                             title,
-                            dueDate: dueDate ? dueDate.toISOString() : undefined,
+                            dueDate: finalDueDate ? finalDueDate.toISOString() : undefined,
                             notificationId: newNotificationId,
+                            recurrence: finalRecurrence,
                         }
 
                         : reminder
@@ -154,8 +197,9 @@ export default function ReminderEditorScreen() {
                 completed:
                     false,
 
-                dueDate: dueDate ? dueDate.toISOString() : undefined,
+                dueDate: finalDueDate ? finalDueDate.toISOString() : undefined,
                 notificationId: newNotificationId,
+                recurrence: finalRecurrence,
 
                 createdAt:
                     new Date()
@@ -272,67 +316,106 @@ export default function ReminderEditorScreen() {
                     color: colors.text,
                 }}
             >
-                Set Date & Time
+                Notification Schedule
             </Text>
 
-            <View style={{ flexDirection: "row", gap: 10, marginBottom: 20 }}>
-                <TouchableOpacity
-                    onPress={() => showMode('date')}
-                    style={{
-                        flex: 1,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        paddingVertical: 12,
-                        backgroundColor: colors.card,
-                        borderWidth: 1,
-                        borderColor: colors.border,
-                        borderRadius: 10,
-                        gap: 8,
-                    }}
-                >
-                    <Ionicons name="calendar-outline" size={20} color={colors.primary} />
-                    <Text style={{ color: colors.text, fontWeight: "600" }}>
-                        {dueDate ? dueDate.toLocaleDateString() : "Select Date"}
+            <TouchableOpacity
+                onPress={() => setShowRecurrencePicker(true)}
+                style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    paddingVertical: 14,
+                    paddingHorizontal: 16,
+                    backgroundColor: colors.card,
+                    borderWidth: 1,
+                    borderColor: colors.border,
+                    borderRadius: 10,
+                    marginBottom: 20,
+                }}
+            >
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                    <Ionicons name="notifications-outline" size={20} color={colors.primary} />
+                    <Text style={{ color: colors.text, fontWeight: "600", fontSize: 16 }}>
+                        {scheduleOptions.find(o => o.value === scheduleType)?.label || "No Reminder"}
                     </Text>
-                </TouchableOpacity>
+                </View>
+                <Ionicons name="chevron-down" size={20} color={colors.subText} />
+            </TouchableOpacity>
 
-                <TouchableOpacity
-                    onPress={() => showMode('time')}
-                    style={{
-                        flex: 1,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        paddingVertical: 12,
-                        backgroundColor: colors.card,
-                        borderWidth: 1,
-                        borderColor: colors.border,
-                        borderRadius: 10,
-                        gap: 8,
-                    }}
-                >
-                    <Ionicons name="time-outline" size={20} color={colors.primary} />
-                    <Text style={{ color: colors.text, fontWeight: "600" }}>
-                        {dueDate ? dueDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "Select Time"}
+            {scheduleType === 'specific' && (
+                <>
+                    <Text
+                        style={{
+                            fontSize: 16,
+                            fontWeight: "600",
+                            marginBottom: 10,
+                            color: colors.text,
+                        }}
+                    >
+                        Set Date & Time
                     </Text>
-                </TouchableOpacity>
-            </View>
 
-            {dueDate && (
-                <TouchableOpacity
-                    onPress={() => setDueDate(null)}
-                    style={{
-                        alignSelf: 'flex-start',
-                        marginBottom: 20,
-                        paddingVertical: 6,
-                        paddingHorizontal: 12,
-                        backgroundColor: 'rgba(244, 67, 54, 0.1)',
-                        borderRadius: 20,
-                    }}
-                >
-                    <Text style={{ color: '#F44336', fontWeight: '600' }}>Clear Date & Time</Text>
-                </TouchableOpacity>
+                    <View style={{ flexDirection: "row", gap: 10, marginBottom: 20 }}>
+                        <TouchableOpacity
+                            onPress={() => showMode('date')}
+                            style={{
+                                flex: 1,
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                paddingVertical: 12,
+                                backgroundColor: colors.card,
+                                borderWidth: 1,
+                                borderColor: colors.border,
+                                borderRadius: 10,
+                                gap: 8,
+                            }}
+                        >
+                            <Ionicons name="calendar-outline" size={20} color={colors.primary} />
+                            <Text style={{ color: colors.text, fontWeight: "600" }}>
+                                {dueDate ? dueDate.toLocaleDateString() : "Select Date"}
+                            </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            onPress={() => showMode('time')}
+                            style={{
+                                flex: 1,
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                paddingVertical: 12,
+                                backgroundColor: colors.card,
+                                borderWidth: 1,
+                                borderColor: colors.border,
+                                borderRadius: 10,
+                                gap: 8,
+                            }}
+                        >
+                            <Ionicons name="time-outline" size={20} color={colors.primary} />
+                            <Text style={{ color: colors.text, fontWeight: "600" }}>
+                                {dueDate ? dueDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "Select Time"}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    {dueDate && (
+                        <TouchableOpacity
+                            onPress={() => setDueDate(null)}
+                            style={{
+                                alignSelf: 'flex-start',
+                                marginBottom: 20,
+                                paddingVertical: 6,
+                                paddingHorizontal: 12,
+                                backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                                borderRadius: 20,
+                            }}
+                        >
+                            <Text style={{ color: '#F44336', fontWeight: '600' }}>Clear Date & Time</Text>
+                        </TouchableOpacity>
+                    )}
+                </>
             )}
 
             {showPicker && (
@@ -401,6 +484,50 @@ export default function ReminderEditorScreen() {
                 </View>
 
             </TouchableOpacity>
+
+            <Modal visible={showRecurrencePicker} transparent={true} animationType="fade">
+                <TouchableOpacity 
+                    style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}
+                    activeOpacity={1}
+                    onPress={() => setShowRecurrencePicker(false)}
+                >
+                    <View style={{ backgroundColor: colors.card, width: '80%', maxHeight: '70%', borderRadius: 20, overflow: 'hidden' }}>
+                        <View style={{ padding: 16, borderBottomWidth: 1, borderBottomColor: colors.border, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Text style={{ color: colors.text, fontSize: 18, fontWeight: '700' }}>Notification Schedule</Text>
+                            <TouchableOpacity onPress={() => setShowRecurrencePicker(false)}>
+                                <Ionicons name="close" size={24} color={colors.text} />
+                            </TouchableOpacity>
+                        </View>
+                        <FlatList
+                            data={scheduleOptions}
+                            keyExtractor={(item) => item.value}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    style={{
+                                        padding: 16,
+                                        borderBottomWidth: 1,
+                                        borderBottomColor: colors.border,
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center'
+                                    }}
+                                    onPress={() => {
+                                        setScheduleType(item.value);
+                                        // Auto set a due date if they pick specific and it was null
+                                        if (item.value === 'specific' && !dueDate) {
+                                            setDueDate(new Date());
+                                        }
+                                        setShowRecurrencePicker(false);
+                                    }}
+                                >
+                                    <Text style={{ color: colors.text, fontSize: 16, fontWeight: scheduleType === item.value ? '700' : '400' }}>{item.label}</Text>
+                                    {scheduleType === item.value && <Ionicons name="checkmark" size={20} color={colors.primary} />}
+                                </TouchableOpacity>
+                            )}
+                        />
+                    </View>
+                </TouchableOpacity>
+            </Modal>
 
             <View
                 style={{
