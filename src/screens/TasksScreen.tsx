@@ -73,6 +73,15 @@ export default function TasksScreen() {
     ] = useState("");
 
     const [
+        expandedTasks,
+        setExpandedTasks,
+    ] = useState<Record<string, boolean>>({});
+
+    const toggleExpand = (taskId: string) => {
+        setExpandedTasks(prev => ({ ...prev, [taskId]: !prev[taskId] }));
+    };
+
+    const [
         categories,
         setCategories,
     ] = useState<Category[]>([]);
@@ -121,19 +130,41 @@ export default function TasksScreen() {
         id: string
     ) {
 
-        const updated =
-            tasks.map(task =>
-                task.id === id
-                    ? {
-                        ...task,
-                        completed:
-                            !task.completed,
-                    }
-                    : task
-            );
+        const updated = tasks.map(task => {
+            if (task.id === id) {
+                const newCompleted = !task.completed;
+                let updatedSubtasks = task.subtasks;
+                
+                // Auto-complete all subtasks if main task is checked off
+                if (newCompleted && updatedSubtasks) {
+                    updatedSubtasks = updatedSubtasks.map((s: any) => ({ ...s, completed: true }));
+                }
+
+                return {
+                    ...task,
+                    completed: newCompleted,
+                    subtasks: updatedSubtasks
+                };
+            }
+            return task;
+        });
 
         setTasks(updated);
 
+        await saveTasks(updated);
+    }
+
+    async function toggleSubtaskCompletion(taskId: string, subtaskId: string) {
+        const updated = tasks.map(task => {
+            if (task.id === taskId && task.subtasks) {
+                const updatedSubtasks = task.subtasks.map((s: any) => 
+                    s.id === subtaskId ? { ...s, completed: !s.completed } : s
+                );
+                return { ...task, subtasks: updatedSubtasks };
+            }
+            return task;
+        });
+        setTasks(updated);
         await saveTasks(updated);
     }
 
@@ -700,19 +731,7 @@ export default function TasksScreen() {
                         )}
                     >
 
-                        <TouchableOpacity
-
-                            activeOpacity={0.9}
-
-                            onPress={() =>
-                                navigation.navigate(
-                                    "TaskEditor",
-                                    {
-                                        task: item,
-                                    }
-                                )
-                            }
-
+                        <View
                             style={[
                                 globalStyles.card,
                                 {
@@ -730,9 +749,24 @@ export default function TasksScreen() {
                                         item.completed
                                             ? "#4CAF50"
                                             : "#2196F3",
+                                    
+                                    flexDirection: "column",
                                 },
                             ]}
                         >
+                            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                                <TouchableOpacity
+                                    activeOpacity={0.9}
+                                    onPress={() =>
+                                        navigation.navigate(
+                                            "TaskEditor",
+                                            {
+                                                task: item,
+                                            }
+                                        )
+                                    }
+                                    style={{ flex: 1 }}
+                                >
                             <Text
                                 style={{
                                     fontSize: 16,
@@ -845,7 +879,64 @@ export default function TasksScreen() {
 
                             </View>
 
-                        </TouchableOpacity>
+                            </TouchableOpacity>
+
+                            {item.subtasks && item.subtasks.length > 0 && (
+                                <TouchableOpacity 
+                                    onPress={() => toggleExpand(item.id)}
+                                    style={{ alignItems: "center", justifyContent: "center", marginLeft: 16, flexDirection: "row" }}
+                                >
+                                    <View style={{
+                                        backgroundColor: `${item.subtasks.filter((s: any) => s.completed).length === item.subtasks.length ? "#4CAF50" : colors.primary}20`,
+                                        paddingHorizontal: 12,
+                                        paddingVertical: 8,
+                                        borderRadius: 16,
+                                        alignItems: "center",
+                                    }}>
+                                        <Text style={{ 
+                                            fontWeight: "700", 
+                                            color: item.subtasks.filter((s: any) => s.completed).length === item.subtasks.length ? "#4CAF50" : colors.primary, 
+                                            fontSize: 16 
+                                        }}>
+                                            {item.subtasks.filter((s: any) => s.completed).length}/{item.subtasks.length}
+                                        </Text>
+                                        <Text style={{ 
+                                            fontSize: 12, 
+                                            fontWeight: "600",
+                                            color: item.subtasks.filter((s: any) => s.completed).length === item.subtasks.length ? "#4CAF50" : colors.primary, 
+                                            marginTop: 2 
+                                        }}>
+                                            {Math.round((item.subtasks.filter((s: any) => s.completed).length / item.subtasks.length) * 100)}%
+                                        </Text>
+                                    </View>
+                                    <Ionicons 
+                                        name={expandedTasks[item.id] ? "chevron-up" : "chevron-down"} 
+                                        size={20} 
+                                        color={colors.subText} 
+                                        style={{ marginLeft: 6 }} 
+                                    />
+                                </TouchableOpacity>
+                            )}
+                            </View>
+
+                            {expandedTasks[item.id] && item.subtasks && item.subtasks.length > 0 && (
+                                <View style={{ marginTop: 14, paddingTop: 14, borderTopWidth: 1, borderTopColor: colors.border }}>
+                                    {item.subtasks.map((subtask: any) => (
+                                        <TouchableOpacity 
+                                            key={subtask.id} 
+                                            onPress={() => toggleSubtaskCompletion(item.id, subtask.id)} 
+                                            style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}
+                                        >
+                                            <Ionicons name={subtask.completed ? "checkmark-circle" : "ellipse-outline"} size={22} color={subtask.completed ? "#4CAF50" : colors.subText} style={{ marginRight: 10 }} />
+                                            <Text style={{ flex: 1, fontSize: 15, color: subtask.completed ? colors.subText : colors.text, textDecorationLine: subtask.completed ? "line-through" : "none" }}>
+                                                {subtask.title}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+                            )}
+
+                        </View>
 
                     </Swipeable>
 

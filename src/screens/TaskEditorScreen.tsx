@@ -30,6 +30,7 @@ import {
 } from "../services/categoryStorage";
 
 import { Category } from "../types/Category";
+import { Subtask } from "../types/Task";
 
 import {
     globalStyles,
@@ -77,6 +78,16 @@ export default function TaskEditorScreen() {
         setCategories,
     ] = useState<Category[]>([]);
 
+    const [
+        subtasks,
+        setSubtasks,
+    ] = useState<Subtask[]>([]);
+
+    const [
+        newSubtaskTitle,
+        setNewSubtaskTitle,
+    ] = useState("");
+
     useEffect(() => {
 
         if (editingTask) {
@@ -94,6 +105,10 @@ export default function TaskEditorScreen() {
                 editingTask.priority
                 || "Medium"
             );
+
+            setSubtasks(
+                editingTask.subtasks || []
+            );
         }
 
         async function fetchCategories() {
@@ -103,6 +118,20 @@ export default function TaskEditorScreen() {
         fetchCategories();
 
     }, []);
+
+    function addSubtask() {
+        if (!newSubtaskTitle.trim()) return;
+        setSubtasks([...subtasks, { id: Date.now().toString(), title: newSubtaskTitle.trim(), completed: false }]);
+        setNewSubtaskTitle("");
+    }
+
+    function toggleSubtask(id: string) {
+        setSubtasks(subtasks.map(s => s.id === id ? { ...s, completed: !s.completed } : s));
+    }
+
+    function deleteSubtask(id: string) {
+        setSubtasks(subtasks.filter(s => s.id !== id));
+    }
 
     async function saveTask() {
 
@@ -133,6 +162,8 @@ export default function TaskEditorScreen() {
                             category,
 
                             priority,
+
+                            subtasks,
                         }
 
                         : task
@@ -154,6 +185,8 @@ export default function TaskEditorScreen() {
                 category,
 
                 priority,
+
+                subtasks,
 
                 createdAt:
                     new Date()
@@ -340,6 +373,45 @@ export default function TaskEditorScreen() {
 
                 ))}
 
+            </View>
+
+            <Text
+                style={{
+                    fontSize: 16,
+                    fontWeight: "600",
+                    marginBottom: 10,
+                    color: colors.text,
+                }}
+            >
+                Subtasks
+            </Text>
+
+            <View style={{ marginBottom: 20 }}>
+                {subtasks.map((subtask) => (
+                    <View key={subtask.id} style={{ flexDirection: "row", alignItems: "center", marginBottom: 8, backgroundColor: colors.card, padding: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border }}>
+                        <TouchableOpacity onPress={() => toggleSubtask(subtask.id)} style={{ marginRight: 12 }}>
+                            <Ionicons name={subtask.completed ? "checkmark-circle" : "ellipse-outline"} size={24} color={subtask.completed ? "#4CAF50" : colors.subText} />
+                        </TouchableOpacity>
+                        <Text style={{ flex: 1, color: subtask.completed ? colors.subText : colors.text, textDecorationLine: subtask.completed ? "line-through" : "none", fontSize: 16 }}>{subtask.title}</Text>
+                        <TouchableOpacity onPress={() => deleteSubtask(subtask.id)} style={{ padding: 4 }}>
+                            <Ionicons name="trash-outline" size={20} color="#F44336" />
+                        </TouchableOpacity>
+                    </View>
+                ))}
+
+                <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8 }}>
+                    <TextInput
+                        placeholder="Add subtask..."
+                        placeholderTextColor={colors.subText}
+                        value={newSubtaskTitle}
+                        onChangeText={setNewSubtaskTitle}
+                        onSubmitEditing={addSubtask}
+                        style={{ flex: 1, backgroundColor: colors.input, color: colors.text, paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border, marginRight: 10 }}
+                    />
+                    <TouchableOpacity onPress={addSubtask} style={{ backgroundColor: colors.primary, width: 48, height: 48, borderRadius: 24, justifyContent: "center", alignItems: "center" }}>
+                        <Ionicons name="add" size={24} color="#fff" />
+                    </TouchableOpacity>
+                </View>
             </View>
 
             <Text
