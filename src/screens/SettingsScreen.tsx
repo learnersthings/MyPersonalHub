@@ -4,6 +4,7 @@ import {
     Switch,
     ScrollView,
     TouchableOpacity,
+    Alert,
 } from "react-native";
 
 import {
@@ -29,6 +30,8 @@ import {
 import {
     useNavigation,
 } from "@react-navigation/native";
+
+import { createBackup, restoreBackup } from "../services/backupService";
 
 export default function SettingsScreen() {
 
@@ -77,6 +80,25 @@ export default function SettingsScreen() {
             JSON.stringify(value)
         );
     }
+
+    const handleBackup = async () => {
+        const success = await createBackup();
+        if (success) {
+            Alert.alert("Success", "Backup saved successfully.");
+        } else {
+            Alert.alert("Error", "Failed to save backup or cancelled.");
+        }
+    };
+
+    const handleRestore = async () => {
+        const success = await restoreBackup();
+        if (success) {
+            Alert.alert("Success", "Backup restored successfully. Please fully restart the app to ensure all data is loaded properly.");
+            loadSettings();
+        } else {
+            Alert.alert("Error", "Failed to restore backup or cancelled.");
+        }
+    };
 
     function SettingRow({
         icon,
@@ -336,6 +358,69 @@ export default function SettingsScreen() {
                     <Ionicons name="chevron-forward" size={20} color={colors.subText} />
                 </TouchableOpacity>
 
+            </View>
+
+            {/* Data Management */}
+
+            <View
+                style={{
+                    backgroundColor: colors.card,
+                    borderRadius: 16,
+                    paddingHorizontal: 16,
+                    marginBottom: 18,
+                }}
+            >
+                <Text
+                    style={{
+                        fontSize: 18,
+                        fontWeight: "700",
+                        marginTop: 16,
+                        marginBottom: 8,
+                        color: colors.text,
+                    }}
+                >
+                    Data Management
+                </Text>
+
+                <TouchableOpacity
+                    onPress={handleBackup}
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        paddingVertical: 16,
+                        borderBottomWidth: 1,
+                        borderBottomColor: colors.border,
+                    }}
+                >
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <Ionicons name="save-outline" size={22} color={colors.primary} />
+                        <Text style={{ marginLeft: 12, fontSize: 16, fontWeight: "500", color: colors.text }}>
+                            Backup Data
+                        </Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={20} color={colors.subText} />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    onPress={handleRestore}
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        paddingVertical: 16,
+                        borderBottomWidth: 1,
+                        borderBottomColor: colors.border,
+                    }}
+                >
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <Ionicons name="cloud-download-outline" size={22} color={colors.primary} />
+                        <Text style={{ marginLeft: 12, fontSize: 16, fontWeight: "500", color: colors.text }}>
+                            Restore Data
+                        </Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={20} color={colors.subText} />
+                </TouchableOpacity>
             </View>
 
             {/* About */}
