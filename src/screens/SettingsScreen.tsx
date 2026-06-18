@@ -7,6 +7,7 @@ import {
     Alert,
     TextInput,
     Image,
+    Modal,
 } from "react-native";
 
 import {
@@ -57,6 +58,39 @@ export default function SettingsScreen() {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [avatarBase64, setAvatarBase64] = useState<string | null>(null);
+    const [showAvatarModal, setShowAvatarModal] = useState(false);
+    const [avatarFilter, setAvatarFilter] = useState('All');
+
+    const defaultAvatars = [
+        { category: 'Boys', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Felix" },
+        { category: 'Boys', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Leo" },
+        { category: 'Boys', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Max" },
+        { category: 'Boys', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Jack" },
+        { category: 'Boys', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Oliver" },
+        { category: 'Boys', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Milo" },
+        { category: 'Girls', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Luna" },
+        { category: 'Girls', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Bella" },
+        { category: 'Girls', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Sophie" },
+        { category: 'Girls', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Lily" },
+        { category: 'Girls', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Chloe" },
+        { category: 'Girls', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Mia" },
+        { category: 'Men', url: "https://api.dicebear.com/9.x/avataaars/png?seed=George" },
+        { category: 'Men', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Arthur" },
+        { category: 'Men', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Thomas" },
+        { category: 'Men', url: "https://api.dicebear.com/9.x/avataaars/png?seed=James" },
+        { category: 'Men', url: "https://api.dicebear.com/9.x/avataaars/png?seed=John" },
+        { category: 'Men', url: "https://api.dicebear.com/9.x/avataaars/png?seed=William" },
+        { category: 'Womens', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Mary" },
+        { category: 'Womens', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Patricia" },
+        { category: 'Womens', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Jennifer" },
+        { category: 'Womens', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Linda" },
+        { category: 'Womens', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Elizabeth" },
+        { category: 'Womens', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Barbara" },
+    ];
+
+    const filteredAvatars = avatarFilter === 'All' 
+        ? defaultAvatars 
+        : defaultAvatars.filter(a => a.category === avatarFilter);
 
     useEffect(() => {
         loadSettings();
@@ -120,6 +154,7 @@ export default function SettingsScreen() {
     };
 
     const pickImage = async () => {
+        setShowAvatarModal(false);
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ['images'],
             allowsEditing: true,
@@ -131,6 +166,16 @@ export default function SettingsScreen() {
         if (!result.canceled && result.assets && result.assets[0].base64) {
             setAvatarBase64(`data:image/jpeg;base64,${result.assets[0].base64}`);
         }
+    };
+
+    const removeAvatar = () => {
+        setAvatarBase64(null);
+        setShowAvatarModal(false);
+    };
+
+    const selectDefaultAvatar = (url: string) => {
+        setAvatarBase64(url);
+        setShowAvatarModal(false);
     };
 
     const handleSaveProfile = async () => {
@@ -266,7 +311,7 @@ export default function SettingsScreen() {
                     alignItems: "center",
                 }}
             >
-                <TouchableOpacity onPress={pickImage} style={{ marginBottom: 16 }}>
+                <TouchableOpacity onPress={() => setShowAvatarModal(true)} style={{ marginBottom: 16 }}>
                     {avatarBase64 ? (
                         <Image
                             source={{ uri: avatarBase64 }}
@@ -332,6 +377,59 @@ export default function SettingsScreen() {
                     <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Save Profile</Text>
                 </TouchableOpacity>
             </View>
+
+            {/* Avatar Selection Modal */}
+            <Modal visible={showAvatarModal} transparent={true} animationType="fade">
+                <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={{ backgroundColor: colors.card, padding: 24, borderRadius: 16, width: '85%', maxHeight: '80%' }}>
+                        <Text style={{ fontSize: 20, fontWeight: '700', color: colors.text, marginBottom: 20, textAlign: 'center' }}>Profile Picture</Text>
+                        
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16, maxHeight: 40 }}>
+                            {['All', 'Boys', 'Girls', 'Men', 'Womens'].map((cat) => (
+                                <TouchableOpacity 
+                                    key={cat} 
+                                    onPress={() => setAvatarFilter(cat)}
+                                    style={{
+                                        paddingHorizontal: 16,
+                                        paddingVertical: 8,
+                                        borderRadius: 20,
+                                        backgroundColor: avatarFilter === cat ? colors.primary : colors.background,
+                                        marginRight: 8,
+                                        borderWidth: avatarFilter === cat ? 0 : 1,
+                                        borderColor: colors.border
+                                    }}
+                                >
+                                    <Text style={{ color: avatarFilter === cat ? '#fff' : colors.text, fontWeight: '600' }}>{cat}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+
+                        <ScrollView style={{ maxHeight: 200, marginBottom: 24 }}>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
+                                {filteredAvatars.map((item, i) => (
+                                    <TouchableOpacity key={i} onPress={() => selectDefaultAvatar(item.url)}>
+                                        <Image source={{ uri: item.url }} style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: colors.background }} />
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </ScrollView>
+
+                        <TouchableOpacity onPress={pickImage} style={{ backgroundColor: colors.primary, padding: 12, borderRadius: 8, marginBottom: 12, alignItems: 'center' }}>
+                            <Text style={{ color: '#fff', fontWeight: '600' }}>Pick from Gallery</Text>
+                        </TouchableOpacity>
+
+                        {avatarBase64 && (
+                            <TouchableOpacity onPress={removeAvatar} style={{ backgroundColor: 'rgba(244, 67, 54, 0.1)', padding: 12, borderRadius: 8, marginBottom: 12, alignItems: 'center' }}>
+                                <Text style={{ color: '#F44336', fontWeight: '600' }}>Remove Picture</Text>
+                            </TouchableOpacity>
+                        )}
+
+                        <TouchableOpacity onPress={() => setShowAvatarModal(false)} style={{ padding: 12, alignItems: 'center' }}>
+                            <Text style={{ color: colors.subText, fontWeight: '600' }}>Cancel</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
 
             {/* Appearance */}
 
