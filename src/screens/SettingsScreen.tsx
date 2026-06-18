@@ -86,10 +86,46 @@ export default function SettingsScreen() {
         { category: 'Womens', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Linda" },
         { category: 'Womens', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Elizabeth" },
         { category: 'Womens', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Barbara" },
+
+        // Boys - Classic, Modern, Cool, Expressions
+        { category: 'Boys', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Felix&mouth=smile" },
+        { category: 'Boys', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Leo&mouth=sad" },
+        { category: 'Boys', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Max&mouth=grimace" },
+        { category: 'Boys', url: "https://api.dicebear.com/9.x/micah/png?seed=Jack" },
+        { category: 'Boys', url: "https://api.dicebear.com/9.x/adventurer/png?seed=Oliver" },
+        { category: 'Boys', url: "https://api.dicebear.com/9.x/fun-emoji/png?seed=Milo" },
+        { category: 'Boys', url: "https://robohash.org/Milo.png?set=set4" },
+
+        // Girls - Classic, Modern, Cool, Expressions
+        { category: 'Girls', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Luna&mouth=smile" },
+        { category: 'Girls', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Bella&mouth=sad" },
+        { category: 'Girls', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Sophie&mouth=screamOpen" },
+        { category: 'Girls', url: "https://api.dicebear.com/9.x/micah/png?seed=Lily" },
+        { category: 'Girls', url: "https://api.dicebear.com/9.x/adventurer/png?seed=Chloe" },
+        { category: 'Girls', url: "https://api.dicebear.com/9.x/fun-emoji/png?seed=Mia" },
+        { category: 'Girls', url: "https://robohash.org/Mia.png?set=set4" },
+
+        // Men - Classic, Modern, Cool, Expressions
+        { category: 'Men', url: "https://api.dicebear.com/9.x/avataaars/png?seed=George&mouth=smile&facialHair=beardLight" },
+        { category: 'Men', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Arthur&mouth=sad&facialHair=beardMedium" },
+        { category: 'Men', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Thomas&mouth=grimace&facialHair=moustacheMagnum" },
+        { category: 'Men', url: "https://api.dicebear.com/9.x/micah/png?seed=James" },
+        { category: 'Men', url: "https://api.dicebear.com/9.x/adventurer/png?seed=John" },
+        { category: 'Men', url: "https://api.dicebear.com/9.x/fun-emoji/png?seed=William" },
+        { category: 'Men', url: "https://robohash.org/William.png?set=set2" },
+
+        // Womens - Classic, Modern, Cool, Expressions
+        { category: 'Womens', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Mary&mouth=smile" },
+        { category: 'Womens', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Patricia&mouth=sad" },
+        { category: 'Womens', url: "https://api.dicebear.com/9.x/avataaars/png?seed=Jennifer&mouth=screamOpen" },
+        { category: 'Womens', url: "https://api.dicebear.com/9.x/micah/png?seed=Linda" },
+        { category: 'Womens', url: "https://api.dicebear.com/9.x/adventurer/png?seed=Elizabeth" },
+        { category: 'Womens', url: "https://api.dicebear.com/9.x/fun-emoji/png?seed=Barbara" },
+        { category: 'Womens', url: "https://robohash.org/Barbara.png?set=set4" },
     ];
 
-    const filteredAvatars = avatarFilter === 'All' 
-        ? defaultAvatars 
+    const filteredAvatars = avatarFilter === 'All'
+        ? defaultAvatars
         : defaultAvatars.filter(a => a.category === avatarFilter);
 
     useEffect(() => {
@@ -383,11 +419,11 @@ export default function SettingsScreen() {
                 <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}>
                     <View style={{ backgroundColor: colors.card, padding: 24, borderRadius: 16, width: '85%', maxHeight: '80%' }}>
                         <Text style={{ fontSize: 20, fontWeight: '700', color: colors.text, marginBottom: 20, textAlign: 'center' }}>Profile Picture</Text>
-                        
+
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16, maxHeight: 40 }}>
                             {['All', 'Boys', 'Girls', 'Men', 'Womens'].map((cat) => (
-                                <TouchableOpacity 
-                                    key={cat} 
+                                <TouchableOpacity
+                                    key={cat}
                                     onPress={() => setAvatarFilter(cat)}
                                     style={{
                                         paddingHorizontal: 16,
