@@ -428,9 +428,7 @@ export default function TasksScreen() {
                     >
 
                         {
-                            Math.round(
-                                progress
-                            )
+                            progress.toFixed(2).padStart(5, "0")
                         }%
 
                     </Text>
@@ -913,7 +911,7 @@ export default function TasksScreen() {
                                             color: item.subtasks.filter((s: any) => s.completed).length === item.subtasks.length ? "#4CAF50" : colors.primary, 
                                             marginTop: 2 
                                         }}>
-                                            {Math.round((item.subtasks.filter((s: any) => s.completed).length / item.subtasks.length) * 100)}%
+                                            {((item.subtasks.filter((s: any) => s.completed).length / item.subtasks.length) * 100).toFixed(2).padStart(5, "0")}%
                                         </Text>
                                     </View>
                                     <Ionicons 

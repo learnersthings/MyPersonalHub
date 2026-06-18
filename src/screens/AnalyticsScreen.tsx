@@ -86,15 +86,11 @@ export default function AnalyticsScreen() {
 
     const progress =
         totalTasks > 0
-
-            ? Math.round(
-                (
-                    completedTasks
-                    /
-                    totalTasks
-                ) * 100
-            )
-
+            ? (
+                completedTasks
+                /
+                totalTasks
+            ) * 100
             : 0;
 
 
@@ -280,7 +276,7 @@ export default function AnalyticsScreen() {
                     }}
                 >
 
-                    {progress}%
+                    {progress.toFixed(2).padStart(5, "0")}%
 
                 </Text>
 
