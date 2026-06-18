@@ -1,6 +1,17 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
+export async function setupNotificationChannel() {
+    if (Platform.OS === 'android') {
+        await Notifications.setNotificationChannelAsync('reminders', {
+            name: 'Reminders',
+            importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: '#FF231F7C',
+        });
+    }
+}
+
 export async function scheduleReminderNotification(title: string, date: Date): Promise<string | string[] | undefined> {
     const triggerDate = new Date(date);
     
@@ -11,6 +22,7 @@ export async function scheduleReminderNotification(title: string, date: Date): P
     let trigger: Notifications.NotificationTriggerInput = {
         type: Notifications.SchedulableTriggerInputTypes.DATE,
         date: triggerDate,
+        channelId: 'reminders',
     };
 
     try {

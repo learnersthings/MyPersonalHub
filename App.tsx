@@ -53,6 +53,9 @@ export default function App() {
           console.log('Failed to get push token for push notification!');
           return;
         }
+        
+        const { setupNotificationChannel } = require('./src/services/notificationService');
+        await setupNotificationChannel();
       } catch (e) {
         console.log("Push notifications not supported in Expo Go", e);
       }
