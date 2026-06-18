@@ -19,6 +19,8 @@ const ThemeContext =
 
         toggleTheme: () => { },
 
+        loadTheme: async () => { },
+
         colors: lightTheme,
     });
 
@@ -91,6 +93,8 @@ export function ThemeProvider({
                 darkMode,
 
                 toggleTheme,
+
+                loadTheme,
 
                 colors:
                     darkMode

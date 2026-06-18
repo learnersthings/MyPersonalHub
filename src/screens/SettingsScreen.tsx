@@ -41,6 +41,7 @@ export default function SettingsScreen() {
     const {
         darkMode,
         toggleTheme,
+        loadTheme,
         colors,
     } = useTheme();
 
@@ -95,6 +96,7 @@ export default function SettingsScreen() {
         if (success) {
             Alert.alert("Success", "Backup restored successfully. Please fully restart the app to ensure all data is loaded properly.");
             loadSettings();
+            await loadTheme();
         } else {
             Alert.alert("Error", "Failed to restore backup or cancelled.");
         }
