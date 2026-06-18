@@ -2,7 +2,10 @@ import {
     View,
     Text,
     TouchableOpacity,
+    Image,
 } from "react-native";
+
+import { useState, useCallback } from "react";
 
 import {
     Ionicons,
@@ -10,7 +13,10 @@ import {
 
 import {
     useNavigation,
+    useFocusEffect,
 } from "@react-navigation/native";
+
+import { getProfile, UserProfile } from "../services/profileStorage";
 
 import {
     useTheme,
@@ -28,6 +34,18 @@ export default function HomeScreen() {
     const {
         colors,
     } = useTheme();
+
+    const [profile, setProfile] = useState<UserProfile | null>(null);
+
+    useFocusEffect(
+        useCallback(() => {
+            async function load() {
+                const data = await getProfile();
+                setProfile(data);
+            }
+            load();
+        }, [])
+    );
 
     const currentHour =
         new Date().getHours();
@@ -247,23 +265,23 @@ export default function HomeScreen() {
 
                 </View>
 
-                <Text
-                    style={{
-                        fontSize: 34,
-
-                        fontWeight: "800",
-
-                        color:
-                            colors.text,
-
-                        marginTop: 4,
-                    }}
-                >
-
-                    User
-
-                </Text>
-
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
+                    <Text
+                        style={{
+                            fontSize: 34,
+                            fontWeight: "800",
+                            color: colors.text,
+                        }}
+                    >
+                        {profile?.firstName ? profile.firstName : "User"}
+                    </Text>
+                    {profile?.avatarBase64 && (
+                        <Image 
+                            source={{ uri: profile.avatarBase64 }} 
+                            style={{ width: 48, height: 48, borderRadius: 24 }} 
+                        />
+                    )}
+                </View>
             </View>
 
             {/* Tiles */}
