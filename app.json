@@ -22,7 +22,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.generaluse.MyPersonalHub",
+      "package": "com.mypersonalhub.MyPersonalHub",
       "permissions": ["android.permission.SCHEDULE_EXACT_ALARM"]
     },
     "web": {
