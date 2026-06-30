@@ -88,6 +88,11 @@ export default function TaskEditorScreen() {
         setNewSubtaskTitle,
     ] = useState("");
 
+    const [
+        titleError,
+        setTitleError,
+    ] = useState(false);
+
     useEffect(() => {
 
         if (editingTask) {
@@ -137,8 +142,12 @@ export default function TaskEditorScreen() {
 
         if (
             !title.trim()
-        )
+        ) {
+            setTitleError(true);
             return;
+        }
+
+        setTitleError(false);
 
         const tasks =
             await getTasks();
@@ -279,9 +288,10 @@ export default function TaskEditorScreen() {
                     title
                 }
 
-                onChangeText={
-                    setTitle
-                }
+                onChangeText={(text) => {
+                    setTitle(text);
+                    if (titleError) setTitleError(false);
+                }}
 
                 style={[
                     globalStyles.input,
@@ -293,10 +303,16 @@ export default function TaskEditorScreen() {
                             colors.text,
 
                         borderColor:
-                            colors.border,
+                            titleError ? "#F44336" : colors.border,
                     },
                 ]}
             />
+
+            {titleError && (
+                <Text style={{ color: "#F44336", fontSize: 14, marginTop: -10, marginBottom: 15, marginLeft: 4 }}>
+                    Task title is required
+                </Text>
+            )}
 
             <Text
                 style={{
