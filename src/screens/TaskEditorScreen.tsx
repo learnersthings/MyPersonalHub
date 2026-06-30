@@ -93,6 +93,9 @@ export default function TaskEditorScreen() {
         setNewSubtaskTitle,
     ] = useState("");
 
+    const [editingSubtaskId, setEditingSubtaskId] = useState<string | null>(null);
+    const [editSubtaskTitle, setEditSubtaskTitle] = useState("");
+
     const [
         titleError,
         setTitleError,
@@ -161,6 +164,25 @@ export default function TaskEditorScreen() {
     function deleteSubtask(id: string) {
         setSubtasks(subtasks.filter(s => s.id !== id));
     }
+
+    const startEditingSubtask = (subtask: any) => {
+        setEditingSubtaskId(subtask.id);
+        setEditSubtaskTitle(subtask.title);
+    };
+
+    const saveEditSubtask = () => {
+        if (!editSubtaskTitle.trim() || !editingSubtaskId) {
+            setEditingSubtaskId(null);
+            return;
+        }
+        setSubtasks(
+            subtasks.map((s) =>
+                s.id === editingSubtaskId ? { ...s, title: editSubtaskTitle.trim() } : s
+            )
+        );
+        setEditingSubtaskId(null);
+        setEditSubtaskTitle("");
+    };
 
     async function saveTask() {
 
@@ -437,15 +459,30 @@ export default function TaskEditorScreen() {
 
                 <View style={{ marginBottom: 20 }}>
                     {subtasks.map((subtask) => (
-                        <View key={subtask.id} style={{ flexDirection: "row", alignItems: "center", marginBottom: 8, backgroundColor: colors.card, padding: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border }}>
-                            <TouchableOpacity onPress={() => toggleSubtask(subtask.id)} style={{ marginRight: 12 }}>
-                                <Ionicons name={subtask.completed ? "checkmark-circle" : "ellipse-outline"} size={24} color={subtask.completed ? "#4CAF50" : colors.subText} />
+                        editingSubtaskId === subtask.id ? (
+                            <View key={subtask.id} style={{ flexDirection: "row", alignItems: "center", marginBottom: 8 }}>
+                                <TextInput
+                                    value={editSubtaskTitle}
+                                    onChangeText={setEditSubtaskTitle}
+                                    onSubmitEditing={saveEditSubtask}
+                                    style={{ flex: 1, backgroundColor: colors.input, color: colors.text, paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border, marginRight: 10 }}
+                                    autoFocus
+                                />
+                                <TouchableOpacity onPress={saveEditSubtask} style={{ backgroundColor: colors.primary, width: 48, height: 48, borderRadius: 24, justifyContent: "center", alignItems: "center" }}>
+                                    <Ionicons name="checkmark" size={24} color="#fff" />
+                                </TouchableOpacity>
+                            </View>
+                        ) : (
+                            <TouchableOpacity key={subtask.id} onPress={() => startEditingSubtask(subtask)} style={{ flexDirection: "row", alignItems: "center", marginBottom: 8, backgroundColor: colors.card, padding: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border }}>
+                                <TouchableOpacity onPress={() => toggleSubtask(subtask.id)} style={{ marginRight: 12 }}>
+                                    <Ionicons name={subtask.completed ? "checkmark-circle" : "ellipse-outline"} size={24} color={subtask.completed ? "#4CAF50" : colors.subText} />
+                                </TouchableOpacity>
+                                <Text style={{ flex: 1, color: subtask.completed ? colors.subText : colors.text, textDecorationLine: subtask.completed ? "line-through" : "none", fontSize: 16 }}>{subtask.title}</Text>
+                                <TouchableOpacity onPress={() => deleteSubtask(subtask.id)} style={{ padding: 4 }}>
+                                    <Ionicons name="trash-outline" size={20} color="#F44336" />
+                                </TouchableOpacity>
                             </TouchableOpacity>
-                            <Text style={{ flex: 1, color: subtask.completed ? colors.subText : colors.text, textDecorationLine: subtask.completed ? "line-through" : "none", fontSize: 16 }}>{subtask.title}</Text>
-                            <TouchableOpacity onPress={() => deleteSubtask(subtask.id)} style={{ padding: 4 }}>
-                                <Ionicons name="trash-outline" size={20} color="#F44336" />
-                            </TouchableOpacity>
-                        </View>
+                        )
                     ))}
 
                     <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8 }}>
