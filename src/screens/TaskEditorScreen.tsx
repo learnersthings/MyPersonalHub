@@ -3,12 +3,14 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    ScrollView,
     KeyboardAvoidingView,
     Platform,
     Keyboard,
     KeyboardEvent
 } from "react-native";
+
+import DraggableFlatList, { ScaleDecorator, RenderItemParams } from "react-native-draggable-flatlist";
+import { TouchableOpacity as RNGHTouchableOpacity } from "react-native-gesture-handler";
 
 import {
     useState,
@@ -101,8 +103,6 @@ export default function TaskEditorScreen() {
         setTitleError,
     ] = useState(false);
 
-    const scrollViewRef = useRef<ScrollView>(null);
-
     const [keyboardHeight, setKeyboardHeight] = useState(0);
 
     useEffect(() => {
@@ -182,6 +182,47 @@ export default function TaskEditorScreen() {
         );
         setEditingSubtaskId(null);
         setEditSubtaskTitle("");
+    };
+
+    const renderSubtaskItem = ({ item: subtask, drag, isActive }: RenderItemParams<Subtask>) => {
+        return (
+            <ScaleDecorator>
+                <RNGHTouchableOpacity activeOpacity={1}>
+                    {editingSubtaskId === subtask.id ? (
+                        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 8, elevation: isActive ? 5 : 0 }}>
+                            <TextInput
+                                value={editSubtaskTitle}
+                                onChangeText={setEditSubtaskTitle}
+                                onSubmitEditing={saveEditSubtask}
+                                style={{ flex: 1, backgroundColor: colors.input, color: colors.text, paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border, marginRight: 10 }}
+                                autoFocus
+                            />
+                            <TouchableOpacity onPress={saveEditSubtask} style={{ backgroundColor: colors.primary, width: 48, height: 48, borderRadius: 24, justifyContent: "center", alignItems: "center" }}>
+                                <Ionicons name="checkmark" size={24} color="#fff" />
+                            </TouchableOpacity>
+                        </View>
+                    ) : (
+                        <TouchableOpacity
+                            onPress={() => startEditingSubtask(subtask)}
+                            style={{ flexDirection: "row", alignItems: "center", marginBottom: 8, backgroundColor: colors.card, padding: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border, elevation: isActive ? 5 : 0 }}
+                        >
+                            <TouchableOpacity onPress={() => toggleSubtask(subtask.id)} style={{ marginRight: 12 }}>
+                                <Ionicons name={subtask.completed ? "checkmark-circle" : "ellipse-outline"} size={24} color={subtask.completed ? "#4CAF50" : colors.subText} />
+                            </TouchableOpacity>
+                            <Text style={{ flex: 1, color: subtask.completed ? colors.subText : colors.text, textDecorationLine: subtask.completed ? "line-through" : "none", fontSize: 16 }}>{subtask.title}</Text>
+                            
+                            <TouchableOpacity onPress={() => deleteSubtask(subtask.id)} style={{ padding: 4, marginRight: 8 }}>
+                                <Ionicons name="trash-outline" size={20} color="#F44336" />
+                            </TouchableOpacity>
+                            
+                            <TouchableOpacity onLongPress={drag} style={{ padding: 4 }}>
+                                <Ionicons name="menu-outline" size={24} color={colors.subText} />
+                            </TouchableOpacity>
+                        </TouchableOpacity>
+                    )}
+                </RNGHTouchableOpacity>
+            </ScaleDecorator>
+        );
     };
 
     async function saveTask() {
@@ -268,12 +309,15 @@ export default function TaskEditorScreen() {
 
     return (
         <View style={{ flex: 1, backgroundColor: colors.background }}>
-            <ScrollView
-                ref={scrollViewRef}
-                onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+            <DraggableFlatList
+                data={subtasks}
+                onDragEnd={({ data }: { data: any[] }) => setSubtasks(data)}
+                keyExtractor={(item: any) => item.id}
+                renderItem={renderSubtaskItem}
                 contentContainerStyle={{
                     paddingBottom: keyboardHeight > 0 ? keyboardHeight - 20 : 0
                 }}
+                containerStyle={{ flex: 1 }}
                 style={[
                     globalStyles.screen,
                     {
@@ -281,11 +325,11 @@ export default function TaskEditorScreen() {
                             colors.background,
                     },
                 ]}
-
                 showsVerticalScrollIndicator={
                     false
                 }
-            >
+                ListHeaderComponent={
+                    <View>
 
                 <View
                     style={{
@@ -457,35 +501,11 @@ export default function TaskEditorScreen() {
                     Subtasks
                 </Text>
 
-                <View style={{ marginBottom: 20 }}>
-                    {subtasks.map((subtask) => (
-                        editingSubtaskId === subtask.id ? (
-                            <View key={subtask.id} style={{ flexDirection: "row", alignItems: "center", marginBottom: 8 }}>
-                                <TextInput
-                                    value={editSubtaskTitle}
-                                    onChangeText={setEditSubtaskTitle}
-                                    onSubmitEditing={saveEditSubtask}
-                                    style={{ flex: 1, backgroundColor: colors.input, color: colors.text, paddingHorizontal: 16, paddingVertical: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border, marginRight: 10 }}
-                                    autoFocus
-                                />
-                                <TouchableOpacity onPress={saveEditSubtask} style={{ backgroundColor: colors.primary, width: 48, height: 48, borderRadius: 24, justifyContent: "center", alignItems: "center" }}>
-                                    <Ionicons name="checkmark" size={24} color="#fff" />
-                                </TouchableOpacity>
-                            </View>
-                        ) : (
-                            <TouchableOpacity key={subtask.id} onPress={() => startEditingSubtask(subtask)} style={{ flexDirection: "row", alignItems: "center", marginBottom: 8, backgroundColor: colors.card, padding: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border }}>
-                                <TouchableOpacity onPress={() => toggleSubtask(subtask.id)} style={{ marginRight: 12 }}>
-                                    <Ionicons name={subtask.completed ? "checkmark-circle" : "ellipse-outline"} size={24} color={subtask.completed ? "#4CAF50" : colors.subText} />
-                                </TouchableOpacity>
-                                <Text style={{ flex: 1, color: subtask.completed ? colors.subText : colors.text, textDecorationLine: subtask.completed ? "line-through" : "none", fontSize: 16 }}>{subtask.title}</Text>
-                                <TouchableOpacity onPress={() => deleteSubtask(subtask.id)} style={{ padding: 4 }}>
-                                    <Ionicons name="trash-outline" size={20} color="#F44336" />
-                                </TouchableOpacity>
-                            </TouchableOpacity>
-                        )
-                    ))}
-
-                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8 }}>
+                    </View>
+                }
+                ListFooterComponent={
+                    <View>
+                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8, marginBottom: 20 }}>
                         <TextInput
                             placeholder="Add subtask..."
                             placeholderTextColor={colors.subText}
@@ -498,7 +518,7 @@ export default function TaskEditorScreen() {
                             <Ionicons name="add" size={24} color="#fff" />
                         </TouchableOpacity>
                     </View>
-                </View>
+
 
                 <Text
                     style={{
@@ -648,8 +668,9 @@ export default function TaskEditorScreen() {
                         height: 40,
                     }}
                 />
-
-            </ScrollView>
+                </View>
+                }
+            />
         </View>
 
     );
