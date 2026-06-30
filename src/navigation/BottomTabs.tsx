@@ -7,10 +7,13 @@ import SettingsStack from "./SettingsStack";
 import RemindersStack from "./RemindersStack";
 import TasksStack from "./TasksStack";
 import AnalyticsScreen from "../screens/AnalyticsScreen";
+import { useTheme } from "../context/ThemeContext";
 
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabs() {
+    const { colors } = useTheme();
+
     return (
         <NavigationContainer>
             <Tab.Navigator
@@ -40,14 +43,16 @@ export default function BottomTabs() {
                     tabBarStyle: {
                         paddingBottom: 8,
                         paddingTop: 5,
+                        backgroundColor: colors.card,
+                        borderTopColor: colors.border,
                     },
 
                     tabBarLabelStyle: {
                         fontSize: 12,
                     },
 
-                    tabBarActiveTintColor: "#2196F3",
-                    tabBarInactiveTintColor: "gray",
+                    tabBarActiveTintColor: colors.primary,
+                    tabBarInactiveTintColor: colors.subText,
 
                     headerTitleAlign: "center",
 
