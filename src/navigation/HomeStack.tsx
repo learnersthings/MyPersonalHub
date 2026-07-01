@@ -4,15 +4,6 @@ import {
 
 import HomeScreen from "../screens/HomeScreen";
 
-import BrainActivityScreen from "../screens/BrainActivityScreen";
-
-import BrainDashboardScreen from "../screens/BrainDashboardScreen";
-
-import ReactionChallengeScreen from "../screens/ReactionChallengeScreen";
-
-import MemoryRecallScreen from "../screens/MemoryRecallScreen";
-
-import QuickDecisionScreen from "../screens/QuickDecisionScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -31,30 +22,6 @@ export default function HomeStack() {
                 component={HomeScreen}
             />
 
-            <Stack.Screen
-                name="BrainActivity"
-                component={BrainActivityScreen}
-            />
-
-            <Stack.Screen
-                name="BrainDashboard"
-                component={BrainDashboardScreen}
-            />
-
-            <Stack.Screen
-                name="NumberRecall"
-                component={MemoryRecallScreen}
-            />
-
-            <Stack.Screen
-                name="ReactionChallenge"
-                component={ReactionChallengeScreen}
-            />
-
-            <Stack.Screen
-                name="QuickDecision"
-                component={QuickDecisionScreen}
-            />
 
         </Stack.Navigator>
     );
