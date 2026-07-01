@@ -392,26 +392,6 @@ export default function SettingsScreen() {
                     <Ionicons name="chevron-forward" size={20} color={colors.subText} />
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                    onPress={() => navigation.navigate("ManageSteps")}
-                    style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        paddingVertical: 16,
-                        borderBottomWidth: 1,
-                        borderBottomColor: colors.border,
-                    }}
-                >
-                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                        <Ionicons name="walk-outline" size={22} color={colors.primary} />
-                        <Text style={{ marginLeft: 12, fontSize: 16, fontWeight: "500", color: colors.text }}>
-                            Manage Steps
-                        </Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={20} color={colors.subText} />
-                </TouchableOpacity>
-
             </View>
 
             {/* Data Management */}
