@@ -273,12 +273,12 @@ export default function HomeScreen() {
                             color: colors.text,
                         }}
                     >
-                        {profile?.firstName ? profile.firstName : "User"}
+                        {profile?.firstName ? profile.firstName : ""}
                     </Text>
                     {profile?.avatarBase64 && (
-                        <Image 
-                            source={{ uri: profile.avatarBase64 }} 
-                            style={{ width: 48, height: 48, borderRadius: 24 }} 
+                        <Image
+                            source={{ uri: profile.avatarBase64 }}
+                            style={{ width: 48, height: 48, borderRadius: 24 }}
                         />
                     )}
                 </View>
