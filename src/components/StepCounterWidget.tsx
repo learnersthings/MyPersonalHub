@@ -1,104 +1,198 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, AppState } from 'react-native';
 import { Pedometer } from 'expo-sensors';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { useFocusEffect } from '@react-navigation/native';
-import { getStepGoals, StepGoals } from '../services/stepsStorage';
+import { getStepGoals, StepGoals, getStepProgress, saveStepProgress, StepProgress } from '../services/stepsStorage';
 
 export default function StepCounterWidget() {
-    const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
-    const [pastStepCount, setPastStepCount] = useState(0);
-    const [currentStepCount, setCurrentStepCount] = useState(0);
-    const [weeklySteps, setWeeklySteps] = useState(0);
-    const [monthlySteps, setMonthlySteps] = useState(0);
-
-    const [goals, setGoals] = useState<StepGoals>({ daily: 10000, weekly: 50000, monthly: 300000 });
-    const [activeTab, setActiveTab] = useState<'Daily' | 'Weekly' | 'Monthly'>('Daily');
-
     const { colors } = useTheme();
 
-    useFocusEffect(
-        useCallback(() => {
-            getStepGoals().then(setGoals);
-        }, [])
-    );
+    const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
+    const [goals, setGoals] = useState<StepGoals>({ daily: 10000, weekly: 50000, monthly: 300000 });
+    const [progress, setProgress] = useState<StepProgress | null>(null);
+    const [activeTab, setActiveTab] = useState<'Daily' | 'Weekly' | 'Monthly'>('Daily');
 
-    const subscribe = async () => {
+    // To track the delta from the active pedometer session
+    const lastSessionStepsRef = useRef(0);
+    const progressRef = useRef<StepProgress | null>(null);
+    const subscriptionRef = useRef<Pedometer.Subscription | null>(null);
+
+    // Sync ref when progress state updates (useful for saving)
+    useEffect(() => {
+        if (progress) progressRef.current = progress;
+    }, [progress]);
+
+    // Helpers
+    const getStartOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const getStartOfWeek = (d: Date) => {
+        const date = new Date(d);
+        const day = date.getDay();
+        const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+        return new Date(date.setDate(diff));
+    };
+    const getStartOfMonth = (d: Date) => new Date(d.getFullYear(), d.getMonth(), 1);
+
+    const isSameDay = (d1: Date, d2: Date) => getStartOfDay(d1).getTime() === getStartOfDay(d2).getTime();
+    const isSameWeek = (d1: Date, d2: Date) => getStartOfDay(getStartOfWeek(d1)).getTime() === getStartOfDay(getStartOfWeek(d2)).getTime();
+    const isSameMonth = (d1: Date, d2: Date) => getStartOfMonth(d1).getTime() === getStartOfMonth(d2).getTime();
+
+    // Load data and handle background catchup
+    const initializeSteps = async () => {
+        const storedGoals = await getStepGoals();
+        setGoals(storedGoals);
+
+        let storedProgress = await getStepProgress();
+        const now = new Date();
+        const lastUpdate = new Date(storedProgress.lastUpdateDate);
+
+        let needsSave = false;
+
+        // Daily Reset Check
+        if (!isSameDay(now, lastUpdate)) {
+            const yesterday = new Date(now);
+            yesterday.setDate(yesterday.getDate() - 1);
+            storedProgress.yesterdaySteps = isSameDay(yesterday, lastUpdate) ? storedProgress.dailySteps : 0;
+            storedProgress.dailySteps = 0;
+            needsSave = true;
+        }
+
+        // Weekly Reset Check (Monday start)
+        if (!isSameWeek(now, lastUpdate)) {
+            const lastWeek = new Date(now);
+            lastWeek.setDate(lastWeek.getDate() - 7);
+            storedProgress.lastWeekSteps = isSameWeek(lastWeek, lastUpdate) ? storedProgress.weeklySteps : 0;
+            storedProgress.weeklySteps = 0;
+            needsSave = true;
+        }
+
+        // Monthly Reset Check
+        if (!isSameMonth(now, lastUpdate)) {
+            const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+            storedProgress.lastMonthSteps = isSameMonth(lastMonth, lastUpdate) ? storedProgress.monthlySteps : 0;
+            storedProgress.monthlySteps = 0;
+            needsSave = true;
+        }
+
+        // Catchup missing steps while app was closed
+        try {
+            const { granted } = await Pedometer.getPermissionsAsync();
+            if (granted && await Pedometer.isAvailableAsync()) {
+                if (now.getTime() > lastUpdate.getTime()) {
+                    // Try catching up since last update (capped at start of today to avoid large syncs if app wasn't opened for days)
+                    const catchupStart = lastUpdate.getTime() < getStartOfDay(now).getTime() ? getStartOfDay(now) : lastUpdate;
+                    
+                    if (now.getTime() > catchupStart.getTime()) {
+                        const catchupResult = await Pedometer.getStepCountAsync(catchupStart, now);
+                        if (catchupResult && catchupResult.steps > 0) {
+                            storedProgress.dailySteps += catchupResult.steps;
+                            storedProgress.weeklySteps += catchupResult.steps;
+                            storedProgress.monthlySteps += catchupResult.steps;
+                            needsSave = true;
+                        }
+                    }
+                }
+            }
+        } catch (e) {
+            console.log("Catchup failed or unavailable, ignoring.", e);
+        }
+
+        storedProgress.lastUpdateDate = now.toISOString();
+        if (needsSave) {
+            await saveStepProgress(storedProgress);
+        }
+
+        setProgress(storedProgress);
+        progressRef.current = storedProgress;
+
+        startRealtimeTracking();
+    };
+
+    const startRealtimeTracking = async () => {
         try {
             const { granted } = await Pedometer.requestPermissionsAsync();
             if (!granted) {
                 setIsPedometerAvailable('permission denied');
-                return null;
+                return;
             }
 
             const isAvailable = await Pedometer.isAvailableAsync();
             setIsPedometerAvailable(String(isAvailable));
 
-            if (isAvailable) {
-                const now = new Date();
-                
-                const startOfDay = new Date();
-                startOfDay.setHours(0, 0, 0, 0);
+            if (isAvailable && !subscriptionRef.current) {
+                lastSessionStepsRef.current = 0;
+                subscriptionRef.current = Pedometer.watchStepCount(result => {
+                    const delta = result.steps - lastSessionStepsRef.current;
+                    lastSessionStepsRef.current = result.steps;
 
-                const startOfWeek = new Date();
-                startOfWeek.setDate(now.getDate() - now.getDay());
-                startOfWeek.setHours(0, 0, 0, 0);
+                    if (delta > 0 && progressRef.current) {
+                        const newProgress = { ...progressRef.current };
+                        newProgress.dailySteps += delta;
+                        newProgress.weeklySteps += delta;
+                        newProgress.monthlySteps += delta;
+                        newProgress.lastUpdateDate = new Date().toISOString();
 
-                const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
-                const [dailyRes, weeklyRes, monthlyRes] = await Promise.all([
-                    Pedometer.getStepCountAsync(startOfDay, now).catch(() => ({ steps: 0 })),
-                    Pedometer.getStepCountAsync(startOfWeek, now).catch(() => ({ steps: 0 })),
-                    Pedometer.getStepCountAsync(startOfMonth, now).catch(() => ({ steps: 0 }))
-                ]);
-
-                setPastStepCount(dailyRes?.steps || 0);
-                setWeeklySteps(weeklyRes?.steps || 0);
-                setMonthlySteps(monthlyRes?.steps || 0);
-
-                return Pedometer.watchStepCount(result => {
-                    setCurrentStepCount(result.steps);
+                        setProgress(newProgress);
+                        progressRef.current = newProgress;
+                        
+                        // Save asynchronously without blocking
+                        saveStepProgress(newProgress).catch(console.error);
+                    }
                 });
             }
         } catch (e) {
-            console.error("Pedometer Error: ", e);
+            console.error("Pedometer Watch Error: ", e);
             setIsPedometerAvailable('error');
         }
-        return null;
+    };
+
+    const stopRealtimeTracking = () => {
+        if (subscriptionRef.current) {
+            subscriptionRef.current.remove();
+            subscriptionRef.current = null;
+        }
     };
 
     useEffect(() => {
-        let subscription: Pedometer.Subscription | null = null;
-        subscribe().then(sub => {
-            subscription = sub as any;
-        });
-        return () => {
-            if (subscription && (subscription as any).remove) {
-                (subscription as any).remove();
+        initializeSteps();
+        
+        // Handle app state changes (background/foreground) to restart tracker and avoid stale deltas
+        const appStateSubscription = AppState.addEventListener('change', nextAppState => {
+            if (nextAppState === 'active') {
+                initializeSteps(); // re-checks dates and does catchup
+            } else if (nextAppState === 'background') {
+                stopRealtimeTracking();
             }
+        });
+
+        return () => {
+            stopRealtimeTracking();
+            appStateSubscription.remove();
         };
     }, []);
 
-    const dailyTotal = pastStepCount + currentStepCount;
-    const weeklyTotal = weeklySteps + currentStepCount;
-    const monthlyTotal = monthlySteps + currentStepCount;
+    if (!progress) return null;
 
-    let totalSteps = 0;
-    let goal = 0;
+    let currentSteps = 0;
+    let currentGoal = 0;
+    let comparisonText = "";
 
     if (activeTab === 'Daily') {
-        totalSteps = dailyTotal;
-        goal = goals.daily;
+        currentSteps = progress.dailySteps;
+        currentGoal = goals.daily;
+        comparisonText = `Yesterday: ${progress.yesterdaySteps.toLocaleString()}`;
     } else if (activeTab === 'Weekly') {
-        totalSteps = weeklyTotal;
-        goal = goals.weekly;
+        currentSteps = progress.weeklySteps;
+        currentGoal = goals.weekly;
+        comparisonText = `Last Week: ${progress.lastWeekSteps.toLocaleString()}`;
     } else {
-        totalSteps = monthlyTotal;
-        goal = goals.monthly;
+        currentSteps = progress.monthlySteps;
+        currentGoal = goals.monthly;
+        comparisonText = `Last Month: ${progress.lastMonthSteps.toLocaleString()}`;
     }
 
-    const progress = Math.min((totalSteps / goal) * 100, 100) || 0;
+    const progressPercentage = Math.min((currentSteps / currentGoal) * 100, 100) || 0;
 
     return (
         <View style={[styles.container, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -133,17 +227,22 @@ export default function StepCounterWidget() {
 
             <View style={styles.content}>
                 <Text style={[styles.stepsText, { color: colors.text }]}>
-                    {totalSteps.toLocaleString()}
+                    {currentSteps.toLocaleString()}
                 </Text>
                 <Text style={[styles.goalText, { color: colors.subText }]}>
-                    / {goal.toLocaleString()} steps
+                    / {currentGoal.toLocaleString()} steps
                 </Text>
             </View>
 
             <View style={[styles.progressBarBackground, { backgroundColor: colors.border }]}>
-                <View style={[styles.progressBarFill, { width: `${progress}%`, backgroundColor: colors.primary }]} />
+                <View style={[styles.progressBarFill, { width: `${progressPercentage}%`, backgroundColor: colors.primary }]} />
             </View>
             
+            <View style={styles.comparisonContainer}>
+                <Ionicons name="stats-chart" size={14} color={colors.subText} style={{ marginRight: 6 }} />
+                <Text style={[styles.comparisonText, { color: colors.subText }]}>{comparisonText}</Text>
+            </View>
+
             {isPedometerAvailable === 'false' || isPedometerAvailable === 'permission denied' || isPedometerAvailable === 'error' ? (
                 <Text style={styles.errorText}>
                     {isPedometerAvailable === 'false' ? 'Step counter not available on this device' : 
@@ -217,6 +316,16 @@ const styles = StyleSheet.create({
     progressBarFill: {
         height: '100%',
         borderRadius: 4,
+    },
+    comparisonContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 12,
+        justifyContent: 'center',
+    },
+    comparisonText: {
+        fontSize: 13,
+        fontWeight: '500',
     },
     errorText: {
         color: '#F44336',
