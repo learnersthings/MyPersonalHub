@@ -26,6 +26,8 @@ import {
     globalStyles,
 } from "../theme/styles";
 
+import StepCounterWidget from "../components/StepCounterWidget";
+
 export default function HomeScreen() {
 
     const navigation =
@@ -284,6 +286,7 @@ export default function HomeScreen() {
                 </View>
             </View>
 
+            <StepCounterWidget />
 
         </View>
     );

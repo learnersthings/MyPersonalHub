@@ -24,7 +24,8 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.mypersonalhub.mypersonalhub",
       "permissions": [
-        "android.permission.SCHEDULE_EXACT_ALARM"
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.ACTIVITY_RECOGNITION"
       ]
     },
     "web": {
